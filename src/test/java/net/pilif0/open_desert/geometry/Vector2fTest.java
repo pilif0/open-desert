@@ -177,4 +177,18 @@ public class Vector2fTest {
         assertEquals(Math.toRadians(0), AXIS_X.angle(AXIS_X), 10e-5);
         assertEquals(Math.toRadians(45), AXIS_X.angle(new Vector2f(1, 1)), 10e-5);
     }
+
+    @Test
+    public void testComponentX() throws Exception {
+        //Test calculation of the x component
+        assertEquals(new Vector2f(7, 0), (new Vector2f(7, 15)).getComponentX());
+        assertEquals(new Vector2f(0, 0), (new Vector2f(0, 13)).getComponentX());
+    }
+
+    @Test
+    public void testComponentY() throws Exception {
+        //Test calculation of the y component
+        assertEquals(new Vector2f(0, 15), (new Vector2f(7, 15)).getComponentY());
+        assertEquals(new Vector2f(0, 0), (new Vector2f(13, 0)).getComponentY());
+    }
 }

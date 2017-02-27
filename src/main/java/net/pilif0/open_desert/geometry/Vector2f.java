@@ -177,6 +177,24 @@ public class Vector2f {
         return x == 0 && y == 0;
     }
 
+    /**
+     * Returns the x component of the vector
+     *
+     * @return The x component
+     */
+    public Vector2f getComponentX(){
+        return new Vector2f(x, 0);
+    }
+
+    /**
+     * Returns the y component of the vector
+     *
+     * @return The y component
+     */
+    public Vector2f getComponentY(){
+        return new Vector2f(0, y);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

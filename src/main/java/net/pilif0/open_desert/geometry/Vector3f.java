@@ -223,6 +223,27 @@ public class Vector3f {
         return x == 0 && y == 0 && z == 0;
     }
 
+    /**
+     * Returns the x component of the vector
+     *
+     * @return The x component
+     */
+    public Vector3f getComponentX(){ return new Vector3f(x, 0, 0); }
+
+    /**
+     * Returns the y component of the vector
+     *
+     * @return The y component
+     */
+    public Vector3f getComponentY(){ return new Vector3f(0, y, 0); }
+
+    /**
+     * Returns the z component of the vector
+     *
+     * @return The z component
+     */
+    public Vector3f getComponentZ(){ return new Vector3f(0, 0, z); }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

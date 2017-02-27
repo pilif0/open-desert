@@ -242,4 +242,25 @@ public class Vector3fTest {
         assertEquals(Math.toRadians(0), AXIS_X.angle(AXIS_X), 10e-5);
         assertEquals(Math.toRadians(45), AXIS_X.angle(new Vector3f(1, 1, 0)), 10e-5);
     }
+
+    @Test
+    public void testComponentX() throws Exception {
+        //Test calculation of the x component
+        assertEquals(new Vector3f(7, 0, 0), (new Vector3f(7, 15, 12)).getComponentX());
+        assertEquals(new Vector3f(0, 0, 0), (new Vector3f(0, 13, 31)).getComponentX());
+    }
+
+    @Test
+    public void testComponentY() throws Exception {
+        //Test calculation of the y component
+        assertEquals(new Vector3f(0, 15, 0), (new Vector3f(7, 15, 12)).getComponentY());
+        assertEquals(new Vector3f(0, 0, 0), (new Vector3f(13, 0, 31)).getComponentY());
+    }
+
+    @Test
+    public void testComponentZ() throws Exception {
+        //Test calculation of the z component
+        assertEquals(new Vector3f(0, 0, 12), (new Vector3f(7, 15, 12)).getComponentZ());
+        assertEquals(new Vector3f(0, 0, 0), (new Vector3f(13, 31, 0)).getComponentZ());
+    }
 }
