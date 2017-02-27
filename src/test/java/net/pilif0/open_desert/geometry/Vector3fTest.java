@@ -240,6 +240,6 @@ public class Vector3fTest {
         //Test calculation of the angle between two vectors
         assertEquals(Math.toRadians(90), AXIS_X.angle(AXIS_Y), 10e-5);
         assertEquals(Math.toRadians(0), AXIS_X.angle(AXIS_X), 10e-5);
-        assertEquals(Math.toRadians(45), AXIS_X.angle(new Vector3f(1, 1, 0)), 10-5);
+        assertEquals(Math.toRadians(45), AXIS_X.angle(new Vector3f(1, 1, 0)), 10e-5);
     }
 }
