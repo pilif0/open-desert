@@ -1,5 +1,8 @@
 package net.pilif0.open_desert.math;
 
+import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
+
 /**
  * Represents a rational number (quotient of two integers).
  * The objects are meant as immutable and manipulation creates new instances.
@@ -75,7 +78,7 @@ public class Rational extends Number implements Comparable<Rational> {
      * @return The result of the addition
      * @throws ArithmeticException On a possible overflow
      */
-    public Rational add(Rational b){
+    public Rational add(@NotNull Rational b){
         //Calculate the new numerators and denominators
         long newNum = ((long) numerator * (long) b.denominator) + ((long) b.numerator * (long) denominator);
         long newDen = (long) denominator * (long) b.denominator;
@@ -143,7 +146,7 @@ public class Rational extends Number implements Comparable<Rational> {
      * @param b The rational to multiply
      * @return The result of the multiplication
      */
-    public Rational multiply(Rational b){
+    public Rational multiply(@NotNull Rational b){
         //Skip when one numerator is the other denominator
         if(numerator == b.denominator){
             return new Rational(b.numerator, denominator);
@@ -199,7 +202,7 @@ public class Rational extends Number implements Comparable<Rational> {
      * @param b The rational to divide by
      * @return The result of the division
      */
-    public Rational divide(Rational b){
+    public Rational divide(@NotNull Rational b){
         //Multiply by the reciprocal
         return multiply(b.reciprocal());
     }
@@ -225,7 +228,7 @@ public class Rational extends Number implements Comparable<Rational> {
      *      a value less than {@code 0} if {@code a < b};
      *      and a value greater than {@code 0} if {@code a > b}
      */
-    public static int compare(Rational a, Rational b){
+    public static int compare(@NotNull Rational a, @NotNull Rational b){
         //Compare the numerators multiplied by the other one's denominator
         return Long.compare(a.numerator * b.denominator, b.numerator * a.denominator);
     }
@@ -249,7 +252,7 @@ public class Rational extends Number implements Comparable<Rational> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

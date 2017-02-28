@@ -1,5 +1,7 @@
 package net.pilif0.open_desert.util;
 
+import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.system.APIUtil;
@@ -35,7 +37,7 @@ public class Log{
      *
      * @param name The name to use for the file
      */
-    public Log(String name){
+    public Log(@Nullable String name){
         //Note the datetime
         LocalDateTime creationDT = LocalDateTime.now();
 
@@ -74,7 +76,7 @@ public class Log{
      *
      * @param text The text to write
      */
-    private synchronized void write(String text){
+    private synchronized void write(@NotNull String text){
         try {
             Files.write(path, text.getBytes(), StandardOpenOption.APPEND);
         } catch (IOException e) {
@@ -96,13 +98,13 @@ public class Log{
      * @param origin The origin of the message
      * @param message The message
      */
-    public synchronized void log(Severity severity, String origin, String message){
+    public synchronized void log(@Nullable Severity severity, @Nullable String origin, @Nullable String message){
         //Note the datetime
         LocalDateTime dt = LocalDateTime.now();
 
         //Build text
         StringBuilder text = new StringBuilder(dt.format(DATE_TIME_FORMAT));
-        text.append(" ").append(severity.toString())
+        text.append(" ").append(severity)
                 .append(" ").append(origin)
                 .append(" - ").append(message)
                 .append(System.lineSeparator());
@@ -117,7 +119,7 @@ public class Log{
      * @param origin The origin of the exception
      * @param e The exception
      */
-    public synchronized void log(String origin, Exception e){
+    public synchronized void log(@Nullable String origin, @NotNull Exception e){
         StringBuilder message = new StringBuilder(e.toString());
         message.append(System.lineSeparator());
 
@@ -138,7 +140,7 @@ public class Log{
      *
      * @param e The exception
      */
-    public synchronized void log(Exception e){
+    public synchronized void log(@NotNull Exception e){
         log("Java", e);
     }
 
@@ -160,7 +162,7 @@ public class Log{
          *
          * @param target The target log instance
          */
-        public LogCallback(Log target){
+        public LogCallback(@NotNull Log target){
             this.target = target;
         }
 
