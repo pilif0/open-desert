@@ -179,7 +179,7 @@ public class Log{
             //Append the stack trace
             StackTraceElement[] stack = Thread.currentThread().getStackTrace();
             for ( int i = 4; i < stack.length; i++ ) {
-                message.append("\t\t")
+                message.append("\n\t\t")
                     .append(stack[i].toString());
             }
 
