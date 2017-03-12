@@ -2,6 +2,7 @@ package net.pilif0.open_desert.events;
 
 import com.sun.istack.internal.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  */
 public class EventMultiplexer<T extends Event> implements EventListener<T> {
     /** The listeners to distribute to */
-    private List<EventListener<T>> listeners;
+    private List<EventListener<T>> listeners = new ArrayList<>();
 
     @Override
     public void handle(T event) {
