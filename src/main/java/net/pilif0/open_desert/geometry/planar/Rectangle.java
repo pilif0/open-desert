@@ -1,7 +1,8 @@
 package net.pilif0.open_desert.geometry.planar;
 
 import com.sun.istack.internal.NotNull;
-import net.pilif0.open_desert.geometry.Vector2f;
+import org.joml.Vector2f;
+import org.joml.Vector2fc;
 
 /**
  * Represents a rectangle with origin (bottom left corner) and dimensions.
@@ -14,9 +15,9 @@ public class Rectangle {
     public enum Corner {TOP_LEFT, TOP_RIGHT, BOT_LEFT, BOT_RIGHT}
 
     /** The origin of the rectangle (the bottom left corner) */
-    public final Vector2f origin;
+    private final Vector2f origin;
     /** The dimensions of the rectangle (vector from bottom left to top right) */
-    public final Vector2f dimensions;
+    private final Vector2f dimensions;
 
     /**
      * Constructs the rectangle from its origin and dimensions
@@ -69,12 +70,12 @@ public class Rectangle {
      * @param c The desired corner
      * @return The position vector of the corner
      */
-    public Vector2f getCorner(@NotNull Corner c){
+    public Vector2fc getCorner(@NotNull Corner c){
         switch(c){
-            case BOT_LEFT: return origin;
-            case BOT_RIGHT: return origin.add(dimensions.getComponentX());
-            case TOP_LEFT: return origin.add(dimensions.getComponentY());
-            case TOP_RIGHT: return origin.add(dimensions);
+            case BOT_LEFT: return origin.toImmutable();
+            case BOT_RIGHT: return origin.add(dimensions.x, 0, new Vector2f()).toImmutable();
+            case TOP_LEFT: return origin.add(0, dimensions.y, new Vector2f()).toImmutable();
+            case TOP_RIGHT: return origin.add(dimensions, new Vector2f()).toImmutable();
             default: return null;
         }
     }

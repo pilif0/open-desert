@@ -7,6 +7,8 @@ import com.sun.istack.internal.NotNull;
  *
  * @author Filip Smola
  * @version 1.0
+ *
+ * @deprecated Deprecated in favour of the JOML library
  */
 public class Vector3f {
     //Standard vectors

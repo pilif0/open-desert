@@ -2,8 +2,9 @@ package net.pilif0.open_desert.window;
 
 import com.sun.istack.internal.NotNull;
 import net.pilif0.open_desert.events.EventMultiplexer;
-import net.pilif0.open_desert.geometry.Vector2f;
 import net.pilif0.open_desert.input.KeyEvent;
+import org.joml.Vector2f;
+import org.joml.Vector2fc;
 import org.lwjgl.glfw.GLFWKeyCallbackI;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
@@ -167,8 +168,8 @@ public class Window {
      *
      * @return The window position
      */
-    public Vector2f getPosition(){
-        return position;
+    public Vector2fc getPosition(){
+        return position.toImmutable();
     }
 
     /**
@@ -176,9 +177,9 @@ public class Window {
      *
      * @param position The new position
      */
-    public void setPosition(@NotNull Vector2f position){
-        glfwSetWindowPos(handle, (int) position.x, (int) position.y);
-        this.position = position;
+    public void setPosition(@NotNull Vector2fc position){
+        glfwSetWindowPos(handle, (int) position.x(), (int) position.y());
+        this.position.set(position);
     }
 
     /**
@@ -186,8 +187,8 @@ public class Window {
      *
      * @return The window size
      */
-    public Vector2f getSize(){
-        return size;
+    public Vector2fc getSize(){
+        return size.toImmutable();
     }
 
     /**
@@ -195,9 +196,9 @@ public class Window {
      *
      * @param size The window size
      */
-    public void setSize(@NotNull Vector2f size){
-        glfwSetWindowSize(handle, (int) size.x, (int) size.y);
-        this.size = size;
+    public void setSize(@NotNull Vector2fc size){
+        glfwSetWindowSize(handle, (int) size.x(), (int) size.y());
+        this.size.set(size);
         this.resized = true;
     }
 
@@ -235,8 +236,8 @@ public class Window {
                 height,
                 GLFW_DONT_CARE
         );
-        position = Vector2f.ZERO;
-        setSize(new Vector2f(width, height));
+        position.set(0f, 0f);
+        size.set(width, height);
         type = Type.WINDOWED;
         centre();
     }
@@ -266,8 +267,8 @@ public class Window {
                 mode.height(),
                 mode.refreshRate()
         );
-        position = Vector2f.ZERO;
-        setSize(new Vector2f(mode.width(), mode.height()));
+        position.set(0f, 0f);
+        size.set(mode.width(), mode.height());
         type = Type.BORDERLESS;
     }
 
@@ -296,7 +297,7 @@ public class Window {
                 (int) size.y,
                 mode.refreshRate()
         );
-        position = Vector2f.ZERO;
+        position.set(0f, 0f);
         type = Type.FULLSCREEN;
     }
 
@@ -329,8 +330,8 @@ public class Window {
             GLFWVidMode mode = glfwGetVideoMode(monitorID);
 
             //Change dimensions to fit new video mode
-            position = Vector2f.ZERO;
-            setSize(new Vector2f(mode.width(), mode.height()));
+            position.set(0f, 0f);
+            size.set(mode.width(), mode.height());
 
             glfwSetWindowMonitor(
                     handle,
@@ -355,7 +356,7 @@ public class Window {
             GLFWVidMode mode = glfwGetVideoMode(monitor);
             int newX = posX.get(0) + (mode.width() / 2) - (int) (size.x / 2);
             int newY = posY.get(0) + (mode.height() / 2) - (int) (size.y / 2);
-            position = new Vector2f(newX, newY);
+            position.set(newX, newY);
 
             //Move the window and change the field
             glfwSetWindowPos(handle, newX, newY);
@@ -374,7 +375,7 @@ public class Window {
     /**
      * Returns whether the window was resized
      *
-     * @param consume Whether the flag should be reseted after returning
+     * @param consume Whether the flag should be reset after returning
      * @return Whether the window was resized
      */
     public boolean getResized(boolean consume){
@@ -450,7 +451,7 @@ public class Window {
 
         //Move the window and change the field
         glfwSetWindowPos(handle, newX, newY);
-        position = new Vector2f(newX, newY);
+        position.set(newX, newY);
     }
 
     /**

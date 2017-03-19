@@ -1,7 +1,7 @@
 package net.pilif0.open_desert.geometry.planar;
 
 import com.sun.istack.internal.NotNull;
-import net.pilif0.open_desert.geometry.Vector2f;
+import org.joml.Vector2f;
 
 /**
  * Represents a square with origin (bottom left corner) and side

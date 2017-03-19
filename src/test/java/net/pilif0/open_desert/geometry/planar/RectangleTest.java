@@ -1,6 +1,6 @@
 package net.pilif0.open_desert.geometry.planar;
 
-import net.pilif0.open_desert.geometry.Vector2f;
+import org.joml.Vector2f;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -18,7 +18,7 @@ public class RectangleTest {
         //Test the centre calculation
         assertEquals(
                 new Vector2f(1, 1),
-                (new Rectangle(Vector2f.ZERO, 2, 2)).getCentre()
+                (new Rectangle(new Vector2f(0f, 0f), 2, 2)).getCentre()
         );
         assertEquals(
                 new Vector2f(0, 0),
@@ -26,7 +26,7 @@ public class RectangleTest {
         );
         assertEquals(
                 new Vector2f(3, 4),
-                (new Rectangle(Vector2f.ZERO, 6, 8)).getCentre()
+                (new Rectangle(new Vector2f(0f, 0f), 6, 8)).getCentre()
         );
     }
 
