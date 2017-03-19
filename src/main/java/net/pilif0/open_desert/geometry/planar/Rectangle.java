@@ -1,6 +1,5 @@
 package net.pilif0.open_desert.geometry.planar;
 
-import com.sun.istack.internal.NotNull;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
@@ -25,7 +24,7 @@ public class Rectangle {
      * @param origin The origin
      * @param dimensions The dimensions
      */
-    public Rectangle(@NotNull Vector2f origin, @NotNull Vector2f dimensions){
+    public Rectangle(Vector2f origin, Vector2f dimensions){
         this.origin = origin;
         this.dimensions = dimensions;
     }
@@ -37,7 +36,7 @@ public class Rectangle {
      * @param width The width
      * @param height The height
      */
-    public Rectangle(@NotNull Vector2f origin, float width, float height){
+    public Rectangle(Vector2f origin, float width, float height){
         this(origin, new Vector2f(width, height));
     }
 
@@ -70,7 +69,7 @@ public class Rectangle {
      * @param c The desired corner
      * @return The position vector of the corner
      */
-    public Vector2fc getCorner(@NotNull Corner c){
+    public Vector2fc getCorner(Corner c){
         switch(c){
             case BOT_LEFT: return origin.toImmutable();
             case BOT_RIGHT: return origin.add(dimensions.x, 0, new Vector2f()).toImmutable();

@@ -1,7 +1,5 @@
 package net.pilif0.open_desert.geometry;
 
-import com.sun.istack.internal.NotNull;
-
 /**
  * Represents a vector in three dimensions.
  *
@@ -55,7 +53,7 @@ public class Vector3f {
      * @param b The vector to add
      * @return The resulting vector
      */
-    public Vector3f add(@NotNull Vector3f b){
+    public Vector3f add(Vector3f b){
         //Add components
         return new Vector3f(
                 x + b.x,
@@ -69,7 +67,7 @@ public class Vector3f {
      * @param b The vector to subtract
      * @return The resulting vector
      */
-    public Vector3f subtract(@NotNull Vector3f b){
+    public Vector3f subtract(Vector3f b){
         //Subtract components
         return new Vector3f(
                 x - b.x,
@@ -99,7 +97,7 @@ public class Vector3f {
      * @param b The other vector
      * @return The cross product of the vectors
      */
-    public Vector3f cross(@NotNull Vector3f b){
+    public Vector3f cross(Vector3f b){
         //Calculate the cross product this x b
         return new Vector3f(
                 y * b.z - z * b.y,
@@ -149,7 +147,7 @@ public class Vector3f {
      * @param b The other vector
      * @return The dot product
      */
-    public float dot(@NotNull Vector3f b){
+    public float dot(Vector3f b){
         return x * b.x + y * b.y + z * b.z;
     }
 
@@ -159,7 +157,7 @@ public class Vector3f {
      * @param b The vector to test against
      * @return Whether this vector is a multiple of the other one
      */
-    public boolean isMultipleOf(@NotNull Vector3f b){
+    public boolean isMultipleOf(Vector3f b){
         return (dot(b) * dot(b)) / b.magnitudeSquared() == magnitudeSquared();
     }
 
@@ -169,7 +167,7 @@ public class Vector3f {
      * @param b The vector to project onto
      * @return The projection
      */
-    public Vector3f projectOnto(@NotNull Vector3f b){
+    public Vector3f projectOnto(Vector3f b){
         float a = dot(b) / b.magnitudeSquared();
         return b.scale(a);
     }
@@ -181,7 +179,7 @@ public class Vector3f {
      * @param v The second vector to project onto
      * @return The projection
      */
-    public Vector3f projectOnto(@NotNull Vector3f u, @NotNull Vector3f v){
+    public Vector3f projectOnto(Vector3f u, Vector3f v){
         return subtract(projectOnto(u.cross(v)));
     }
 
@@ -191,7 +189,7 @@ public class Vector3f {
      * @param b The other vector
      * @return The perpendicular component
      */
-    public Vector3f perpComponent(@NotNull Vector3f b){
+    public Vector3f perpComponent(Vector3f b){
         return subtract(projectOnto(b));
     }
 
@@ -202,7 +200,7 @@ public class Vector3f {
      * @param v The second vector
      * @return The perpendicular component
      */
-    public Vector3f perpComponent(@NotNull Vector3f u, @NotNull Vector3f v){
+    public Vector3f perpComponent(Vector3f u, Vector3f v){
         return projectOnto(u.cross(v));
     }
 
@@ -212,7 +210,7 @@ public class Vector3f {
      * @param b The other vector
      * @return The angle
      */
-    public double angle(@NotNull Vector3f b){
+    public double angle(Vector3f b){
         return Math.acos(dot(b) / (magnitude() * b.magnitude()));
     }
 

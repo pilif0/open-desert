@@ -1,6 +1,5 @@
 package net.pilif0.open_desert.geometry.planar;
 
-import com.sun.istack.internal.NotNull;
 import org.joml.Vector2f;
 
 /**
@@ -17,7 +16,7 @@ public class Square extends Rectangle{
      * @param origin The origin
      * @param side The side
      */
-    public Square(@NotNull Vector2f origin, float side){
+    public Square(Vector2f origin, float side){
         super(origin, side, side);
     }
 }

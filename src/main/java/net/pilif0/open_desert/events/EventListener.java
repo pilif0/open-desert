@@ -1,7 +1,5 @@
 package net.pilif0.open_desert.events;
 
-import com.sun.istack.internal.NotNull;
-
 /**
  * An interface for event listeners
  *
@@ -14,5 +12,5 @@ public interface EventListener<T extends Event> {
      *
      * @param event The event to handle
      */
-    void handle(@NotNull final T event);
+    void handle(final T event);
 }

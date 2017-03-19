@@ -1,6 +1,5 @@
 package net.pilif0.open_desert.window;
 
-import com.sun.istack.internal.NotNull;
 import net.pilif0.open_desert.events.EventMultiplexer;
 import net.pilif0.open_desert.input.KeyEvent;
 import org.joml.Vector2f;
@@ -59,7 +58,7 @@ public class Window {
      * @param width The width of the window
      * @param height The height of the window
      */
-    public Window(@NotNull String title, int width, int height){
+    public Window(String title, int width, int height){
         this(title, width, height, Type.WINDOWED, -1, false);
     }
 
@@ -73,7 +72,7 @@ public class Window {
      * @param monitor The monitor to use for fullscreen or borderless
      * @param vSync Whether vSync should be enabled
      */
-    public Window(@NotNull String title, int width, int height, @NotNull Type type, int monitor, boolean vSync){
+    public Window(String title, int width, int height, Type type, int monitor, boolean vSync){
         //Make sure GLFW is initialised
         if(!glfwInit()){
             throw new IllegalStateException("Could not initialise GLFW");
@@ -177,7 +176,7 @@ public class Window {
      *
      * @param position The new position
      */
-    public void setPosition(@NotNull Vector2fc position){
+    public void setPosition(Vector2fc position){
         glfwSetWindowPos(handle, (int) position.x(), (int) position.y());
         this.position.set(position);
     }
@@ -196,7 +195,7 @@ public class Window {
      *
      * @param size The window size
      */
-    public void setSize(@NotNull Vector2fc size){
+    public void setSize(Vector2fc size){
         glfwSetWindowSize(handle, (int) size.x(), (int) size.y());
         this.size.set(size);
         this.resized = true;

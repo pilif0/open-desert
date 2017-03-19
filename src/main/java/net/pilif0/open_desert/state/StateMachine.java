@@ -1,6 +1,5 @@
 package net.pilif0.open_desert.state;
 
-import com.sun.istack.internal.NotNull;
 import javafx.util.Pair;
 
 import java.util.Map;
@@ -29,7 +28,7 @@ public class StateMachine<T extends GameState> {
      * @param start The starting state
      * @param transitions The transitions
      */
-    public StateMachine(@NotNull Set<T> states, @NotNull T start, @NotNull Map<Pair<T, Integer>, T> transitions) {
+    public StateMachine(Set<T> states, T start, Map<Pair<T, Integer>, T> transitions) {
         //Check we start at a valid state
         if(!states.contains(start)){
             throw new IllegalStateException("The start state is not in the states of the machine");

@@ -1,7 +1,5 @@
 package net.pilif0.open_desert.geometry;
 
-import com.sun.istack.internal.NotNull;
-
 /**
  * Represents a vector in two dimensions
  *
@@ -48,7 +46,7 @@ public class Vector2f {
      * @param b The vector to add
      * @return The resulting vector
      */
-    public Vector2f add(@NotNull Vector2f b){
+    public Vector2f add(Vector2f b){
         //Add components
         return new Vector2f(
                 x + b.x,
@@ -62,7 +60,7 @@ public class Vector2f {
      * @param b The vector to subtract
      * @return The resulting vector
      */
-    public Vector2f subtract(@NotNull Vector2f b){
+    public Vector2f subtract(Vector2f b){
         //Subtract components
         return new Vector2f(
                 x - b.x,
@@ -125,7 +123,7 @@ public class Vector2f {
      * @param b The other vector
      * @return The dot product
      */
-    public float dot(@NotNull Vector2f b){
+    public float dot(Vector2f b){
         return x * b.x + y * b.y;
     }
 
@@ -135,7 +133,7 @@ public class Vector2f {
      * @param b The vector to test against
      * @return Whether this vector is a multiple of the other one
      */
-    public boolean isMultipleOf(@NotNull Vector2f b){
+    public boolean isMultipleOf(Vector2f b){
         return (dot(b) * dot(b)) / b.magnitudeSquared() == magnitudeSquared();
     }
 
@@ -145,7 +143,7 @@ public class Vector2f {
      * @param b The vector to project onto
      * @return The projection
      */
-    public Vector2f projectOnto(@NotNull Vector2f b){
+    public Vector2f projectOnto(Vector2f b){
         float a = dot(b) / b.magnitudeSquared();
         return b.scale(a);
     }
@@ -156,7 +154,7 @@ public class Vector2f {
      * @param b The other vector
      * @return The perpendicular component
      */
-    public Vector2f perpComponent(@NotNull Vector2f b){
+    public Vector2f perpComponent(Vector2f b){
         return subtract(projectOnto(b));
     }
 
@@ -166,7 +164,7 @@ public class Vector2f {
      * @param b The other vector
      * @return The angle
      */
-    public double angle(@NotNull Vector2f b){
+    public double angle(Vector2f b){
         return Math.acos(dot(b) / (magnitude() * b.magnitude()));
     }
 

@@ -1,7 +1,5 @@
 package net.pilif0.open_desert.events;
 
-import com.sun.istack.internal.NotNull;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +26,7 @@ public class EventMultiplexer<T extends Event> implements EventListener<T> {
      *
      * @param l The listener to add
      */
-    public void register(@NotNull EventListener<T> l){
+    public void register(EventListener<T> l){
         listeners.add(l);
     }
 
@@ -37,7 +35,7 @@ public class EventMultiplexer<T extends Event> implements EventListener<T> {
      *
      * @param ls The listeners to add
      */
-    public void register(@NotNull EventListener<T>... ls){
+    public void register(EventListener<T>... ls){
         listeners.addAll(Arrays.asList(ls));
     }
 
@@ -46,7 +44,7 @@ public class EventMultiplexer<T extends Event> implements EventListener<T> {
      *
      * @param l The listener to remove
      */
-    public void remove(@NotNull EventListener<T> l){
+    public void remove(EventListener<T> l){
         listeners.remove(l);
     }
 
@@ -55,7 +53,7 @@ public class EventMultiplexer<T extends Event> implements EventListener<T> {
      *
      * @param ls The listeners to remove
      */
-    public void remove(@NotNull EventListener<T>... ls){
+    public void remove(EventListener<T>... ls){
         listeners.removeAll(Arrays.asList(ls));
     }
 }
