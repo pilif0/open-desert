@@ -1,11 +1,15 @@
 package net.pilif0.open_desert.graphics;
 
+import net.pilif0.open_desert.Launcher;
+import net.pilif0.open_desert.util.Severity;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
+import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -36,6 +40,9 @@ public class Mesh {
      * @param indices The indices to use
      */
     public Mesh(float[] positions, float[] colors, int[] indices){
+        //Log any previous OpenGL error (to clear the flags)
+        Launcher.getLog().logOpenGLError("OpenGL", "before mesh creation");
+
         //Count vertices
         vertexCount = indices.length;
 
@@ -80,6 +87,9 @@ public class Mesh {
         //Unbind
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+
+        //Log OpenGL errors
+        Launcher.getLog().logOpenGLError("Mesh", "when creating");
     }
 
     /**

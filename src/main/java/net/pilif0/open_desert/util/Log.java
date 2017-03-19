@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
+import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
+import static org.lwjgl.opengl.GL11.glGetError;
+
 /**
  * Handles logging
  *
@@ -130,6 +133,28 @@ public class Log{
 
         //Log the message
         log(Severity.EXCEPTION, origin, message.toString());
+    }
+
+    /**
+     * Logs any OpenGL error that occurred before calling this method
+     *
+     * @param origin The origin of the call
+     * @param identifier The identifier of the call (added to the end of the mssage to better describe it)
+     *                   or {@code null} to skip
+     */
+    public synchronized void logOpenGLError(String origin, String identifier){
+        for(int glError = glGetError(); glError != GL_NO_ERROR; glError = glGetError()){
+            //Build the message
+            StringBuilder message = new StringBuilder("OpenGL error #");
+            message.append(glError);
+
+            if(identifier != null){
+                message.append(" (").append(identifier).append(')');
+            }
+
+            //Log the message
+            log(Severity.ERROR, origin, message.toString());
+        }
     }
 
     /**

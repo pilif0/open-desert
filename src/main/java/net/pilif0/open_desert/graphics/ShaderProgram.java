@@ -3,6 +3,8 @@ package net.pilif0.open_desert.graphics;
 import net.pilif0.open_desert.Launcher;
 import net.pilif0.open_desert.util.Severity;
 
+import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
+import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL20.*;
 
 /**
@@ -15,9 +17,9 @@ public class ShaderProgram {
     /** The shader program ID */
     public final int programID;
     /** The vertex shader ID */
-    private int vertexID;
+    private int vertexID = 0;
     /** The fragment shader ID */
-    private int fragmentID;
+    private int fragmentID = 0;
 
     /**
      * Constructs an empty program
@@ -68,6 +70,9 @@ public class ShaderProgram {
      * Links the shader program
      */
     public void link(){
+        //Log any previous OpenGL error (to clear the flags)
+        Launcher.getLog().logOpenGLError("OpenGL", "before shader link");
+
         //Link the program
         glLinkProgram(programID);
 
@@ -89,6 +94,9 @@ public class ShaderProgram {
         if(glGetProgrami(programID, GL_VALIDATE_STATUS) == 0){
             Launcher.getLog().log(Severity.WARNING, "Shader program", "Warning validating shader (" + glGetShaderInfoLog(programID) + ")");
         }
+
+        //Log OpenGL errors
+        Launcher.getLog().logOpenGLError("ShaderProgram", "when linking");
     }
 
     /**
@@ -132,7 +140,7 @@ public class ShaderProgram {
      * @return The ID of the shader created
      * @throws GraphicsException On creation or compilation errors
      */
-    protected int createShader(String code, int type) {
+    protected static int createShader(String code, int type) {
         //Create the shader
         int shaderID = glCreateShader(type);
         if (shaderID == 0) {
@@ -153,8 +161,6 @@ public class ShaderProgram {
             throw new GraphicsException("Could not compile a new shader. Code: " + code);
         }
 
-        //Attach and return
-        glAttachShader(programID, shaderID);
         return shaderID;
     }
 }
