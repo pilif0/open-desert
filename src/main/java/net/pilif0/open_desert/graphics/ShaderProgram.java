@@ -2,9 +2,13 @@ package net.pilif0.open_desert.graphics;
 
 import net.pilif0.open_desert.Launcher;
 import net.pilif0.open_desert.util.Severity;
+import org.joml.Matrix4f;
+import org.lwjgl.system.MemoryStack;
 
-import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
-import static org.lwjgl.opengl.GL11.glGetError;
+import java.nio.FloatBuffer;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.lwjgl.opengl.GL20.*;
 
 /**
@@ -20,6 +24,8 @@ public class ShaderProgram {
     private int vertexID = 0;
     /** The fragment shader ID */
     private int fragmentID = 0;
+    /** The uniforms of the shader program */
+    private Map<String, Integer> uniforms;
 
     /**
      * Constructs an empty program
@@ -27,11 +33,14 @@ public class ShaderProgram {
      * @throws GraphicsException On creation error
      */
     public ShaderProgram(){
+        //Create the program
         programID = glCreateProgram();
-
         if(programID == 0){
             throw new GraphicsException("Could not create shader program");
         }
+
+        //Initialise the uniforms map
+        uniforms = new HashMap<>();
     }
 
     /**
@@ -133,6 +142,38 @@ public class ShaderProgram {
     }
 
     /**
+     * Creates a uniform entry in the program
+     *
+     * @param name The name of the uniform
+     */
+    public void createUniform(String name){
+        //Get the uniform location
+        int location = glGetUniformLocation(programID, name);
+
+        //Verify location
+        if(location < 0){
+            throw new GraphicsException("Could not find uniform " + name);
+        }
+
+        //Add the uniform to the map
+        uniforms.put(name, location);
+    }
+
+    /**
+     * Sets the uniform value
+     *
+     * @param name The uniform name
+     * @param value The uniform value
+     */
+    public void setUniform(String name, Matrix4f value){
+        try(MemoryStack stack = MemoryStack.stackPush()){
+            FloatBuffer buffer = stack.mallocFloat(16);
+            value.get(buffer);
+            glUniformMatrix4fv(uniforms.get(name), false, buffer);
+        }
+    }
+
+    /**
      * Creates a new shader and attaches it to this program
      *
      * @param code The code of the shader
@@ -140,7 +181,7 @@ public class ShaderProgram {
      * @return The ID of the shader created
      * @throws GraphicsException On creation or compilation errors
      */
-    protected static int createShader(String code, int type) {
+    private static int createShader(String code, int type) {
         //Create the shader
         int shaderID = glCreateShader(type);
         if (shaderID == 0) {
