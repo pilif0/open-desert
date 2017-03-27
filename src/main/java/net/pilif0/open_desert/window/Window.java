@@ -1,11 +1,12 @@
 package net.pilif0.open_desert.window;
 
 import net.pilif0.open_desert.events.EventMultiplexer;
-import net.pilif0.open_desert.input.KeyEvent;
+import net.pilif0.open_desert.input.InputManager;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
-import org.lwjgl.glfw.GLFWKeyCallbackI;
-import org.lwjgl.glfw.GLFWVidMode;
+import org.joml.Vector2i;
+import org.joml.Vector2ic;
+import org.lwjgl.glfw.*;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
@@ -33,22 +35,33 @@ public class Window {
 
     /** The window handle */
     public final long handle;
-    /** The input callback */
-    public final KeyCallback keyCallback;
+    /** The input manager */
+    public final InputManager inputManager;
     /** The window title */
     private String title;
     /** The top left corner of the window */
     private Vector2f position;
     /** The size of the window */
-    private Vector2f size;
+    private Vector2i size;
+    /** The resolution of the window (for windowed equal to size) */
+    private Vector2i resolution;
     /** The window type */
     private Type type;
     /** Whether vSync is turned on */
     private final boolean vSync;
-    /** Whether the window was resized */
-    private boolean resized;
     /** The current monitor */
     private long monitorID;
+
+    /** The window size event multiplexer */
+    public final WindowSizeMultiplexer sizeMultiplexer;
+    /** The window position event multiplexer */
+    public final WindowPosMultiplexer posMultiplexer;
+    /** The window focus event multiplexer */
+    public final WindowFocusMultiplexer focusMultiplexer;
+    /** The window close event multiplexer */
+    public final WindowCloseMultiplexer closeMultiplexer;
+    /** The window resolution event multiplexer */
+    public final EventMultiplexer<WindowResolutionEvent> resolutionMultiplexer;
 
     /**
      * Constructs the window using the parameters provided
@@ -64,6 +77,7 @@ public class Window {
 
     /**
      * Constructs the window using the parameters provided
+     * The resolution will be equal to the size of the window
      *
      * @param title The title to use
      * @param width The width of the window
@@ -73,6 +87,23 @@ public class Window {
      * @param vSync Whether vSync should be enabled
      */
     public Window(String title, int width, int height, Type type, int monitor, boolean vSync){
+        this(title, width, height, width, height, type, monitor, vSync);
+    }
+
+
+    /**
+     * Constructs the window using the parameters provided
+     *
+     * @param title The title to use
+     * @param width The width of the window
+     * @param height The height of the window
+     * @param resX The horizontal resolution
+     * @param resY The vertical resolution
+     * @param type The window type
+     * @param monitor The monitor to use for fullscreen or borderless
+     * @param vSync Whether vSync should be enabled
+     */
+    public Window(String title, int width, int height, int resX, int resY, Type type, int monitor, boolean vSync){
         //Make sure GLFW is initialised
         if(!glfwInit()){
             throw new IllegalStateException("Could not initialise GLFW");
@@ -130,13 +161,28 @@ public class Window {
             glfwGetWindowPos(handle, xpos, ypos);
             position = new Vector2f(xpos.get(0), ypos.get(0));
         }
-        size = new Vector2f(width, height);
+        size = new Vector2i(width, height);
         this.title = title;
         this.vSync = vSync;
+        resolution = new Vector2i(resX, resY);
 
-        //Assign key callback
-        keyCallback = new KeyCallback();
-        glfwSetKeyCallback(handle, keyCallback);
+        //Attach input manager
+        inputManager = new InputManager(this);
+        glfwSetKeyCallback(handle, inputManager.getKeyCallback());
+
+        //Set the window event multiplexers
+        sizeMultiplexer = new WindowSizeMultiplexer();
+        glfwSetWindowSizeCallback(handle, sizeMultiplexer);
+        posMultiplexer = new WindowPosMultiplexer();
+        glfwSetWindowPosCallback(handle, posMultiplexer);
+        focusMultiplexer = new WindowFocusMultiplexer();
+        glfwSetWindowFocusCallback(handle, focusMultiplexer);
+        closeMultiplexer = new WindowCloseMultiplexer();
+        glfwSetWindowCloseCallback(handle, closeMultiplexer);
+        resolutionMultiplexer = new EventMultiplexer<>();
+
+        //Register size change listener to update the viewport
+        sizeMultiplexer.register(e -> glViewport(0, 0, e.width, e.height));
 
         //Register the window
         windows.put(handle, this);
@@ -186,7 +232,7 @@ public class Window {
      *
      * @return The window size
      */
-    public Vector2fc getSize(){
+    public Vector2ic getSize(){
         return size.toImmutable();
     }
 
@@ -195,10 +241,27 @@ public class Window {
      *
      * @param size The window size
      */
-    public void setSize(Vector2fc size){
-        glfwSetWindowSize(handle, (int) size.x(), (int) size.y());
+    public void setSize(Vector2ic size){
+        glfwSetWindowSize(handle, size.x(), size.y());
         this.size.set(size);
-        this.resized = true;
+        sizeMultiplexer.handle(new WindowSizeEvent(handle, size.x(), size.y()));
+    }
+
+    /**
+     * Returns the window resolution
+     *
+     * @return The window resolution
+     */
+    public Vector2ic getResolution(){ return resolution.toImmutable(); }
+
+    /**
+     * Changes teh window resolution
+     *
+     * @param resolution The window resolution
+     */
+    public void setResolution(Vector2ic resolution){
+        this.resolution.set(resolution);
+        resolutionMultiplexer.handle(new WindowResolutionEvent(handle, resolution.x(), resolution.y()));
     }
 
     /**
@@ -217,12 +280,14 @@ public class Window {
      * @param height The height
      */
     public void makeWindowed(int width, int height){
+        //Window the window, change size and resolution based on params
+
         //Skip if already windowed
         if(type == Type.WINDOWED){
             return;
         }
 
-        //Retrieve the monitor's video mode
+        //Remove the monitor
         monitorID = NULL;
 
         //Change the window
@@ -239,6 +304,11 @@ public class Window {
         size.set(width, height);
         type = Type.WINDOWED;
         centre();
+        resolution.set(width, height);
+
+        //Fire the resize and resolution events
+        sizeMultiplexer.handle(new WindowSizeEvent(handle, width, height));
+        resolutionMultiplexer.handle(new WindowResolutionEvent(handle, width, height));
     }
 
     /**
@@ -247,6 +317,8 @@ public class Window {
      * @param monitor The monitor where the window should be located
      */
     public void makeBorderless(long monitor){
+        //Fullscreen, change the size and resolution based on the video mode
+
         //Skip if already borderless
         if(type == Type.BORDERLESS){
             return;
@@ -269,6 +341,11 @@ public class Window {
         position.set(0f, 0f);
         size.set(mode.width(), mode.height());
         type = Type.BORDERLESS;
+        resolution.set(mode.width(), mode.height());
+
+        //Fire the resize and resolution events
+        sizeMultiplexer.handle(new WindowSizeEvent(handle, mode.width(), mode.height()));
+        resolutionMultiplexer.handle(new WindowResolutionEvent(handle, mode.width(), mode.height()));
     }
 
     /**
@@ -277,6 +354,8 @@ public class Window {
      * @param monitor The handle of the monitor where the window should be located
      */
     public void makeFullscreen(long monitor){
+        //Fullscreen, keep the size and the resolution
+
         //Skip if already fullscreen
         if(type == Type.FULLSCREEN){
             return;
@@ -292,12 +371,15 @@ public class Window {
                 monitorID,
                 0,
                 0,
-                (int) size.x,
-                (int) size.y,
+                size.x,
+                size.y,
                 mode.refreshRate()
         );
         position.set(0f, 0f);
         type = Type.FULLSCREEN;
+
+        //Fire the resize event
+        sizeMultiplexer.handle(new WindowSizeEvent(handle, size.x, size.y));
     }
 
     /**
@@ -319,8 +401,8 @@ public class Window {
                     monitorID,
                     0,
                     0,
-                    (int) size.x,
-                    (int) size.y,
+                    size.x,
+                    size.y,
                     mode.refreshRate()
             );
         }else if(type == Type.BORDERLESS){
@@ -353,8 +435,8 @@ public class Window {
 
             //Centre the window on that monitor
             GLFWVidMode mode = glfwGetVideoMode(monitor);
-            int newX = posX.get(0) + (mode.width() / 2) - (int) (size.x / 2);
-            int newY = posY.get(0) + (mode.height() / 2) - (int) (size.y / 2);
+            int newX = posX.get(0) + (mode.width() / 2) - (size.x / 2);
+            int newY = posY.get(0) + (mode.height() / 2) - (size.y / 2);
             position.set(newX, newY);
 
             //Move the window and change the field
@@ -369,18 +451,6 @@ public class Window {
      */
     public boolean isvSync() {
         return vSync;
-    }
-
-    /**
-     * Returns whether the window was resized
-     *
-     * @param consume Whether the flag should be reset after returning
-     * @return Whether the window was resized
-     */
-    public boolean getResized(boolean consume){
-        boolean buffer = resized;
-        if(consume) resized = false;
-        return buffer;
     }
 
     /**
@@ -454,14 +524,50 @@ public class Window {
     }
 
     /**
-     * The window key callback.
-     * Bridges the GLFW callback system with the event system.
+     * The window size callback
      */
-    public static class KeyCallback extends EventMultiplexer<KeyEvent> implements GLFWKeyCallbackI {
+    public static class WindowSizeMultiplexer extends EventMultiplexer<WindowSizeEvent>
+            implements GLFWWindowSizeCallbackI{
 
         @Override
-        public void invoke(long window, int key, int scancode, int action, int mods) {
-            this.handle(new KeyEvent(window, key, scancode, action, mods));
+        public void invoke(long window, int width, int height) {
+            this.handle(new WindowSizeEvent(window, width, height));
+        }
+    }
+
+    /**
+     * The window position callback
+     */
+    public static class WindowPosMultiplexer extends EventMultiplexer<WindowPosEvent>
+            implements GLFWWindowPosCallbackI{
+
+        @Override
+        public void invoke(long window, int xpos, int ypos) {
+            this.handle(new WindowPosEvent(window, xpos, ypos));
+        }
+    }
+
+    /**
+     * The window focus callback
+     */
+    public static class WindowFocusMultiplexer extends EventMultiplexer<WindowFocusEvent>
+            implements GLFWWindowFocusCallbackI{
+
+        @Override
+        public void invoke(long window, boolean focused) {
+            this.handle(new WindowFocusEvent(window, focused));
+        }
+    }
+
+    /**
+     * The window close callback
+     */
+    public static class WindowCloseMultiplexer extends EventMultiplexer<WindowCloseEvent>
+            implements GLFWWindowCloseCallbackI{
+
+        @Override
+        public void invoke(long window) {
+            this.handle(new WindowCloseEvent(window));
         }
     }
 }
