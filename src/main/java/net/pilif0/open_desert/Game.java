@@ -5,7 +5,6 @@ import net.pilif0.open_desert.input.Action;
 import net.pilif0.open_desert.state.GameState;
 import net.pilif0.open_desert.state.StateMachine;
 import net.pilif0.open_desert.util.Delta;
-import net.pilif0.open_desert.util.Severity;
 import net.pilif0.open_desert.window.Window;
 import org.lwjgl.opengl.GL;
 
@@ -23,8 +22,9 @@ import static org.lwjgl.opengl.GL11.*;
  * @version 1.0
  */
 public class Game {
-    /** Whether debug mode is enabled */
-    public final boolean debug;
+    /** The instance */
+    private static Game instance;
+
     /** The main window */
     private Window window;
     /** The game-state state machine */
@@ -33,19 +33,21 @@ public class Game {
     public Delta delta;
 
     /**
-     * Constructs the game instance with debug mode disabled
+     * Constructs the game instnace
      */
-    public Game(){
-        this(false);
-    }
+    private Game(){}
 
     /**
-     * Constructs the game instance
+     * Returns the instance
      *
-     * @param debug Whether debug mode should be enabled or disabled
+     * @return The instance
      */
-    public Game(boolean debug){
-        this.debug = debug;
+    public static Game getInstance(){
+        if(instance == null){
+            instance = new Game();
+        }
+
+        return instance;
     }
 
     /**
@@ -65,7 +67,7 @@ public class Game {
         window = new Window("Test Window", 1280, 720, Window.Type.WINDOWED, -1, false);
         window.makeContextCurrent();
         window.centre();
-        window.keyCallback.register(e -> {
+        window.inputManager.getEventMultiplexer().register(e -> {
             //Quit on escape
             if(e.key == GLFW_KEY_ESCAPE && e.action == Action.PRESS) {
                 glfwSetWindowShouldClose(window.handle, true);
@@ -158,4 +160,11 @@ public class Game {
         window.destroy();
         glfwTerminate();
     }
+
+    /**
+     * Returns the main window
+     *
+     * @return The main window
+     */
+    public Window getWindow(){ return window; }
 }

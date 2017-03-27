@@ -19,8 +19,8 @@ import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 public class Launcher {
     /** The main log */
     private static Log log = new Log();
-    /** The game instance */
-    private static Game game;
+    /** Whether debug mode is on */
+    private static boolean debug;
 
     /**
      * Sets up the environment and launches the game
@@ -30,7 +30,7 @@ public class Launcher {
      */
     public static void main(String[] args){
         //Decide whether to turn debug on
-        boolean debugPresent = Arrays.stream(args)
+        debug = Arrays.stream(args)
                 .filter(x -> x.equals("debug"))
                 .count() > 0;
 
@@ -44,7 +44,7 @@ public class Launcher {
         (new Log.LogCallback(log)).set();
 
         //Instantiate and run the game
-        game = new Game(debugPresent);
+        Game game = Game.getInstance();
         game.run();
 
         //Announce end into the log
@@ -68,9 +68,9 @@ public class Launcher {
     public static Log getLog(){ return log; }
 
     /**
-     * Returns the game instance
+     * Returns whether debug mode is on
      *
-     * @return The game instance
+     * @return Whether debug mode is on
      */
-    public static Game getGame(){ return game; }
+    public static boolean isDebug(){ return debug; }
 }
