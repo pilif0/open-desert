@@ -90,12 +90,16 @@ public class TopDownCamera {
      * @return The projection matrix
      */
     public Matrix4f getMatrix() {
-        //Regenerate if needed
+        return matrix;
+    }
+
+    /**
+     * Updates the camera, regenerating the projection matrix if needed
+     */
+    public void update(){
         if(transformed){
             regenerateMatrix();
         }
-
-        return matrix;
     }
 
     /**

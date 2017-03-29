@@ -125,6 +125,9 @@ public class IntroState extends GameState{
             d.mul(CAMERA_SPEED);
             camera.move(d);
         }
+
+        //Actually update the camera
+        camera.update();
     }
 
     @Override
