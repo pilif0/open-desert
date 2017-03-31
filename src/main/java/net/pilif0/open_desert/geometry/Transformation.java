@@ -11,11 +11,14 @@ import org.joml.Vector3f;
  * @version 1.0
  */
 public class Transformation {
+    /** The 2PI constant */
+    private static final float PI2 = (float) Math.PI * 2;
+
     /** The translation along the axes */
     private final Vector3f translation;
     /** The scale along the axes */
     private final Vector3f scale;
-    /** The rotation around the axes */
+    /** The rotation around the axes (in radians) */
     private final Vector3f rotation;
     /** The matrix representation */
     private final Matrix4f matrix;
@@ -45,6 +48,50 @@ public class Transformation {
         this.rotation = (new Vector3f()).set(rotation);
         matrix = (new Matrix4f()).identity();
         regenerateMatrix();
+    }
+
+    /**
+     * Translates the subject of this transformation by the vector
+     *
+     * @param diff The difference
+     */
+    public void translate(Vector3fc diff){
+        translation.add(diff);
+        transformed = true;
+    }
+
+    /**
+     * Rotates the subject of this transformation by a certain angle around each axis
+     *
+     * @param angles The angles to rotate by around each axis
+     */
+    public void rotate(Vector3fc angles){
+        rotation.add(angles);
+
+        //Normalize components to [0, 2PI) rad
+        rotation.set(rotation.x % PI2, rotation.y % PI2, rotation.z % PI2);
+
+        transformed = true;
+    }
+
+    /**
+     * Scales the subject of this transformation (by multiplying) by a certain factor along each axis
+     *
+     * @param factors The factors to scale by along each axis
+     */
+    public void scaleMul(Vector3fc factors){
+        scale.mul(factors);
+        transformed = true;
+    }
+
+    /**
+     * Scales the subject of this transformation (by adding) by a certain factor along each axis
+     *
+     * @param factors The factors to scale by along each axis
+     */
+    public void scaleAdd(Vector3fc factors){
+        scale.add(factors);
+        transformed = true;
     }
 
     /**
