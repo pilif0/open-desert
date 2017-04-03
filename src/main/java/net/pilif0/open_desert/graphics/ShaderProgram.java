@@ -3,6 +3,7 @@ package net.pilif0.open_desert.graphics;
 import net.pilif0.open_desert.Launcher;
 import net.pilif0.open_desert.util.Severity;
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
@@ -170,6 +171,20 @@ public class ShaderProgram {
             FloatBuffer buffer = stack.mallocFloat(16);
             value.get(buffer);
             glUniformMatrix4fv(uniforms.get(name), false, buffer);
+        }
+    }
+
+    /**
+     * Sets the uniform value
+     *
+     * @param name The uniform name
+     * @param value The uniform value
+     */
+    public void setUniform(String name, Vector4f value){
+        try(MemoryStack stack = MemoryStack.stackPush()){
+            FloatBuffer buffer = stack.mallocFloat(4);
+            value.get(buffer);
+            glUniform4fv(uniforms.get(name), buffer);
         }
     }
 
