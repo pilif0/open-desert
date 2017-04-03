@@ -3,6 +3,7 @@ package net.pilif0.open_desert;
 import net.pilif0.open_desert.graphics.Mesh;
 import net.pilif0.open_desert.graphics.ShaderProgram;
 import net.pilif0.open_desert.graphics.TopDownCamera;
+import net.pilif0.open_desert.graphics.Vertex;
 import net.pilif0.open_desert.input.Action;
 import net.pilif0.open_desert.state.GameState;
 import net.pilif0.open_desert.util.Color;
@@ -13,6 +14,7 @@ import org.joml.Vector3f;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -28,19 +30,7 @@ public class IntroState extends GameState{
     /** The background colour */
     public static final Color CLEAR_COLOR = new Color(0x00_00_00_ff);
     /** The vertices of the square */
-    public static final float[] VERTICES = new float[]{
-            -0.5f,  0.5f, 0f,
-            -0.5f, -0.5f, 0f,
-            0.5f, -0.5f, 0f,
-            0.5f, 0.5f, 0f
-    };
-    /** The colours of the vertices */
-    public static final float[] COLORS = new float[]{
-            1.0f, 0.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 1.0f,
-            1.0f, 1.0f, 1.0f
-    };
+    public static final Vertex[] VERTICES;
     /** The indices to use when drawing */
     public static final int[] INDICES = new int[]{0, 1, 3, 3, 1, 2};
     /** The camera movement speed */
@@ -48,7 +38,25 @@ public class IntroState extends GameState{
     /** The entity movement speed */
     public static final float ENTITY_SPEED = 10f;
     /** The square mesh */
-    public static final Mesh SQUARE_MESH = new Mesh(VERTICES, COLORS, INDICES);
+    public static final Mesh SQUARE_MESH;
+
+    static{
+        Vertex.VertexBuilder vb = new Vertex.VertexBuilder(
+                new Vector3f(-0.5f, 0.5f, 0f),
+                new Color(0xff_ff_ff_ff)
+        );
+
+        VERTICES = new Vertex[4];
+        VERTICES[0] = vb.build();
+        vb.position.add(0, -1f, 0);
+        VERTICES[1] = vb.build();
+        vb.position.add(1f, 0, 0);
+        VERTICES[2] = vb.build();
+        vb.position.add(0, 1f, 0);
+        VERTICES[3] = vb.build();
+
+        SQUARE_MESH = new Mesh(VERTICES, INDICES);
+    }
 
     /** The shader program being used */
     private ShaderProgram program;
