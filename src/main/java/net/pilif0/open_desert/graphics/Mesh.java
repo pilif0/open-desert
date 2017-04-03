@@ -24,19 +24,16 @@ public class Mesh {
     private final int vboID;
     /** ID of the index VBO */
     private final int idxVboID;
-    /** ID of the colour VBO */
-    private final int colVboID;
     /** Number of VERTICES */
     public final int vertexCount;
 
     /**
      * Constructs the mesh
      *
-     * @param positions The positions to use (3 components)
-     * @param colors The colours to use (3 components)
+     * @param vertices The vertices to use
      * @param indices The indices to use
      */
-    public Mesh(float[] positions, float[] colors, int[] indices){
+    public Mesh(Vertex[] vertices, int[] indices){
         //Log any previous OpenGL error (to clear the flags)
         Launcher.getLog().logOpenGLError("OpenGL", "before mesh creation");
 
@@ -51,24 +48,17 @@ public class Mesh {
 
         //Vertices
         try(MemoryStack stack = MemoryStack.stackPush()){
-            FloatBuffer verticesBuffer = stack.mallocFloat(positions.length);
-            verticesBuffer.put(positions).flip();
+            FloatBuffer verticesBuffer = stack.mallocFloat(vertices.length * 7);
+            for(int i = 0; i < vertices.length; i++){
+                verticesBuffer.put(vertices[i].toInterleaved());
+            }
+            verticesBuffer.flip();
 
             vboID = glGenBuffers();
             glBindBuffer(GL_ARRAY_BUFFER, vboID);
             glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
-            glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * 4, 0);
-        }
-
-        //Colours
-        try(MemoryStack stack = MemoryStack.stackPush()){
-            FloatBuffer colorsBuffer = stack.mallocFloat(colors.length);
-            colorsBuffer.put(colors).flip();
-
-            colVboID = glGenBuffers();
-            glBindBuffer(GL_ARRAY_BUFFER, colVboID);
-            glBufferData(GL_ARRAY_BUFFER, colorsBuffer, GL_STATIC_DRAW);
-            glVertexAttribPointer(1, 3, GL_FLOAT, false, 3 * 4, 0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, false, 7 * 4, 0);
+            glVertexAttribPointer(1, 4, GL_FLOAT, false, 7 * 4, 3 * 4);
         }
 
         //Indices
@@ -99,7 +89,6 @@ public class Mesh {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glDeleteBuffers(vboID);
         glDeleteBuffers(idxVboID);
-        glDeleteBuffers(colVboID);
 
         // Delete the VAO
         glBindVertexArray(0);
