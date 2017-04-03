@@ -1,5 +1,7 @@
 package net.pilif0.open_desert.util;
 
+import org.joml.Vector4f;
+
 /**
  * Represents an RGBA colour (internally as an int)
  *
@@ -164,5 +166,14 @@ public class Color {
 
         //Add new
         color += Math.round(0xff * alpha) << ALPHA_SHIFT;
+    }
+
+    /**
+     * Returns the colour as an RGBA vector
+     *
+     * @return The colour as an RGBA vector
+     */
+    public Vector4f toVector(){
+        return new Vector4f(getRed(), getGreen(), getBlue(), getAlpha());
     }
 }
