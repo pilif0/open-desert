@@ -14,7 +14,6 @@ import org.joml.Vector3f;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -34,9 +33,9 @@ public class IntroState extends GameState{
     /** The indices to use when drawing */
     public static final int[] INDICES = new int[]{0, 1, 3, 3, 1, 2};
     /** The camera movement speed */
-    public static final float CAMERA_SPEED = 10f;
+    public static final float CAMERA_SPEED = 750f;
     /** The entity movement speed */
-    public static final float ENTITY_SPEED = 10f;
+    public static final float ENTITY_SPEED = 250f;
     /** The square mesh */
     public static final Mesh SQUARE_MESH;
 
@@ -64,6 +63,10 @@ public class IntroState extends GameState{
     private Entity entity;
     /** The camera */
     private TopDownCamera camera;
+    /** The current entity colour */
+    private Color entityColor;
+    /** The entity colour animation timer */
+    private double colourTimer;
 
     /**
      * Constructs the state
@@ -81,7 +84,7 @@ public class IntroState extends GameState{
 
         //Create the shader program
         try {
-            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/vertex.vs")));
+            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/coloredVertex.vs")));
             String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/fragment.fs")));
 
             program = new ShaderProgram();
@@ -95,10 +98,12 @@ public class IntroState extends GameState{
         //Create the matrices uniforms
         program.createUniform("projectionMatrix");
         program.createUniform("worldMatrix");
+        program.createUniform("color");
 
         //Create the entity and scale it by factor of 100
         entity = new Entity(SQUARE_MESH);
         entity.getTransformation().setScale(new Vector3f(100, 100, 100));
+        entityColor = new Color(0x00_00_00_ff);
 
         //Register input listeners for entity scale control
         Game.getInstance().getWindow().inputManager.getEventMultiplexer().register(e -> {
@@ -127,7 +132,7 @@ public class IntroState extends GameState{
         //Update camera
         updateCamera();
 
-        //Update entity
+        //Update entity transformations
         Vector2f d = new Vector2f();
         float z = 0;
         if(Game.getInstance().getWindow().inputManager.isKeyDown(GLFW_KEY_UP)){
@@ -143,23 +148,32 @@ public class IntroState extends GameState{
             d.add(1, 0);
         }
         if(Game.getInstance().getWindow().inputManager.isKeyDown(GLFW_KEY_J)){
-            z -= 10;
+            z -= 90;
         }
         if(Game.getInstance().getWindow().inputManager.isKeyDown(GLFW_KEY_K)){
-            z += 10;
+            z += 90;
         }
 
         //Normalize and scale to speed
         if(d.x != 0 || d.y != 0){
             d.normalize();
-            d.mul(ENTITY_SPEED);
+            d.mul(ENTITY_SPEED * (float) Game.getInstance().delta.getDeltaSeconds());
             entity.getTransformation().translate(new Vector3f(d, 0));
         }
 
         //Rotate
         if(z != 0){
-            entity.getTransformation().rotate(new Vector3f(0, 0, (float) Math.toRadians(z)));
+            entity.getTransformation().rotate(new Vector3f(0, 0, (float) Math.toRadians(z * (float) Game.getInstance().delta.getDeltaSeconds())));
         }
+
+        //Update entity colour
+        colourTimer += Game.getInstance().delta.getDeltaSeconds();
+        float red = ((float) Math.sin(colourTimer) + 1) / 2;
+        float green = ((float) Math.sin(colourTimer * 0.5) + 1) / 2;
+        float blue = ((float) Math.sin(colourTimer * 0.25) + 1) / 2;
+        entityColor.setRed(red);
+        entityColor.setGreen(green);
+        entityColor.setBlue(blue);
     }
 
     /**
@@ -183,7 +197,7 @@ public class IntroState extends GameState{
         //Normalize and scale to speed
         if(d.x != 0 || d.y != 0){
             d.normalize();
-            d.mul(CAMERA_SPEED);
+            d.mul(CAMERA_SPEED * (float) Game.getInstance().delta.getDeltaSeconds());
             camera.move(d);
         }
 
@@ -199,6 +213,7 @@ public class IntroState extends GameState{
         //Set the uniforms
         program.setUniform("projectionMatrix", camera.getMatrix());
         program.setUniform("worldMatrix", entity.getTransformation().getMatrix());
+        program.setUniform("color", entityColor.toVector());
 
         //Bind the VAO
         glBindVertexArray(entity.getMesh().vaoID);
