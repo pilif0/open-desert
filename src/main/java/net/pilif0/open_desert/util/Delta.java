@@ -67,14 +67,14 @@ public class Delta {
      *
      * @return The delta (in ms)
      */
-    public long getDeltaMillis(){ return delta / MILLISECOND; }
+    public double getDeltaMillis(){ return (double) delta / MILLISECOND; }
 
     /**
      * Returns the delta (in s)
      *
      * @return The delta (in s)
      */
-    public long getDeltaSeconds(){ return delta / SECOND; }
+    public double getDeltaSeconds(){ return (double) delta / SECOND; }
 
     /**
      * Returns the ups (over the previous second)
