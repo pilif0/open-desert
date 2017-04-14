@@ -1,6 +1,7 @@
 package net.pilif0.open_desert;
 
 import javafx.util.Pair;
+import net.pilif0.open_desert.graphics.ShaderProgram;
 import net.pilif0.open_desert.input.Action;
 import net.pilif0.open_desert.state.GameState;
 import net.pilif0.open_desert.state.StateMachine;
@@ -156,6 +157,10 @@ public class Game {
      * Cleans up
      */
     private void cleanUp(){
+        //Clean up all the global shaders
+        ShaderProgram.COLORED_SHADER.cleanUp();
+        ShaderProgram.BASIC_SHADER.cleanUp();
+
         states.cleanUp();
         window.destroy();
         glfwTerminate();
