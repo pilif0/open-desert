@@ -2,6 +2,8 @@ package net.pilif0.open_desert;
 
 import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.Mesh;
+import net.pilif0.open_desert.graphics.ShaderProgram;
+import net.pilif0.open_desert.graphics.TopDownCamera;
 import org.joml.Vector3fc;
 
 /**
@@ -12,9 +14,11 @@ import org.joml.Vector3fc;
  */
 public class Entity {
     /** The entity mesh */
-    private final Mesh mesh;
+    protected final Mesh mesh;
     /** The entity transformation */
-    private final Transformation transformation;
+    protected final Transformation transformation;
+    /** The shader program used to render this entity */
+    protected ShaderProgram program = ShaderProgram.BASIC_SHADER;
 
     /**
      * Constructs the entity with no transformations
@@ -37,6 +41,24 @@ public class Entity {
     public Entity(Mesh mesh, Vector3fc position, Vector3fc scale, Vector3fc rotation){
         this.mesh = mesh;
         this.transformation = new Transformation(position, scale, rotation);
+    }
+
+    /**
+     * Renders the entity
+     */
+    public void render(TopDownCamera camera){
+        //Bind the shader
+        program.bind();
+
+        //Set the uniforms
+        program.setUniform("projectionMatrix", camera.getMatrix());
+        program.setUniform("worldMatrix", getTransformation().getMatrix());
+
+        //Render the mesh
+        getMesh().render();
+
+        //Restore the shader
+        program.unbind();
     }
 
     /**
