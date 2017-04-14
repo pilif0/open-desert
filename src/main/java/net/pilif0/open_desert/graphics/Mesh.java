@@ -6,7 +6,7 @@ import org.lwjgl.system.MemoryStack;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -77,6 +77,20 @@ public class Mesh {
 
         //Log OpenGL errors
         Launcher.getLog().logOpenGLError("Mesh", "when creating");
+    }
+
+    /**
+     * Renders the mesh
+     */
+    public void render(){
+        //Bind the VAO
+        glBindVertexArray(vaoID);
+
+        //Draw
+        glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
+
+        //Restore
+        glBindVertexArray(0);
     }
 
     /**
