@@ -6,7 +6,10 @@ import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +22,11 @@ import static org.lwjgl.opengl.GL20.*;
  * @version 1.0
  */
 public class ShaderProgram {
+    /** The basic shader */
+    public static final ShaderProgram BASIC_SHADER = new ShaderProgram();
+    /** The coloured shader */
+    public static final ShaderProgram COLORED_SHADER = new ShaderProgram();
+
     /** The shader program ID */
     public final int programID;
     /** The vertex shader ID */
@@ -27,6 +35,37 @@ public class ShaderProgram {
     private int fragmentID = 0;
     /** The uniforms of the shader program */
     private Map<String, Integer> uniforms;
+
+    static{
+        //Create the basic shader
+        try {
+            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/vertex.vs")));
+            String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/fragment.fs")));
+
+            BASIC_SHADER.attachVertexShader(vertexCode);
+            BASIC_SHADER.attachFragmentShader(fragmentCode);
+            BASIC_SHADER.link();
+        } catch (IOException e) {
+            Launcher.getLog().log("IO", e);
+        }
+        BASIC_SHADER.createUniform("projectionMatrix");
+        BASIC_SHADER.createUniform("worldMatrix");
+
+        //Create the coloured shader
+        try {
+            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/coloredVertex.vs")));
+            String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/fragment.fs")));
+
+            COLORED_SHADER.attachVertexShader(vertexCode);
+            COLORED_SHADER.attachFragmentShader(fragmentCode);
+            COLORED_SHADER.link();
+        } catch (IOException e) {
+            Launcher.getLog().log("IO", e);
+        }
+        COLORED_SHADER.createUniform("projectionMatrix");
+        COLORED_SHADER.createUniform("worldMatrix");
+        COLORED_SHADER.createUniform("color");
+    }
 
     /**
      * Constructs an empty program
