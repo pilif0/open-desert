@@ -80,5 +80,5 @@ public class Entity {
     /**
      * Cleans up after the entity
      */
-    public void cleanUp(){ mesh.cleanUp();}
+    public void cleanUp(){}
 }
