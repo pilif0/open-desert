@@ -1,7 +1,6 @@
 package net.pilif0.open_desert;
 
 import net.pilif0.open_desert.graphics.Mesh;
-import net.pilif0.open_desert.graphics.ShaderProgram;
 import net.pilif0.open_desert.graphics.TopDownCamera;
 import net.pilif0.open_desert.graphics.Vertex;
 import net.pilif0.open_desert.input.Action;
@@ -11,13 +10,8 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 /**
  * Represents the intro game-state
@@ -57,14 +51,10 @@ public class IntroState extends GameState{
         SQUARE_MESH = new Mesh(VERTICES, INDICES);
     }
 
-    /** The shader program being used */
-    private ShaderProgram program;
     /** The entity to draw */
-    private Entity entity;
+    private ColoredEntity entity;
     /** The camera */
     private TopDownCamera camera;
-    /** The current entity colour */
-    private Color entityColor;
     /** The entity colour animation timer */
     private double colourTimer;
 
@@ -82,28 +72,9 @@ public class IntroState extends GameState{
             camera.setDimensions(new Vector2i(e.newX, e.newY));
         });
 
-        //Create the shader program
-        try {
-            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/coloredVertex.vs")));
-            String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/fragment.fs")));
-
-            program = new ShaderProgram();
-            program.attachVertexShader(vertexCode);
-            program.attachFragmentShader(fragmentCode);
-            program.link();
-        } catch (IOException e) {
-            Launcher.getLog().log("IO", e);
-        }
-
-        //Create the matrices uniforms
-        program.createUniform("projectionMatrix");
-        program.createUniform("worldMatrix");
-        program.createUniform("color");
-
         //Create the entity and scale it by factor of 100
-        entity = new Entity(SQUARE_MESH);
+        entity = new ColoredEntity(SQUARE_MESH);
         entity.getTransformation().setScale(new Vector3f(100, 100, 100));
-        entityColor = new Color(0x00_00_00_ff);
 
         //Register input listeners for entity scale control
         Game.getInstance().getWindow().inputManager.getEventMultiplexer().register(e -> {
@@ -171,9 +142,9 @@ public class IntroState extends GameState{
         float red = ((float) Math.sin(colourTimer) + 1) / 2;
         float green = ((float) Math.sin(colourTimer * 0.5) + 1) / 2;
         float blue = ((float) Math.sin(colourTimer * 0.25) + 1) / 2;
-        entityColor.setRed(red);
-        entityColor.setGreen(green);
-        entityColor.setBlue(blue);
+        entity.getColor().setRed(red);
+        entity.getColor().setGreen(green);
+        entity.getColor().setBlue(blue);
     }
 
     /**
@@ -207,38 +178,15 @@ public class IntroState extends GameState{
 
     @Override
     protected void onRender() {
-        //Bind the shader
-        program.bind();
-
-        //Set the uniforms
-        program.setUniform("projectionMatrix", camera.getMatrix());
-        program.setUniform("worldMatrix", entity.getTransformation().getMatrix());
-        program.setUniform("color", entityColor.toVector());
-
-        //Bind the VAO
-        glBindVertexArray(entity.getMesh().vaoID);
-
-        //Draw
-        glDrawElements(GL_TRIANGLES, entity.getMesh().vertexCount, GL_UNSIGNED_INT, 0);
-
-        //Restore
-        glBindVertexArray(0);
-        program.unbind();
+        entity.render(camera);
     }
 
     @Override
-    public void onExit() {
-
-    }
+    public void onExit() {}
 
     @Override
     public void onCleanUp() {
-        //Clean up shader
-        if(program != null){
-            program.cleanUp();
-        }
-
-        //Clean up mesh
+        //Clean up entity
         entity.cleanUp();
     }
 }
