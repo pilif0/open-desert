@@ -168,7 +168,6 @@ public class Window {
 
         //Attach input manager
         inputManager = new InputManager(this);
-        glfwSetKeyCallback(handle, inputManager.getKeyCallback());
 
         //Set the window event multiplexers
         sizeMultiplexer = new WindowSizeMultiplexer();

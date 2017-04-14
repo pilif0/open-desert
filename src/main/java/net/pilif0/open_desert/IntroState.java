@@ -4,11 +4,11 @@ import net.pilif0.open_desert.graphics.Mesh;
 import net.pilif0.open_desert.graphics.TopDownCamera;
 import net.pilif0.open_desert.graphics.Vertex;
 import net.pilif0.open_desert.input.Action;
+import net.pilif0.open_desert.input.InputManager;
 import net.pilif0.open_desert.state.GameState;
 import net.pilif0.open_desert.util.Color;
-import org.joml.Vector2f;
-import org.joml.Vector2i;
-import org.joml.Vector3f;
+import org.joml.*;
+import org.joml.Math;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -77,14 +77,9 @@ public class IntroState extends GameState{
         entity.getTransformation().setScale(new Vector3f(100, 100, 100));
 
         //Register input listeners for entity scale control
-        Game.getInstance().getWindow().inputManager.getEventMultiplexer().register(e -> {
-            if(e.key == GLFW_KEY_KP_ADD && e.action == Action.PRESS){
-                entity.getTransformation().scaleAdd(new Vector3f(10, 10, 10));
-            }
-
-            if(e.key == GLFW_KEY_KP_SUBTRACT && e.action == Action.PRESS){
-                entity.getTransformation().scaleAdd(new Vector3f(-10, -10, -10));
-            }
+        Game.getInstance().getWindow().inputManager.getScrollCallback().register(e -> {
+            float f = (float) -e.y;
+            entity.getTransformation().scaleAdd(new Vector3f(10*f, 10*f, 10*f));
         });
     }
 
@@ -104,24 +99,24 @@ public class IntroState extends GameState{
         updateCamera();
 
         //Update entity transformations
+        InputManager im = Game.getInstance().getWindow().inputManager;
         Vector2f d = new Vector2f();
         float z = 0;
-        if(Game.getInstance().getWindow().inputManager.isKeyDown(GLFW_KEY_UP)){
-            d.add(0, -1);
+        if(im.isMouseButtonDown(GLFW_MOUSE_BUTTON_MIDDLE)){
+            //Start at the mouse position (adjusted for camera position)
+            d.set(im.getMousePosition());
+            d.add(camera.getPosition());
+
+            //Subtract the entity position
+            Vector2f entityP = new Vector2f(
+                    entity.getTransformation().getTranslation().x(),
+                    entity.getTransformation().getTranslation().y());
+            d.sub(entityP);
         }
-        if(Game.getInstance().getWindow().inputManager.isKeyDown(GLFW_KEY_DOWN)){
-            d.add(0, 1);
-        }
-        if(Game.getInstance().getWindow().inputManager.isKeyDown(GLFW_KEY_LEFT)){
-            d.add(-1, 0);
-        }
-        if(Game.getInstance().getWindow().inputManager.isKeyDown(GLFW_KEY_RIGHT)){
-            d.add(1, 0);
-        }
-        if(Game.getInstance().getWindow().inputManager.isKeyDown(GLFW_KEY_J)){
+        if(im.isMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)){
             z -= 90;
         }
-        if(Game.getInstance().getWindow().inputManager.isKeyDown(GLFW_KEY_K)){
+        if(im.isMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT)){
             z += 90;
         }
 

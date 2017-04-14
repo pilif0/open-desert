@@ -68,7 +68,7 @@ public class Game {
         window = new Window("Test Window", 1280, 720, Window.Type.WINDOWED, -1, false);
         window.makeContextCurrent();
         window.centre();
-        window.inputManager.getEventMultiplexer().register(e -> {
+        window.inputManager.getKeyCallback().register(e -> {
             //Quit on escape
             if(e.key == GLFW_KEY_ESCAPE && e.action == Action.PRESS) {
                 glfwSetWindowShouldClose(window.handle, true);
