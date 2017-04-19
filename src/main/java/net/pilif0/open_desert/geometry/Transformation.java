@@ -1,8 +1,8 @@
 package net.pilif0.open_desert.geometry;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3fc;
-import org.joml.Vector3f;
+import org.joml.Vector2fc;
+import org.joml.Vector2f;
 
 /**
  * Represents a transformation (translation, scaling, rotation)
@@ -15,11 +15,11 @@ public class Transformation {
     private static final float PI2 = (float) Math.PI * 2;
 
     /** The translation along the axes */
-    private final Vector3f translation;
+    private final Vector2f translation;
     /** The scale along the axes */
-    private final Vector3f scale;
-    /** The rotation around the axes (in radians) */
-    private final Vector3f rotation;
+    private final Vector2f scale;
+    /** The rotation around the z axis (in radians) */
+    private float rotation;
     /** The matrix representation */
     private final Matrix4f matrix;
     /** Whether the transformation was changed since the last time the matrix was generated */
@@ -29,9 +29,9 @@ public class Transformation {
      * Constructs an empty (identity) transformation
      */
     public Transformation(){
-        translation = new Vector3f();
-        scale = (new Vector3f()).set(1);
-        rotation = new Vector3f();
+        translation = new Vector2f();
+        scale = (new Vector2f()).set(1);
+        rotation = 0;
         matrix = (new Matrix4f()).identity();
     }
 
@@ -42,10 +42,10 @@ public class Transformation {
      * @param scale The scale
      * @param rotation The rotation
      */
-    public Transformation(Vector3fc translation, Vector3fc scale, Vector3fc rotation){
-        this.translation = (new Vector3f()).set(translation);
-        this.scale = (new Vector3f()).set(scale);
-        this.rotation = (new Vector3f()).set(rotation);
+    public Transformation(Vector2fc translation, Vector2fc scale, float rotation){
+        this.translation = (new Vector2f()).set(translation);
+        this.scale = (new Vector2f()).set(scale);
+        this.rotation = rotation;
         matrix = (new Matrix4f()).identity();
         regenerateMatrix();
     }
@@ -55,7 +55,7 @@ public class Transformation {
      *
      * @param diff The difference
      */
-    public void translate(Vector3fc diff){
+    public void translate(Vector2fc diff){
         translation.add(diff);
         transformed = true;
     }
@@ -63,13 +63,13 @@ public class Transformation {
     /**
      * Rotates the subject of this transformation by a certain angle around each axis
      *
-     * @param angles The angles to rotate by around each axis
+     * @param angle The angles to rotate by around each axis
      */
-    public void rotate(Vector3fc angles){
-        rotation.add(angles);
+    public void rotate(float angle){
+        rotation += angle;
 
         //Normalize components to [0, 2PI) rad
-        rotation.set(rotation.x % PI2, rotation.y % PI2, rotation.z % PI2);
+        rotation = rotation % PI2;
 
         transformed = true;
     }
@@ -79,7 +79,7 @@ public class Transformation {
      *
      * @param factors The factors to scale by along each axis
      */
-    public void scaleMul(Vector3fc factors){
+    public void scaleMul(Vector2fc factors){
         scale.mul(factors);
         transformed = true;
     }
@@ -89,7 +89,7 @@ public class Transformation {
      *
      * @param factors The factors to scale by along each axis
      */
-    public void scaleAdd(Vector3fc factors){
+    public void scaleAdd(Vector2fc factors){
         scale.add(factors);
         transformed = true;
     }
@@ -99,7 +99,7 @@ public class Transformation {
      *
      * @param translation The new translation
      */
-    public void setTranslation(Vector3fc translation){
+    public void setTranslation(Vector2fc translation){
         this.translation.set(translation);
         transformed = true;
     }
@@ -109,7 +109,7 @@ public class Transformation {
      *
      * @return The translation
      */
-    public Vector3fc getTranslation(){
+    public Vector2fc getTranslation(){
         return this.translation.toImmutable();
     }
 
@@ -118,7 +118,7 @@ public class Transformation {
      *
      * @param scale The new scale
      */
-    public void setScale(Vector3fc scale){
+    public void setScale(Vector2fc scale){
         this.scale.set(scale);
         transformed = true;
     }
@@ -128,7 +128,7 @@ public class Transformation {
      *
      * @return The scale
      */
-    public Vector3fc getScale(){
+    public Vector2fc getScale(){
         return this.scale.toImmutable();
     }
 
@@ -137,8 +137,8 @@ public class Transformation {
      *
      * @param rotation The new rotation
      */
-    public void setRotation(Vector3fc rotation){
-        this.rotation.set(rotation);
+    public void setRotation(float rotation){
+        this.rotation = rotation;
         transformed = true;
     }
 
@@ -147,8 +147,8 @@ public class Transformation {
      *
      * @return The rotation
      */
-    public Vector3fc getRotation(){
-        return this.rotation.toImmutable();
+    public float getRotation(){
+        return this.rotation;
     }
 
     /**
@@ -176,9 +176,9 @@ public class Transformation {
 
         //Regenerate the matrix
         matrix.identity()
-                .translate(translation)
-                .rotateXYZ(rotation)
-                .scale(scale);
+                .translate(translation.x, translation.y, 0)
+                .rotateZ(rotation)
+                .scale(scale.x, scale.y, 1f);
 
         //Reset the flag
         transformed = false;

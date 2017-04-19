@@ -12,12 +12,12 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
 /**
- * Represents a general mesh in three dimensions
+ * Represents a general shape in two dimensions
  *
  * @author Filip Smola
  * @version 1.0
  */
-public class Mesh {
+public class Shape {
     /** ID of the vertex array object */
     public final int vaoID;
     /** ID of the vertex buffer object */
@@ -28,14 +28,14 @@ public class Mesh {
     public final int vertexCount;
 
     /**
-     * Constructs the mesh
+     * Constructs the shape
      *
      * @param vertices The vertices to use
      * @param indices The indices to use
      */
-    public Mesh(Vertex[] vertices, int[] indices){
+    public Shape(Vertex[] vertices, int[] indices){
         //Log any previous OpenGL error (to clear the flags)
-        Launcher.getLog().logOpenGLError("OpenGL", "before mesh creation");
+        Launcher.getLog().logOpenGLError("OpenGL", "before shape creation");
 
         //Count vertices
         vertexCount = indices.length;
@@ -57,8 +57,8 @@ public class Mesh {
             vboID = glGenBuffers();
             glBindBuffer(GL_ARRAY_BUFFER, vboID);
             glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
-            glVertexAttribPointer(0, 3, GL_FLOAT, false, 7 * 4, 0);
-            glVertexAttribPointer(1, 4, GL_FLOAT, false, 7 * 4, 3 * 4);
+            glVertexAttribPointer(0, 2, GL_FLOAT, false, 6 * 4, 0);
+            glVertexAttribPointer(1, 4, GL_FLOAT, false, 6 * 4, 2 * 4);
         }
 
         //Indices
@@ -76,11 +76,11 @@ public class Mesh {
         glBindVertexArray(0);
 
         //Log OpenGL errors
-        Launcher.getLog().logOpenGLError("Mesh", "when creating");
+        Launcher.getLog().logOpenGLError("Shape", "when creating");
     }
 
     /**
-     * Renders the mesh
+     * Renders the shape
      */
     public void render(){
         //Bind the VAO
@@ -94,7 +94,7 @@ public class Mesh {
     }
 
     /**
-     * Cleans up the mesh
+     * Cleans up the shape
      */
     public void cleanUp(){
         glDisableVertexAttribArray(0);

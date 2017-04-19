@@ -1,10 +1,10 @@
 package net.pilif0.open_desert;
 
-import net.pilif0.open_desert.graphics.Mesh;
+import net.pilif0.open_desert.graphics.Shape;
 import net.pilif0.open_desert.graphics.ShaderProgram;
 import net.pilif0.open_desert.graphics.PerpendicularCamera;
 import net.pilif0.open_desert.util.Color;
-import org.joml.Vector3fc;
+import org.joml.Vector2fc;
 
 /**
  * A subclass of Entity that uses the coloured shader, thus its colour can change
@@ -13,16 +13,16 @@ import org.joml.Vector3fc;
  * @version 1.0
  */
 public class ColoredEntity extends Entity {
-    /** The entity colour multiplier (is multiplied with the mesh colour in the shader) */
+    /** The entity colour multiplier (is multiplied with the shape colour in the shader) */
     private Color color;
 
     /**
-     * Constructs the entity with no transformation and white colour multiplier (preserves mesh colours)
+     * Constructs the entity with no transformation and white colour multiplier (preserves shape colours)
      *
-     * @param mesh The mesh
+     * @param shape The shape
      */
-    public ColoredEntity(Mesh mesh){
-        super(mesh);
+    public ColoredEntity(Shape shape){
+        super(shape);
         color = new Color(0xff_ff_ff_ff);
         program = ShaderProgram.COLORED_SHADER;
     }
@@ -30,14 +30,14 @@ public class ColoredEntity extends Entity {
     /**
      * Constructs the entity from all its properties
      *
-     * @param mesh The mesh
+     * @param shape The shape
      * @param position The position
      * @param scale The scale
      * @param rotation The rotation
      * @param color The color
      */
-    public ColoredEntity(Mesh mesh, Vector3fc position, Vector3fc scale, Vector3fc rotation, Color color){
-        super(mesh, position, scale, rotation);
+    public ColoredEntity(Shape shape, Vector2fc position, Vector2fc scale, float rotation, Color color){
+        super(shape, position, scale, rotation);
         this.color = color;
         program = ShaderProgram.COLORED_SHADER;
     }
@@ -54,8 +54,8 @@ public class ColoredEntity extends Entity {
         program.setUniform("worldMatrix", getTransformation().getMatrix());
         program.setUniform("color", getColor().toVector());
 
-        //Render the mesh
-        getMesh().render();
+        //Render the shape
+        getShape().render();
 
         //Restore the shader
         program.unbind();

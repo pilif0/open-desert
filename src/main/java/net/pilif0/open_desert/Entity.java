@@ -1,10 +1,10 @@
 package net.pilif0.open_desert;
 
 import net.pilif0.open_desert.geometry.Transformation;
-import net.pilif0.open_desert.graphics.Mesh;
+import net.pilif0.open_desert.graphics.Shape;
 import net.pilif0.open_desert.graphics.ShaderProgram;
 import net.pilif0.open_desert.graphics.PerpendicularCamera;
-import org.joml.Vector3fc;
+import org.joml.Vector2fc;
 
 /**
  * Represents the objects in the world, i.e. transformed meshes.
@@ -13,8 +13,8 @@ import org.joml.Vector3fc;
  * @version 1.0
  */
 public class Entity {
-    /** The entity mesh */
-    protected final Mesh mesh;
+    /** The entity shape */
+    protected final Shape shape;
     /** The entity transformation */
     protected final Transformation transformation;
     /** The shader program used to render this entity */
@@ -23,23 +23,23 @@ public class Entity {
     /**
      * Constructs the entity with no transformations
      *
-     * @param mesh The mesh
+     * @param shape The shape
      */
-    public Entity(Mesh mesh){
-        this.mesh = mesh;
+    public Entity(Shape shape){
+        this.shape = shape;
         this.transformation = new Transformation();
     }
 
     /**
      * Constructs the entity from all its properties
      *
-     * @param mesh The mesh
+     * @param shape The shape
      * @param position The position
      * @param scale The scale
      * @param rotation The rotation
      */
-    public Entity(Mesh mesh, Vector3fc position, Vector3fc scale, Vector3fc rotation){
-        this.mesh = mesh;
+    public Entity(Shape shape, Vector2fc position, Vector2fc scale, float rotation){
+        this.shape = shape;
         this.transformation = new Transformation(position, scale, rotation);
     }
 
@@ -54,20 +54,20 @@ public class Entity {
         program.setUniform("projectionMatrix", camera.getMatrix());
         program.setUniform("worldMatrix", getTransformation().getMatrix());
 
-        //Render the mesh
-        getMesh().render();
+        //Render the shape
+        getShape().render();
 
         //Restore the shader
         program.unbind();
     }
 
     /**
-     * Returns the entity mesh
+     * Returns the entity shape
      *
-     * @return The mesh
+     * @return The shape
      */
-    public Mesh getMesh(){
-        return mesh;
+    public Shape getShape(){
+        return shape;
     }
 
     /**

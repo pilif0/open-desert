@@ -1,6 +1,6 @@
 package net.pilif0.open_desert;
 
-import net.pilif0.open_desert.graphics.Mesh;
+import net.pilif0.open_desert.graphics.Shape;
 import net.pilif0.open_desert.graphics.PerpendicularCamera;
 import net.pilif0.open_desert.graphics.Vertex;
 import net.pilif0.open_desert.input.InputManager;
@@ -29,25 +29,25 @@ public class IntroState extends GameState{
     public static final float CAMERA_SPEED = 750f;
     /** The entity movement speed */
     public static final float ENTITY_SPEED = 250f;
-    /** The square mesh */
-    public static final Mesh SQUARE_MESH;
+    /** The square shape */
+    public static final Shape SQUARE_SHAPE;
 
     static{
         Vertex.VertexBuilder vb = new Vertex.VertexBuilder(
-                new Vector3f(-0.5f, 0.5f, 0f),
+                new Vector2f(-0.5f, 0.5f),
                 new Color(0xff_ff_ff_ff)
         );
 
         VERTICES = new Vertex[4];
         VERTICES[0] = vb.build();
-        vb.position.add(0, -1f, 0);
+        vb.position.add(0, -1f);
         VERTICES[1] = vb.build();
-        vb.position.add(1f, 0, 0);
+        vb.position.add(1f, 0);
         VERTICES[2] = vb.build();
-        vb.position.add(0, 1f, 0);
+        vb.position.add(0, 1f);
         VERTICES[3] = vb.build();
 
-        SQUARE_MESH = new Mesh(VERTICES, INDICES);
+        SQUARE_SHAPE = new Shape(VERTICES, INDICES);
     }
 
     /** The entity to draw */
@@ -72,13 +72,13 @@ public class IntroState extends GameState{
         });
 
         //Create the entity and scale it by factor of 100
-        entity = new ColoredEntity(SQUARE_MESH);
-        entity.getTransformation().setScale(new Vector3f(100, 100, 100));
+        entity = new ColoredEntity(SQUARE_SHAPE);
+        entity.getTransformation().setScale(new Vector2f(100, 100));
 
         //Register input listeners for entity scale control
         Game.getInstance().getWindow().inputManager.getScrollCallback().register(e -> {
             float f = (float) -e.y;
-            entity.getTransformation().scaleAdd(new Vector3f(10*f, 10*f, 10*f));
+            entity.getTransformation().scaleAdd(new Vector2f(10*f, 10*f));
         });
     }
 
@@ -123,12 +123,12 @@ public class IntroState extends GameState{
         if(d.x != 0 || d.y != 0){
             d.normalize();
             d.mul(ENTITY_SPEED * (float) Game.getInstance().delta.getDeltaSeconds());
-            entity.getTransformation().translate(new Vector3f(d, 0));
+            entity.getTransformation().translate(d);
         }
 
         //Rotate
         if(z != 0){
-            entity.getTransformation().rotate(new Vector3f(0, 0, (float) Math.toRadians(z * (float) Game.getInstance().delta.getDeltaSeconds())));
+            entity.getTransformation().rotate((float) Math.toRadians(z * Game.getInstance().delta.getDeltaSeconds()));
         }
 
         //Update entity colour

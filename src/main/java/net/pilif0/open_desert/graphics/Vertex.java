@@ -1,12 +1,13 @@
 package net.pilif0.open_desert.graphics;
 
 import net.pilif0.open_desert.util.Color;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import java.util.Arrays;
 
 /**
- * Represents a single vertex in a mesh - a combination of position and colour
+ * Represents a single vertex in a shape - a combination of position and colour
  *
  * @author Filip Smola
  * @version 1.0
@@ -22,14 +23,13 @@ public class Vertex {
      *
      * @param x The x coordinate
      * @param y The y coordinate
-     * @param z The z coordinate
      * @param r The red colour component
      * @param g The green colour component
      * @param b The blue colour component
      * @param a The alpha colour component
      */
-    public Vertex(float x, float y, float z, float r, float g, float b, float a){
-        position = new float[]{x, y, z};
+    public Vertex(float x, float y, float r, float g, float b, float a){
+        position = new float[]{x, y};
         color = new float[]{r, g, b, a};
     }
 
@@ -39,7 +39,7 @@ public class Vertex {
      * @return The interleaved vertex data
      */
     public float[] toInterleaved(){
-        return new float[]{position[0], position[1], position[2], color[0], color[1], color[2], color[3]};
+        return new float[]{position[0], position[1], color[0], color[1], color[2], color[3]};
     }
 
     @Override
@@ -55,7 +55,7 @@ public class Vertex {
      */
     public static class VertexBuilder{
         /** The current position */
-        public final Vector3f position;
+        public final Vector2f position;
         /** The current colour */
         public final Color color;
 
@@ -65,7 +65,7 @@ public class Vertex {
          * @param position The starting position
          * @param color The starting colour
          */
-        public VertexBuilder(Vector3f position, Color color){
+        public VertexBuilder(Vector2f position, Color color){
             this.position = position;
             this.color = color;
         }
@@ -77,7 +77,7 @@ public class Vertex {
          */
         public Vertex build(){
             return new Vertex(
-                    position.x, position.y, position.z,
+                    position.x, position.y,
                     color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()
             );
         }
