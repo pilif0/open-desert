@@ -3,7 +3,7 @@ package net.pilif0.open_desert;
 import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.Mesh;
 import net.pilif0.open_desert.graphics.ShaderProgram;
-import net.pilif0.open_desert.graphics.TopDownCamera;
+import net.pilif0.open_desert.graphics.PerpendicularCamera;
 import org.joml.Vector3fc;
 
 /**
@@ -46,7 +46,7 @@ public class Entity {
     /**
      * Renders the entity
      */
-    public void render(TopDownCamera camera){
+    public void render(PerpendicularCamera camera){
         //Bind the shader
         program.bind();
 

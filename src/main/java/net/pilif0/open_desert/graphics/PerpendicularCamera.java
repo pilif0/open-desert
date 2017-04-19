@@ -3,12 +3,12 @@ package net.pilif0.open_desert.graphics;
 import org.joml.*;
 
 /**
- * Represents a top-down camera
+ * Represents a camera with perpendicular projection
  *
  * @author Filip Smola
  * @version 1.0
  */
-public class TopDownCamera {
+public class PerpendicularCamera {
     /** The closer z-axis clipping plane */
     public static final float NEAR = -10.0f;
     /** The further z-axis clipping plane */
@@ -29,7 +29,7 @@ public class TopDownCamera {
      * @param position The position (top left corner)
      * @param dimensions The dimensions
      */
-    public TopDownCamera(Vector2fc position, Vector2ic dimensions){
+    public PerpendicularCamera(Vector2fc position, Vector2ic dimensions){
         this.position = new Vector2f(position);
         this.dimensions = new Vector2i(dimensions);
         this.matrix = new Matrix4f();

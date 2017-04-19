@@ -2,7 +2,7 @@ package net.pilif0.open_desert;
 
 import net.pilif0.open_desert.graphics.Mesh;
 import net.pilif0.open_desert.graphics.ShaderProgram;
-import net.pilif0.open_desert.graphics.TopDownCamera;
+import net.pilif0.open_desert.graphics.PerpendicularCamera;
 import net.pilif0.open_desert.util.Color;
 import org.joml.Vector3fc;
 
@@ -45,7 +45,7 @@ public class ColoredEntity extends Entity {
     /**
      * Renders the entity
      */
-    public void render(TopDownCamera camera){
+    public void render(PerpendicularCamera camera){
         //Bind the shader
         program.bind();
 

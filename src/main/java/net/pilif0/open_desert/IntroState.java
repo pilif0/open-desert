@@ -1,9 +1,8 @@
 package net.pilif0.open_desert;
 
 import net.pilif0.open_desert.graphics.Mesh;
-import net.pilif0.open_desert.graphics.TopDownCamera;
+import net.pilif0.open_desert.graphics.PerpendicularCamera;
 import net.pilif0.open_desert.graphics.Vertex;
-import net.pilif0.open_desert.input.Action;
 import net.pilif0.open_desert.input.InputManager;
 import net.pilif0.open_desert.state.GameState;
 import net.pilif0.open_desert.util.Color;
@@ -54,7 +53,7 @@ public class IntroState extends GameState{
     /** The entity to draw */
     private ColoredEntity entity;
     /** The camera */
-    private TopDownCamera camera;
+    private PerpendicularCamera camera;
     /** The entity colour animation timer */
     private double colourTimer;
 
@@ -65,7 +64,7 @@ public class IntroState extends GameState{
         super();
 
         //Create the camera
-        camera = new TopDownCamera(new Vector2f(0, 0), Game.getInstance().getWindow().getResolution());
+        camera = new PerpendicularCamera(new Vector2f(0, 0), Game.getInstance().getWindow().getResolution());
 
         //Have the camera listen to window resolution change
         Game.getInstance().getWindow().resolutionMultiplexer.register(e -> {
