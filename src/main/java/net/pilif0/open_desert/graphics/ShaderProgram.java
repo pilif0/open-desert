@@ -39,8 +39,8 @@ public class ShaderProgram {
     static{
         //Create the basic shader
         try {
-            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/vertex.vs")));
-            String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/fragment.fs")));
+            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/Color.vs")));
+            String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/StaticColor.fs")));
 
             BASIC_SHADER.attachVertexShader(vertexCode);
             BASIC_SHADER.attachFragmentShader(fragmentCode);
@@ -53,8 +53,8 @@ public class ShaderProgram {
 
         //Create the coloured shader
         try {
-            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/vertex.vs")));
-            String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/coloredFragment.fs")));
+            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/Color.vs")));
+            String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/DynamicColor.fs")));
 
             COLORED_SHADER.attachVertexShader(vertexCode);
             COLORED_SHADER.attachFragmentShader(fragmentCode);
