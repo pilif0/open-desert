@@ -13,7 +13,7 @@ import org.joml.Vector2fc;
  * @version 1.0
  */
 public class ColoredEntity extends Entity {
-    /** The entity colour multiplier (is multiplied with the shape colour in the shader) */
+    /** The entity colour (overrides the shape colour in the shader) */
     private Color color;
 
     /**
