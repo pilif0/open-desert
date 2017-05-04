@@ -8,6 +8,7 @@ import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -22,13 +23,17 @@ import static org.lwjgl.opengl.GL20.*;
  * @version 1.0
  */
 public class ShaderProgram {
-    /** The basic shader */
+    /** The basic shader (expects only positions, colours in white) */
     public static final ShaderProgram BASIC_SHADER = new ShaderProgram();
-    /** The coloured shader */
-    public static final ShaderProgram COLORED_SHADER = new ShaderProgram();
+    /** The static color shader (expects positions and colours) */
+    public static final ShaderProgram STATIC_COLOR_SHADER = new ShaderProgram();
+    /** The dynamic color shader (expects positions, colour as uniform) */
+    public static final ShaderProgram DYNAMIC_COLOR_SHADER = new ShaderProgram();
+    /** The texture shader (expects positions and texture coordinates, tile number and texture sampler as uniform) */
+    public static final ShaderProgram TEXTURE_SHADER = new ShaderProgram();
 
     /** The shader program ID */
-    public final int programID;
+    private final int programID;
     /** The vertex shader ID */
     private int vertexID = 0;
     /** The fragment shader ID */
@@ -39,8 +44,8 @@ public class ShaderProgram {
     static{
         //Create the basic shader
         try {
-            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/Color.vs")));
-            String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/StaticColor.fs")));
+            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/vertex/Basic.vs")));
+            String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/fragment/Basic.fs")));
 
             BASIC_SHADER.attachVertexShader(vertexCode);
             BASIC_SHADER.attachFragmentShader(fragmentCode);
@@ -51,20 +56,49 @@ public class ShaderProgram {
         BASIC_SHADER.createUniform("projectionMatrix");
         BASIC_SHADER.createUniform("worldMatrix");
 
-        //Create the coloured shader
+        //Create the static color shader
         try {
-            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/Color.vs")));
-            String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/DynamicColor.fs")));
+            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/vertex/Color.vs")));
+            String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/fragment/StaticColor.fs")));
 
-            COLORED_SHADER.attachVertexShader(vertexCode);
-            COLORED_SHADER.attachFragmentShader(fragmentCode);
-            COLORED_SHADER.link();
+            STATIC_COLOR_SHADER.attachVertexShader(vertexCode);
+            STATIC_COLOR_SHADER.attachFragmentShader(fragmentCode);
+            STATIC_COLOR_SHADER.link();
         } catch (IOException e) {
             Launcher.getLog().log("IO", e);
         }
-        COLORED_SHADER.createUniform("projectionMatrix");
-        COLORED_SHADER.createUniform("worldMatrix");
-        COLORED_SHADER.createUniform("color");
+        STATIC_COLOR_SHADER.createUniform("projectionMatrix");
+        STATIC_COLOR_SHADER.createUniform("worldMatrix");
+
+        //Create the dynamic color shader
+        try {
+            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/vertex/Color.vs")));
+            String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/fragment/DynamicColor.fs")));
+
+            DYNAMIC_COLOR_SHADER.attachVertexShader(vertexCode);
+            DYNAMIC_COLOR_SHADER.attachFragmentShader(fragmentCode);
+            DYNAMIC_COLOR_SHADER.link();
+        } catch (IOException e) {
+            Launcher.getLog().log("IO", e);
+        }
+        DYNAMIC_COLOR_SHADER.createUniform("projectionMatrix");
+        DYNAMIC_COLOR_SHADER.createUniform("worldMatrix");
+        DYNAMIC_COLOR_SHADER.createUniform("color");
+
+        //Create the texture shader
+        try {
+            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/vertex/Texture.vs")));
+            String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/fragment/Texture.fs")));
+
+            TEXTURE_SHADER.attachVertexShader(vertexCode);
+            TEXTURE_SHADER.attachFragmentShader(fragmentCode);
+            TEXTURE_SHADER.link();
+        } catch (IOException e) {
+            Launcher.getLog().log("IO", e);
+        }
+        TEXTURE_SHADER.createUniform("projectionMatrix");
+        TEXTURE_SHADER.createUniform("worldMatrix");
+        TEXTURE_SHADER.createUniform("textureSampler");
     }
 
     /**
@@ -224,6 +258,20 @@ public class ShaderProgram {
             FloatBuffer buffer = stack.mallocFloat(4);
             value.get(buffer);
             glUniform4fv(uniforms.get(name), buffer);
+        }
+    }
+
+    /**
+     * Sets the uniform value
+     *
+     * @param name The uniform name
+     * @param value The uniform value
+     */
+    public void setUniform(String name, int value){
+        try(MemoryStack stack = MemoryStack.stackPush()){
+            IntBuffer buffer = stack.mallocInt(1);
+            buffer.put(value).flip();
+            glUniform1iv(uniforms.get(name), buffer);
         }
     }
 

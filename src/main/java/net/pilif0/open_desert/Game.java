@@ -94,6 +94,7 @@ public class Game {
         //Prepare OpenGL
         GL.createCapabilities();
         glClearColor(0.0f, 0.0f,0.0f,1.0f);
+        glEnable(GL_DEPTH_TEST);
 
         //Prepare the states machine
         LinkedHashSet<GameState> stateSet = new LinkedHashSet<>();
@@ -158,8 +159,10 @@ public class Game {
      */
     private void cleanUp(){
         //Clean up all the global shaders
-        ShaderProgram.COLORED_SHADER.cleanUp();
+        ShaderProgram.DYNAMIC_COLOR_SHADER.cleanUp();
+        ShaderProgram.STATIC_COLOR_SHADER.cleanUp();
         ShaderProgram.BASIC_SHADER.cleanUp();
+        ShaderProgram.TEXTURE_SHADER.cleanUp();
 
         states.cleanUp();
         window.destroy();

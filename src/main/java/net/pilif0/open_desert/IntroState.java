@@ -1,13 +1,15 @@
 package net.pilif0.open_desert;
 
-import net.pilif0.open_desert.graphics.Shape;
-import net.pilif0.open_desert.graphics.PerpendicularCamera;
-import net.pilif0.open_desert.graphics.Vertex;
+import net.pilif0.open_desert.entities.TextureEntity;
+import net.pilif0.open_desert.graphics.*;
 import net.pilif0.open_desert.input.InputManager;
 import net.pilif0.open_desert.state.GameState;
 import net.pilif0.open_desert.util.Color;
 import org.joml.*;
 import org.joml.Math;
+
+import java.io.IOException;
+import java.nio.file.Paths;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -22,7 +24,7 @@ public class IntroState extends GameState{
     /** The background colour */
     public static final Color CLEAR_COLOR = new Color(0x00_00_00_ff);
     /** The vertices of the square */
-    public static final Vertex[] VERTICES;
+    public static final TextureVertex[] VERTICES;
     /** The indices to use when drawing */
     public static final int[] INDICES = new int[]{0, 1, 3, 3, 1, 2};
     /** The camera movement speed */
@@ -30,32 +32,44 @@ public class IntroState extends GameState{
     /** The entity movement speed */
     public static final float ENTITY_SPEED = 250f;
     /** The square shape */
-    public static final Shape SQUARE_SHAPE;
+    public static final TextureShape SQUARE_SHAPE;
+    /** The test texture */
+    public static final Texture TEST_TEXTURE;
 
     static{
-        Vertex.VertexBuilder vb = new Vertex.VertexBuilder(
+        //Build the shape
+        TextureVertex.TexturedVertexBuilder vb = new TextureVertex.TexturedVertexBuilder(
                 new Vector2f(-0.5f, 0.5f),
-                new Color(0xff_ff_ff_ff)
+                new Vector2f(0, 1)
         );
 
-        VERTICES = new Vertex[4];
+        VERTICES = new TextureVertex[4];
         VERTICES[0] = vb.build();
         vb.position.add(0, -1f);
+        vb.texCoords.add(0, -1f);
         VERTICES[1] = vb.build();
         vb.position.add(1f, 0);
+        vb.texCoords.add(1f, 0);
         VERTICES[2] = vb.build();
         vb.position.add(0, 1f);
+        vb.texCoords.add(0, 1f);
         VERTICES[3] = vb.build();
 
-        SQUARE_SHAPE = new Shape(VERTICES, INDICES);
+        SQUARE_SHAPE = new TextureShape(VERTICES, INDICES);
+
+        //Read the texture
+        try {
+            TEST_TEXTURE = new Texture(Paths.get("textures/test.png"));
+        } catch (IOException e) {
+            Launcher.getLog().log("Texture", e);
+            throw new RuntimeException("Crash because of texture");
+        }
     }
 
     /** The entity to draw */
-    private ColoredEntity entity;
+    private TextureEntity entity;
     /** The camera */
     private PerpendicularCamera camera;
-    /** The entity colour animation timer */
-    private double colourTimer;
 
     /**
      * Constructs the state
@@ -72,7 +86,7 @@ public class IntroState extends GameState{
         });
 
         //Create the entity and scale it by factor of 100
-        entity = new ColoredEntity(SQUARE_SHAPE);
+        entity = new TextureEntity(SQUARE_SHAPE, TEST_TEXTURE);
         entity.getTransformation().setScale(new Vector2f(100, 100));
 
         //Register input listeners for entity scale control
@@ -130,15 +144,6 @@ public class IntroState extends GameState{
         if(z != 0){
             entity.getTransformation().rotate((float) Math.toRadians(z * Game.getInstance().delta.getDeltaSeconds()));
         }
-
-        //Update entity colour
-        colourTimer += Game.getInstance().delta.getDeltaSeconds();
-        float red = ((float) Math.sin(colourTimer) + 1) / 2;
-        float green = ((float) Math.sin(colourTimer * 0.5) + 1) / 2;
-        float blue = ((float) Math.sin(colourTimer * 0.25) + 1) / 2;
-        entity.getColor().setRed(red);
-        entity.getColor().setGreen(green);
-        entity.getColor().setBlue(blue);
     }
 
     /**

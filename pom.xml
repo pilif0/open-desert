@@ -15,6 +15,7 @@
         <joml.version>1.9.2</joml.version>
         <main.class>net.pilif0.open_desert.Launcher</main.class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <pngdecoder.version>1.0</pngdecoder.version>
     </properties>
 
     <build>
@@ -192,6 +193,11 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.l33tlabs.twl</groupId>
+            <artifactId>pngdecoder</artifactId>
+            <version>${pngdecoder.version}</version>
         </dependency>
     </dependencies>
 
