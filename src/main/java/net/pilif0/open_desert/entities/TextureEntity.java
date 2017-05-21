@@ -16,7 +16,7 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
  * @author Filip Smola
  * @version 1.0
  */
-public class TextureEntity {
+public class TextureEntity implements Renderable{
     /** The entity shape */
     protected final TextureShape shape;
     /** The entity transformation */
@@ -53,9 +53,7 @@ public class TextureEntity {
         this.texture = texture;
     }
 
-    /**
-     * Renders the entity
-     */
+    @Override
     public void render(PerpendicularCamera camera){
         //Bind the shader
         program.bind();

@@ -13,7 +13,7 @@ import org.joml.Vector2fc;
  * @author Filip Smola
  * @version 1.0
  */
-public class ColorEntity {
+public class ColorEntity implements Renderable{
     /** The entity shape */
     protected final ColorShape shape;
     /** The entity transformation */
@@ -44,9 +44,7 @@ public class ColorEntity {
         this.transformation = new Transformation(position, scale, rotation);
     }
 
-    /**
-     * Renders the entity
-     */
+    @Override
     public void render(PerpendicularCamera camera){
         //Bind the shader
         program.bind();

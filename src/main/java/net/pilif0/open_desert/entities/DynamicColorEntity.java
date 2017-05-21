@@ -42,9 +42,7 @@ public class DynamicColorEntity extends ColorEntity {
         program = ShaderProgram.DYNAMIC_COLOR_SHADER;
     }
 
-    /**
-     * Renders the entity
-     */
+    @Override
     public void render(PerpendicularCamera camera){
         //Bind the shader
         program.bind();
