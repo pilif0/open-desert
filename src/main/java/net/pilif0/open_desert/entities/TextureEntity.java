@@ -2,7 +2,6 @@ package net.pilif0.open_desert.entities;
 
 import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.*;
-import org.joml.Vector2fc;
 
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
@@ -16,40 +15,36 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
  * @author Filip Smola
  * @version 1.0
  */
-public class TextureEntity implements Renderable{
+public class TextureEntity extends Entity implements Renderable{
     /** The entity shape */
     protected final TextureShape shape;
-    /** The entity transformation */
-    protected final Transformation transformation;
     /** The shader program used to render this entity */
     protected ShaderProgram program = ShaderProgram.TEXTURE_SHADER;
     /** The entity texture */
     protected Texture texture;
 
     /**
-     * Constructs the entity with no transformations
+     * Constructs the entity from a shape and texture, with no transformation (identity)
      *
      * @param shape The shape
      * @param texture The texture
      */
     public TextureEntity(TextureShape shape, Texture texture){
+        super();
         this.shape = shape;
-        this.transformation = new Transformation();
         this.texture = texture;
     }
 
     /**
-     * Constructs the entity from all its properties
+     * Constructs the entity from its shape, texture, and transformation (wrt parent)
      *
      * @param shape The shape
      * @param texture The texture
-     * @param position The position
-     * @param scale The scale
-     * @param rotation The rotation
+     * @param t The transformation
      */
-    public TextureEntity(TextureShape shape, Texture texture, Vector2fc position, Vector2fc scale, float rotation){
+    public TextureEntity(TextureShape shape, Texture texture, Transformation t){
+        super(t);
         this.shape = shape;
-        this.transformation = new Transformation(position, scale, rotation);
         this.texture = texture;
     }
 
@@ -94,13 +89,6 @@ public class TextureEntity implements Renderable{
     public Texture getTexture(){
         return texture;
     }
-
-    /**
-     * Returns the entity transformation
-     *
-     * @return The entity transformation
-     */
-    public Transformation getTransformation(){ return transformation; }
 
     /**
      * Cleans up after the entity

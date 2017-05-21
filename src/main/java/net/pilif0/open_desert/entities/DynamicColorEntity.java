@@ -1,10 +1,10 @@
 package net.pilif0.open_desert.entities;
 
+import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.ColorShape;
 import net.pilif0.open_desert.graphics.ShaderProgram;
 import net.pilif0.open_desert.graphics.PerpendicularCamera;
 import net.pilif0.open_desert.util.Color;
-import org.joml.Vector2fc;
 
 /**
  * A subclass of ColorEntity that uses the dynamic colour shader, thus its colour can change
@@ -17,7 +17,7 @@ public class DynamicColorEntity extends ColorEntity {
     private Color color;
 
     /**
-     * Constructs the entity with no transformation and white colour
+     * Constructs the entity from a shape with no transformation (identity) and white colour
      *
      * @param shape The shape
      */
@@ -28,16 +28,14 @@ public class DynamicColorEntity extends ColorEntity {
     }
 
     /**
-     * Constructs the entity from all its properties
+     * Constructs the entity from its shape, transformation (wrt parent), and colour
      *
      * @param shape The shape
-     * @param position The position
-     * @param scale The scale
-     * @param rotation The rotation
+     * @param t The transformation
      * @param color The color
      */
-    public DynamicColorEntity(ColorShape shape, Vector2fc position, Vector2fc scale, float rotation, Color color){
-        super(shape, position, scale, rotation);
+    public DynamicColorEntity(ColorShape shape, Transformation t, Color color){
+        super(shape, t);
         this.color = color;
         program = ShaderProgram.DYNAMIC_COLOR_SHADER;
     }
