@@ -30,8 +30,8 @@ public class Transformation {
      */
     public Transformation(){
         translation = new Vector2f();
-        scale = (new Vector2f()).set(1);
         rotation = 0;
+        scale = (new Vector2f()).set(1);
         matrix = (new Matrix4f()).identity();
     }
 
@@ -44,8 +44,21 @@ public class Transformation {
      */
     public Transformation(Vector2fc translation, Vector2fc scale, float rotation){
         this.translation = (new Vector2f()).set(translation);
+        this.rotation = rotation % PI2;
         this.scale = (new Vector2f()).set(scale);
-        this.rotation = rotation;
+        matrix = (new Matrix4f()).identity();
+        regenerateMatrix();
+    }
+
+    /**
+     * Constructs a transformation by copying another one
+     *
+     * @param t The transformation to copy
+     */
+    public Transformation(Transformation t){
+        this.translation = (new Vector2f()).set(t.getTranslation());
+        this.rotation = t.getRotation();
+        this.scale = (new Vector2f()).set(t.getScale());
         matrix = (new Matrix4f()).identity();
         regenerateMatrix();
     }
@@ -138,7 +151,7 @@ public class Transformation {
      * @param rotation The new rotation
      */
     public void setRotation(float rotation){
-        this.rotation = rotation;
+        this.rotation = rotation % PI2;
         transformed = true;
     }
 
@@ -182,5 +195,25 @@ public class Transformation {
 
         //Reset the flag
         transformed = false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Transformation)) return false;
+
+        Transformation that = (Transformation) o;
+
+        if (Float.compare(rotation, that.rotation) != 0) return false;
+        if (!translation.equals(that.translation)) return false;
+        return scale.equals(that.scale);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = translation.hashCode();
+        result = 31 * result + scale.hashCode();
+        result = 31 * result + (rotation != +0.0f ? Float.floatToIntBits(rotation) : 0);
+        return result;
     }
 }
