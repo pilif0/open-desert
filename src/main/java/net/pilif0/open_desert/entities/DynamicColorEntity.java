@@ -1,7 +1,7 @@
 package net.pilif0.open_desert.entities;
 
 import net.pilif0.open_desert.geometry.Transformation;
-import net.pilif0.open_desert.graphics.ColorShape;
+import net.pilif0.open_desert.graphics.shapes.ColorShape;
 import net.pilif0.open_desert.graphics.ShaderProgram;
 import net.pilif0.open_desert.graphics.PerpendicularCamera;
 import net.pilif0.open_desert.util.Color;

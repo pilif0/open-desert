@@ -1,6 +1,7 @@
-package net.pilif0.open_desert.graphics;
+package net.pilif0.open_desert.graphics.shapes;
 
 import net.pilif0.open_desert.Launcher;
+import net.pilif0.open_desert.graphics.vertices.ColorVertex;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
@@ -8,29 +9,24 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL15.glDeleteBuffers;
-import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
 
 /**
- * Represents a general shape in two dimensions (just the positions).
- * Attributes: 0 - 2D position
+ * Represents a general coloured shape in two dimensions.
+ * Attributes: 0 - 2D position, 1 - colour
  *
  * @author Filip Smola
  * @version 1.0
  */
-public class Shape extends AbstractShape{
+public class ColorShape extends AbstractShape{
     /**
      * Constructs the shape
      *
      * @param vertices The vertices to use
      * @param indices The indices to use
      */
-    public Shape(Vertex[] vertices, int[] indices){
+    public ColorShape(ColorVertex[] vertices, int[] indices){
         //Log any previous OpenGL error (to clear the flags)
         Launcher.getLog().logOpenGLError("OpenGL", "before shape creation");
 
@@ -45,16 +41,17 @@ public class Shape extends AbstractShape{
 
         //Vertices
         try(MemoryStack stack = MemoryStack.stackPush()){
-            FloatBuffer verticesBuffer = stack.mallocFloat(vertices.length * 2);
+            FloatBuffer verticesBuffer = stack.mallocFloat(vertices.length * 6);
             for(int i = 0; i < vertices.length; i++){
-                verticesBuffer.put(vertices[i].position);
+                verticesBuffer.put(vertices[i].toInterleaved());
             }
             verticesBuffer.flip();
 
             vboID = glGenBuffers();
             glBindBuffer(GL_ARRAY_BUFFER, vboID);
             glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
-            glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * 4, 0);
+            glVertexAttribPointer(0, 2, GL_FLOAT, false, 6 * 4, 0);
+            glVertexAttribPointer(1, 4, GL_FLOAT, false, 6 * 4, 2 * 4);
         }
 
         //Indices
@@ -72,7 +69,7 @@ public class Shape extends AbstractShape{
         glBindVertexArray(0);
 
         //Log OpenGL errors
-        Launcher.getLog().logOpenGLError("Shape", "when creating");
+        Launcher.getLog().logOpenGLError("ColorShape", "when creating");
     }
 
     /**
@@ -80,6 +77,7 @@ public class Shape extends AbstractShape{
      */
     public void cleanUp(){
         glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
 
         // Delete the VBOs
         glBindBuffer(GL_ARRAY_BUFFER, 0);

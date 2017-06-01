@@ -1,4 +1,4 @@
-package net.pilif0.open_desert.graphics;
+package net.pilif0.open_desert.graphics.shapes;
 
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;

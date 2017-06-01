@@ -1,4 +1,4 @@
-package net.pilif0.open_desert.graphics;
+package net.pilif0.open_desert.graphics.vertices;
 
 import org.joml.Vector2f;
 

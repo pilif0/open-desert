@@ -2,6 +2,8 @@ package net.pilif0.open_desert;
 
 import net.pilif0.open_desert.entities.TextureEntity;
 import net.pilif0.open_desert.graphics.*;
+import net.pilif0.open_desert.graphics.shapes.TextureShape;
+import net.pilif0.open_desert.graphics.vertices.TextureVertex;
 import net.pilif0.open_desert.input.InputManager;
 import net.pilif0.open_desert.state.GameState;
 import net.pilif0.open_desert.util.Color;

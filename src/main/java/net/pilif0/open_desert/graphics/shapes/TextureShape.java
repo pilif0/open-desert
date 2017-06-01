@@ -1,6 +1,7 @@
-package net.pilif0.open_desert.graphics;
+package net.pilif0.open_desert.graphics.shapes;
 
 import net.pilif0.open_desert.Launcher;
+import net.pilif0.open_desert.graphics.vertices.TextureVertex;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;

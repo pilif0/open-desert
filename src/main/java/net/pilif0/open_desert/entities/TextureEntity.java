@@ -2,6 +2,7 @@ package net.pilif0.open_desert.entities;
 
 import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.*;
+import net.pilif0.open_desert.graphics.shapes.TextureShape;
 
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
