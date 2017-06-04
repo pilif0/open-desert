@@ -3,7 +3,6 @@ package net.pilif0.open_desert;
 import net.pilif0.open_desert.entities.TextureEntity;
 import net.pilif0.open_desert.graphics.*;
 import net.pilif0.open_desert.graphics.shapes.TextureShape;
-import net.pilif0.open_desert.graphics.vertices.TextureVertex;
 import net.pilif0.open_desert.input.InputManager;
 import net.pilif0.open_desert.state.GameState;
 import net.pilif0.open_desert.util.Color;
@@ -25,10 +24,6 @@ import static org.lwjgl.opengl.GL11.*;
 public class IntroState extends GameState{
     /** The background colour */
     public static final Color CLEAR_COLOR = new Color(0x00_00_00_ff);
-    /** The vertices of the square */
-    public static final TextureVertex[] VERTICES;
-    /** The indices to use when drawing */
-    public static final int[] INDICES = new int[]{0, 1, 3, 3, 1, 2};
     /** The camera movement speed */
     public static final float CAMERA_SPEED = 750f;
     /** The entity movement speed */
@@ -39,25 +34,8 @@ public class IntroState extends GameState{
     public static final Texture TEST_TEXTURE;
 
     static{
-        //Build the shape
-        TextureVertex.TexturedVertexBuilder vb = new TextureVertex.TexturedVertexBuilder(
-                new Vector2f(-0.5f, 0.5f),
-                new Vector2f(0, 1)
-        );
-
-        VERTICES = new TextureVertex[4];
-        VERTICES[0] = vb.build();
-        vb.position.add(0, -1f);
-        vb.texCoords.add(0, -1f);
-        VERTICES[1] = vb.build();
-        vb.position.add(1f, 0);
-        vb.texCoords.add(1f, 0);
-        VERTICES[2] = vb.build();
-        vb.position.add(0, 1f);
-        vb.texCoords.add(0, 1f);
-        VERTICES[3] = vb.build();
-
-        SQUARE_SHAPE = new TextureShape(VERTICES, INDICES);
+        //Parse the shape
+        SQUARE_SHAPE = TextureShape.parse(Paths.get("shapes/TexturedSquare.shape"));
 
         //Read the texture
         try {
