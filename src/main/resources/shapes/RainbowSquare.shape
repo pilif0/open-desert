@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<shape type="ColorShape">
+    <vertices>
+        <vertex id="0">
+            <position>
+                <x>-0.5</x>
+                <y>-0.5</y>
+            </position>
+            <color>
+                <r>1</r>
+                <g>0</g>
+                <b>0</b>
+                <a>1</a>
+            </color>
+        </vertex>
+        <vertex id="1">
+            <position>
+                <x>0.5</x>
+                <y>-0.5</y>
+            </position>
+            <color>
+                <r>0</r>
+                <g>1</g>
+                <b>0</b>
+                <a>1</a>
+            </color>
+        </vertex>
+        <vertex id="2">
+            <position>
+                <x>0.5</x>
+                <y>0.5</y>
+            </position>
+            <color>
+                <r>1</r>
+                <g>1</g>
+                <b>1</b>
+                <a>1</a>
+            </color>
+        </vertex>
+        <vertex id="3">
+            <position>
+                <x>-0.5</x>
+                <y>0.5</y>
+            </position>
+            <color>
+                <r>0</r>
+                <g>0</g>
+                <b>1</b>
+                <a>1</a>
+            </color>
+        </vertex>
+    </vertices>
+    <indices>
+        <index>0</index>
+        <index>1</index>
+        <index>2</index>
+        <index>0</index>
+        <index>3</index>
+        <index>2</index>
+    </indices>
+</shape>
