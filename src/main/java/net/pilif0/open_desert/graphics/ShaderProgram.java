@@ -72,7 +72,7 @@ public class ShaderProgram {
 
         //Create the dynamic color shader
         try {
-            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/vertex/Color.vs")));
+            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/vertex/Basic.vs")));
             String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/fragment/DynamicColor.fs")));
 
             DYNAMIC_COLOR_SHADER.attachVertexShader(vertexCode);

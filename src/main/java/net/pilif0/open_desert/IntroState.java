@@ -1,7 +1,12 @@
 package net.pilif0.open_desert;
 
+import net.pilif0.open_desert.entities.ColorEntity;
+import net.pilif0.open_desert.entities.DynamicColorEntity;
 import net.pilif0.open_desert.entities.TextureEntity;
+import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.*;
+import net.pilif0.open_desert.graphics.shapes.ColorShape;
+import net.pilif0.open_desert.graphics.shapes.Shape;
 import net.pilif0.open_desert.graphics.shapes.TextureShape;
 import net.pilif0.open_desert.input.InputManager;
 import net.pilif0.open_desert.state.GameState;
@@ -28,14 +33,20 @@ public class IntroState extends GameState{
     public static final float CAMERA_SPEED = 750f;
     /** The entity movement speed */
     public static final float ENTITY_SPEED = 250f;
-    /** The square shape */
+    /** The textured square shape */
     public static final TextureShape SQUARE_SHAPE;
+    /** The rainbow square shape */
+    public static final ColorShape RAINBOW_SQUARE;
+    /** The basic square shape */
+    public static final Shape BASIC_SQUARE;
     /** The test texture */
     public static final Texture TEST_TEXTURE;
 
     static{
-        //Parse the shape
+        //Parse the shapes
         SQUARE_SHAPE = TextureShape.parse(Paths.get("shapes/TexturedSquare.shape"));
+        RAINBOW_SQUARE = ColorShape.parse(Paths.get("shapes/RainbowSquare.shape"));
+        BASIC_SQUARE = Shape.parse(Paths.get("shapes/Square.shape"));
 
         //Read the texture
         try {
@@ -48,6 +59,12 @@ public class IntroState extends GameState{
 
     /** The entity to draw */
     private TextureEntity entity;
+    /** The static entity */
+    private ColorEntity staticEntity;
+    /** The pulsating entity */
+    private DynamicColorEntity pulsatingEntity;
+    /** The phase of the pulsating entity */
+    private double pulsePhase;
     /** The camera */
     private PerpendicularCamera camera;
 
@@ -67,7 +84,20 @@ public class IntroState extends GameState{
 
         //Create the entity and scale it by factor of 100
         entity = new TextureEntity(SQUARE_SHAPE, TEST_TEXTURE);
-        entity.getTransformation().setScale(new Vector2f(100, 100));
+        entity.getTransformation()
+                .setScale(new Vector2f(100, 100));
+
+        //Create the static entity
+        staticEntity = new ColorEntity(RAINBOW_SQUARE);
+        staticEntity.getTransformation()
+                .setScale(new Vector2f(50, 50))
+                .translate(new Vector2f(450, 250));
+
+        //Create the pulsating entity
+        pulsatingEntity = new DynamicColorEntity(BASIC_SQUARE, new Transformation(), new Color(0));
+        pulsatingEntity.getTransformation()
+                .setScale(new Vector2f(150, 50))
+                .translate(new Vector2f(200, 600));
 
         //Register input listeners for entity scale control
         Game.getInstance().getWindow().inputManager.getScrollCallback().register(e -> {
@@ -124,6 +154,10 @@ public class IntroState extends GameState{
         if(z != 0){
             entity.getTransformation().rotate((float) Math.toRadians(z * Game.getInstance().delta.getDeltaSeconds()));
         }
+
+        //Update pulsating entity color
+        pulsePhase += 2 * Game.getInstance().delta.getDeltaSeconds();
+        pulsatingEntity.getColor().setRed((float) Math.abs(Math.sin(pulsePhase)));
     }
 
     /**
@@ -158,6 +192,8 @@ public class IntroState extends GameState{
     @Override
     protected void onRender() {
         entity.render(camera);
+        staticEntity.render(camera);
+        pulsatingEntity.render(camera);
     }
 
     @Override
