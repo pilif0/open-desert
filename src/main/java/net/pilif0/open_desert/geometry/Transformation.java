@@ -68,9 +68,10 @@ public class Transformation {
      *
      * @param diff The difference
      */
-    public void translate(Vector2fc diff){
+    public Transformation translate(Vector2fc diff){
         translation.add(diff);
         transformed = true;
+        return this;
     }
 
     /**
@@ -78,13 +79,15 @@ public class Transformation {
      *
      * @param angle The angles to rotate by around each axis
      */
-    public void rotate(float angle){
+    public Transformation rotate(float angle){
         rotation += angle;
 
         //Normalize components to [0, 2PI) rad
         rotation = rotation % PI2;
 
         transformed = true;
+
+        return this;
     }
 
     /**
@@ -92,9 +95,11 @@ public class Transformation {
      *
      * @param factors The factors to scale by along each axis
      */
-    public void scaleMul(Vector2fc factors){
+    public Transformation scaleMul(Vector2fc factors){
         scale.mul(factors);
         transformed = true;
+
+        return this;
     }
 
     /**
@@ -102,9 +107,11 @@ public class Transformation {
      *
      * @param factors The factors to scale by along each axis
      */
-    public void scaleAdd(Vector2fc factors){
+    public Transformation scaleAdd(Vector2fc factors){
         scale.add(factors);
         transformed = true;
+
+        return this;
     }
 
     /**
@@ -112,9 +119,11 @@ public class Transformation {
      *
      * @param translation The new translation
      */
-    public void setTranslation(Vector2fc translation){
+    public Transformation setTranslation(Vector2fc translation){
         this.translation.set(translation);
         transformed = true;
+
+        return this;
     }
 
     /**
@@ -131,9 +140,11 @@ public class Transformation {
      *
      * @param scale The new scale
      */
-    public void setScale(Vector2fc scale){
+    public Transformation setScale(Vector2fc scale){
         this.scale.set(scale);
         transformed = true;
+
+        return this;
     }
 
     /**
@@ -150,9 +161,11 @@ public class Transformation {
      *
      * @param rotation The new rotation
      */
-    public void setRotation(float rotation){
+    public Transformation setRotation(float rotation){
         this.rotation = rotation % PI2;
         transformed = true;
+
+        return this;
     }
 
     /**
