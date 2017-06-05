@@ -4,7 +4,6 @@ import net.pilif0.open_desert.Launcher;
 import net.pilif0.open_desert.graphics.vertices.TextureVertex;
 import org.lwjgl.system.MemoryStack;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -13,9 +12,6 @@ import javax.xml.xpath.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
@@ -37,12 +33,12 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 public class TextureShape extends AbstractShape{
     //Parser XPath expressions
     private static final XPathExpression typeExpr;
-    private static final XPathExpression indexExpr;
+    private static final XPathExpression idExpr;
     private static final XPathExpression posXExpr;
     private static final XPathExpression posYExpr;
     private static final XPathExpression texXExpr;
     private static final XPathExpression texYExpr;
-    private static final XPathExpression indexNodesExpr;
+    private static final XPathExpression indexExpr;
 
     static{
         //Prepare to use XPath
@@ -52,12 +48,12 @@ public class TextureShape extends AbstractShape{
         //Compile the XPath expressions
         try {
             typeExpr = xpath.compile("/shape/@type");
-            indexExpr = xpath.compile("//vertex/@id");
+            idExpr = xpath.compile("//vertex/@id");
             posXExpr = xpath.compile("//vertex/position/x");
             posYExpr = xpath.compile("//vertex/position/y");
             texXExpr = xpath.compile("//vertex/texture/x");
             texYExpr = xpath.compile("//vertex/texture/y");
-            indexNodesExpr = xpath.compile("/shape/indices/index/text()");
+            indexExpr = xpath.compile("/shape/indices/index/text()");
         }catch(XPathExpressionException e){
             //When XPath compilation fails, there is no hope. Just die.
             throw new RuntimeException("TextureShape XPath compilation failed");
@@ -164,40 +160,43 @@ public class TextureShape extends AbstractShape{
         }
 
         //Gather all vertex nodes
-        List<TextureVertex> vertexList = new ArrayList<>();
+        TextureVertex[] vertices;
         try{
-            NodeList indexNodes = (NodeList) indexExpr.evaluate(doc, XPathConstants.NODESET);
+            NodeList idNodes = (NodeList) idExpr.evaluate(doc, XPathConstants.NODESET);
             NodeList xNodes = (NodeList) posXExpr.evaluate(doc, XPathConstants.NODESET);
             NodeList yNodes = (NodeList) posYExpr.evaluate(doc, XPathConstants.NODESET);
             NodeList texXNodes = (NodeList) texXExpr.evaluate(doc, XPathConstants.NODESET);
             NodeList texYNodes = (NodeList) texYExpr.evaluate(doc, XPathConstants.NODESET);
 
-            for(int i = 0; i < indexNodes.getLength(); i++){
-                int index = Integer.parseInt(indexNodes.item(i).getTextContent());
+            vertices = new TextureVertex[idNodes.getLength()];
+
+            for(int i = 0; i < idNodes.getLength(); i++){
+                int id = Integer.parseInt(idNodes.item(i).getTextContent());
                 float x = Float.parseFloat(xNodes.item(i).getTextContent());
                 float y = Float.parseFloat(yNodes.item(i).getTextContent());
                 float tX = Float.parseFloat(texXNodes.item(i).getTextContent());
                 float tY = Float.parseFloat(texYNodes.item(i).getTextContent());
 
                 TextureVertex vertex = new TextureVertex(x, y, tX, tY);
-                vertexList.add(index, vertex);
+                vertices[id] = vertex;
             }
         }catch(XPathExpressionException e){
             throw new ShapeParseException(p, e);
         }
-        TextureVertex[] vertices = vertexList.toArray(new TextureVertex[vertexList.size()]);
 
         //Gather the indices
-        List<Integer> indexList = new ArrayList<>();
+        int[] indices;
         try{
-            NodeList indexNodes = (NodeList) indexNodesExpr.evaluate(doc, XPathConstants.NODESET);
+            NodeList indexNodes = (NodeList) indexExpr.evaluate(doc, XPathConstants.NODESET);
+
+            indices = new int[indexNodes.getLength()];
+
             for(int i = 0; i < indexNodes.getLength(); i++){
-                indexList.add(i, Integer.parseInt(indexNodes.item(i).getTextContent()));
+                indices[i] = Integer.parseInt(indexNodes.item(i).getTextContent());
             }
         }catch(XPathExpressionException e){
             throw new ShapeParseException(p, e);
         }
-        int[] indices = indexList.stream().mapToInt(Integer::intValue).toArray();
 
         //Put the shape together and return it
         return new TextureShape(vertices, indices);
