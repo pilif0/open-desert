@@ -12,7 +12,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 /**
- * Represents a 2D texture
+ * Represents a 2D texture (from a PNG in RGBA format)
  *
  * @author Filip Smola
  * @version 1.0
@@ -20,6 +20,10 @@ import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 public class Texture {
     /** The texture ID */
     public final int ID;
+    /** The texture width */
+    public final int width;
+    /** The texture height */
+    public final int height;
 
     /**
      * Constructs the texture from the PNG file
@@ -33,6 +37,10 @@ public class Texture {
         ByteBuffer buffer = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
         decoder.decode(buffer, decoder.getWidth() * 4, PNGDecoder.Format.RGBA);
         buffer.flip();
+
+        //Set the data members
+        width = decoder.getWidth();
+        height = decoder.getHeight();
 
         //Upload the texture to the GPU
         ID = glGenTextures();
@@ -53,5 +61,12 @@ public class Texture {
 
         //Unbind the texture
         glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    /**
+     * Cleans up the texture from the GPU
+     */
+    public void cleanUp(){
+        glDeleteTextures(ID);
     }
 }
