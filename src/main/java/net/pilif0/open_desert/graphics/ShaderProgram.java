@@ -2,8 +2,7 @@ package net.pilif0.open_desert.graphics;
 
 import net.pilif0.open_desert.Launcher;
 import net.pilif0.open_desert.util.Severity;
-import org.joml.Matrix4f;
-import org.joml.Vector4f;
+import org.joml.*;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
@@ -29,8 +28,10 @@ public class ShaderProgram {
     public static final ShaderProgram STATIC_COLOR_SHADER = new ShaderProgram();
     /** The dynamic color shader (expects positions, colour as uniform) */
     public static final ShaderProgram DYNAMIC_COLOR_SHADER = new ShaderProgram();
-    /** The texture shader (expects positions and texture coordinates, tile number and texture sampler as uniform) */
+    /** The texture shader (expects positions and texture coordinates, texture sampler as uniform) */
     public static final ShaderProgram TEXTURE_SHADER = new ShaderProgram();
+    /** The sprite shader (expects positions and texture coordinates, texture sampler and segment number as uniform */
+    public static final ShaderProgram SPRITE_SHADER = new ShaderProgram();
 
     /** The shader program ID */
     private final int programID;
@@ -99,6 +100,22 @@ public class ShaderProgram {
         TEXTURE_SHADER.createUniform("projectionMatrix");
         TEXTURE_SHADER.createUniform("worldMatrix");
         TEXTURE_SHADER.createUniform("textureSampler");
+
+        //Create the sprite shader
+        try {
+            String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/vertex/Texture.vs")));
+            String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/fragment/TextureAtlas.fs")));
+
+            SPRITE_SHADER.attachVertexShader(vertexCode);
+            SPRITE_SHADER.attachFragmentShader(fragmentCode);
+            SPRITE_SHADER.link();
+        } catch (IOException e) {
+            Launcher.getLog().log("IO", e);
+        }
+        SPRITE_SHADER.createUniform("projectionMatrix");
+        SPRITE_SHADER.createUniform("worldMatrix");
+        SPRITE_SHADER.createUniform("textureSampler");
+        SPRITE_SHADER.createUniform("textureDelta");
     }
 
     /**
@@ -239,7 +256,7 @@ public class ShaderProgram {
      * @param name The uniform name
      * @param value The uniform value
      */
-    public void setUniform(String name, Matrix4f value){
+    public void setUniform(String name, Matrix4fc value){
         try(MemoryStack stack = MemoryStack.stackPush()){
             FloatBuffer buffer = stack.mallocFloat(16);
             value.get(buffer);
@@ -253,7 +270,7 @@ public class ShaderProgram {
      * @param name The uniform name
      * @param value The uniform value
      */
-    public void setUniform(String name, Vector4f value){
+    public void setUniform(String name, Vector4fc value){
         try(MemoryStack stack = MemoryStack.stackPush()){
             FloatBuffer buffer = stack.mallocFloat(4);
             value.get(buffer);
@@ -272,6 +289,20 @@ public class ShaderProgram {
             IntBuffer buffer = stack.mallocInt(1);
             buffer.put(value).flip();
             glUniform1iv(uniforms.get(name), buffer);
+        }
+    }
+
+    /**
+     * Sets the uniform value
+     *
+     * @param name The uniform name
+     * @param value The uniform value
+     */
+    public void setUniform(String name, Vector2fc value) {
+        try(MemoryStack stack = MemoryStack.stackPush()){
+            FloatBuffer buffer = stack.mallocFloat(2);
+            value.get(buffer);
+            glUniform2fv(uniforms.get(name), buffer);
         }
     }
 

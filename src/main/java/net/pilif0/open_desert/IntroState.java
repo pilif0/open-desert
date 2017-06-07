@@ -2,12 +2,15 @@ package net.pilif0.open_desert;
 
 import net.pilif0.open_desert.entities.ColorEntity;
 import net.pilif0.open_desert.entities.DynamicColorEntity;
+import net.pilif0.open_desert.entities.SpriteEntity;
 import net.pilif0.open_desert.entities.TextureEntity;
 import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.*;
 import net.pilif0.open_desert.graphics.shapes.ColorShape;
 import net.pilif0.open_desert.graphics.shapes.Shape;
+import net.pilif0.open_desert.graphics.shapes.SpriteShape;
 import net.pilif0.open_desert.graphics.shapes.TextureShape;
+import net.pilif0.open_desert.input.Action;
 import net.pilif0.open_desert.input.InputManager;
 import net.pilif0.open_desert.state.GameState;
 import net.pilif0.open_desert.util.Color;
@@ -39,14 +42,27 @@ public class IntroState extends GameState{
     public static final ColorShape RAINBOW_SQUARE;
     /** The basic square shape */
     public static final Shape BASIC_SQUARE;
+    /** The sprite shape */
+    public static final SpriteShape SPRITE_SHAPE;
+    /** The sprite texture atlas */
+    public static final TextureAtlas SPRITE_TEXTURE_ATLAS;
     /** The test texture */
     public static final Texture TEST_TEXTURE;
 
     static{
+        //Read the texture atlas
+        try{
+            SPRITE_TEXTURE_ATLAS = new TextureAtlas(Paths.get("textures/atlas.png"), 64, 64);
+        }catch(IOException e){
+            Launcher.getLog().log("Texture", e);
+            throw new RuntimeException("Crash because of texture atlas");
+        }
+
         //Parse the shapes
         SQUARE_SHAPE = TextureShape.parse(Paths.get("shapes/TexturedSquare.shape"));
         RAINBOW_SQUARE = ColorShape.parse(Paths.get("shapes/RainbowSquare.shape"));
         BASIC_SQUARE = Shape.parse(Paths.get("shapes/Square.shape"));
+        SPRITE_SHAPE = new SpriteShape(64, 64, SPRITE_TEXTURE_ATLAS.width, SPRITE_TEXTURE_ATLAS.height);
 
         //Read the texture
         try {
@@ -63,6 +79,8 @@ public class IntroState extends GameState{
     private ColorEntity staticEntity;
     /** The pulsating entity */
     private DynamicColorEntity pulsatingEntity;
+    /** The sprite entity */
+    private SpriteEntity sprite;
     /** The phase of the pulsating entity */
     private double pulsePhase;
     /** The camera */
@@ -99,10 +117,31 @@ public class IntroState extends GameState{
                 .setScale(new Vector2f(150, 50))
                 .translate(new Vector2f(200, 600));
 
+        //Create the sprite entity
+        sprite = new SpriteEntity(SPRITE_SHAPE, SPRITE_TEXTURE_ATLAS);
+        sprite.getTransformation()
+                .translate(new Vector2f(800, 600));
+
         //Register input listeners for entity scale control
         Game.getInstance().getWindow().inputManager.getScrollCallback().register(e -> {
             float f = (float) -e.y;
             entity.getTransformation().scaleAdd(new Vector2f(10*f, 10*f));
+        });
+
+        //Register input listeners for sprite control
+        Game.getInstance().getWindow().inputManager.getKeyCallback().register(e -> {
+            //Increment segment on right arrow
+            if(e.key == GLFW_KEY_RIGHT && e.action == Action.RELEASE){
+                int after = (sprite.getSegment() + 1) % sprite.getTextureAtlas().segments;
+                sprite.setSegment(after);
+            }
+
+            //Decrement segment on left arrow
+            if(e.key == GLFW_KEY_LEFT && e.action == Action.RELEASE){
+                int after = (sprite.getSegment() - 1) % sprite.getTextureAtlas().segments;
+                if(after < 0) after += sprite.getTextureAtlas().segments;
+                sprite.setSegment(after);
+            }
         });
     }
 
@@ -194,6 +233,7 @@ public class IntroState extends GameState{
         entity.render(camera);
         staticEntity.render(camera);
         pulsatingEntity.render(camera);
+        sprite.render(camera);
     }
 
     @Override
@@ -201,7 +241,20 @@ public class IntroState extends GameState{
 
     @Override
     public void onCleanUp() {
-        //Clean up entity
+        //Clean up entities
         entity.cleanUp();
+        pulsatingEntity.cleanUp();
+        staticEntity.cleanUp();
+        sprite.cleanUp();
+
+        //Clean up shapes
+        SQUARE_SHAPE.cleanUp();
+        BASIC_SQUARE.cleanUp();
+        RAINBOW_SQUARE.cleanUp();
+        SPRITE_SHAPE.cleanUp();
+
+        //Clean up textures
+        SPRITE_TEXTURE_ATLAS.cleanUp();
+        TEST_TEXTURE.cleanUp();
     }
 }
