@@ -1,6 +1,7 @@
 package net.pilif0.open_desert.entities;
 
 import net.pilif0.open_desert.geometry.Transformation;
+import net.pilif0.open_desert.graphics.Renderable;
 import net.pilif0.open_desert.graphics.ShaderProgram;
 import net.pilif0.open_desert.graphics.PerpendicularCamera;
 import net.pilif0.open_desert.graphics.shapes.Shape;

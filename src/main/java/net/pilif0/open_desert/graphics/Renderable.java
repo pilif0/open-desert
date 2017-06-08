@@ -1,4 +1,4 @@
-package net.pilif0.open_desert.entities;
+package net.pilif0.open_desert.graphics;
 
 import net.pilif0.open_desert.graphics.PerpendicularCamera;
 

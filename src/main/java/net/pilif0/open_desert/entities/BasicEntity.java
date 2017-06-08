@@ -2,6 +2,7 @@ package net.pilif0.open_desert.entities;
 
 import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.PerpendicularCamera;
+import net.pilif0.open_desert.graphics.Renderable;
 import net.pilif0.open_desert.graphics.ShaderProgram;
 import net.pilif0.open_desert.graphics.shapes.Shape;
 
@@ -12,7 +13,7 @@ import net.pilif0.open_desert.graphics.shapes.Shape;
  * @author Filip Smola
  * @version 1.0
  */
-public class BasicEntity extends Entity implements Renderable{
+public class BasicEntity extends Entity implements Renderable {
     /** The entity shape */
     protected final Shape shape;
     /** The shader program used to render this entity */

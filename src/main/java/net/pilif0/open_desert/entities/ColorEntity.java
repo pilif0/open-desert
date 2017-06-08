@@ -1,6 +1,7 @@
 package net.pilif0.open_desert.entities;
 
 import net.pilif0.open_desert.geometry.Transformation;
+import net.pilif0.open_desert.graphics.Renderable;
 import net.pilif0.open_desert.graphics.shapes.ColorShape;
 import net.pilif0.open_desert.graphics.ShaderProgram;
 import net.pilif0.open_desert.graphics.PerpendicularCamera;
@@ -12,7 +13,7 @@ import net.pilif0.open_desert.graphics.PerpendicularCamera;
  * @author Filip Smola
  * @version 1.0
  */
-public class ColorEntity extends Entity implements Renderable{
+public class ColorEntity extends Entity implements Renderable {
     /** The entity shape */
     protected final ColorShape shape;
     /** The shader program used to render this entity */
