@@ -62,7 +62,7 @@ public class SpriteEntity extends Entity implements Renderable {
     }
 
     @Override
-    public void render(PerpendicularCamera camera){
+    public void render(PerpendicularCamera camera, Transformation parentTransformation){
         //Bind the shader
         program.bind();
 
@@ -70,6 +70,7 @@ public class SpriteEntity extends Entity implements Renderable {
 
         program.setUniform("projectionMatrix", camera.getMatrix());
         program.setUniform("worldMatrix", getTransformation().getMatrix());
+        program.setUniform("parentMatrix", parentTransformation.getMatrix());
         program.setUniform("textureSampler", 0);
         program.setUniform("textureDelta", textureDelta);
 

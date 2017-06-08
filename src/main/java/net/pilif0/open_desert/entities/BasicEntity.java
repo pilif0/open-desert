@@ -41,13 +41,14 @@ public class BasicEntity extends Entity implements Renderable {
     }
 
     @Override
-    public void render(PerpendicularCamera camera){
+    public void render(PerpendicularCamera camera, Transformation parentTransformation){
         //Bind the shader
         program.bind();
 
         //Set the uniforms
         program.setUniform("projectionMatrix", camera.getMatrix());
         program.setUniform("worldMatrix", getTransformation().getMatrix());
+        program.setUniform("parentMatrix", parentTransformation.getMatrix());
 
         //Render the shape
         getShape().render();

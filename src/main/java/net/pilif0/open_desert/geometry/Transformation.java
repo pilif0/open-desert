@@ -13,6 +13,8 @@ import org.joml.Vector2f;
 public class Transformation {
     /** The 2PI constant */
     private static final float PI2 = (float) Math.PI * 2;
+    /** The identity transformation */
+    public static final Transformation IDENTITY = new Transformation();
 
     /** The translation along the axes */
     private final Vector2f translation;

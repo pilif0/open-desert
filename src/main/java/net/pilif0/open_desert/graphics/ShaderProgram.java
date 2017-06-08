@@ -56,6 +56,7 @@ public class ShaderProgram {
         }
         BASIC_SHADER.createUniform("projectionMatrix");
         BASIC_SHADER.createUniform("worldMatrix");
+        BASIC_SHADER.createUniform("parentMatrix");
 
         //Create the static color shader
         try {
@@ -70,6 +71,7 @@ public class ShaderProgram {
         }
         STATIC_COLOR_SHADER.createUniform("projectionMatrix");
         STATIC_COLOR_SHADER.createUniform("worldMatrix");
+        STATIC_COLOR_SHADER.createUniform("parentMatrix");
 
         //Create the dynamic color shader
         try {
@@ -84,6 +86,7 @@ public class ShaderProgram {
         }
         DYNAMIC_COLOR_SHADER.createUniform("projectionMatrix");
         DYNAMIC_COLOR_SHADER.createUniform("worldMatrix");
+        DYNAMIC_COLOR_SHADER.createUniform("parentMatrix");
         DYNAMIC_COLOR_SHADER.createUniform("color");
 
         //Create the texture shader
@@ -99,6 +102,7 @@ public class ShaderProgram {
         }
         TEXTURE_SHADER.createUniform("projectionMatrix");
         TEXTURE_SHADER.createUniform("worldMatrix");
+        TEXTURE_SHADER.createUniform("parentMatrix");
         TEXTURE_SHADER.createUniform("textureSampler");
 
         //Create the sprite shader
@@ -114,6 +118,7 @@ public class ShaderProgram {
         }
         SPRITE_SHADER.createUniform("projectionMatrix");
         SPRITE_SHADER.createUniform("worldMatrix");
+        SPRITE_SHADER.createUniform("parentMatrix");
         SPRITE_SHADER.createUniform("textureSampler");
         SPRITE_SHADER.createUniform("textureDelta");
     }

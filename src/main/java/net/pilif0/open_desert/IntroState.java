@@ -112,7 +112,7 @@ public class IntroState extends GameState{
                 .translate(new Vector2f(450, 250));
 
         //Create the pulsating entity
-        pulsatingEntity = new DynamicColorEntity(BASIC_SQUARE, new Transformation(), new Color(0));
+        pulsatingEntity = new DynamicColorEntity(BASIC_SQUARE, new Transformation(), new Color(0x00_00_00_ff));
         pulsatingEntity.getTransformation()
                 .setScale(new Vector2f(150, 50))
                 .translate(new Vector2f(200, 600));
@@ -230,8 +230,8 @@ public class IntroState extends GameState{
 
     @Override
     protected void onRender() {
-        entity.render(camera);
         staticEntity.render(camera);
+        entity.render(camera);
         pulsatingEntity.render(camera);
         sprite.render(camera);
     }

@@ -47,13 +47,14 @@ public class DynamicColorEntity extends Entity implements Renderable {
     }
 
     @Override
-    public void render(PerpendicularCamera camera){
+    public void render(PerpendicularCamera camera, Transformation parentTransformation){
         //Bind the shader
         program.bind();
 
         //Set the uniforms
         program.setUniform("projectionMatrix", camera.getMatrix());
         program.setUniform("worldMatrix", getTransformation().getMatrix());
+        program.setUniform("parentMatrix", parentTransformation.getMatrix());
         program.setUniform("color", getColor().toVector());
 
         //Render the shape
