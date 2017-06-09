@@ -125,9 +125,4 @@ public class SpriteEntity extends Entity implements Renderable {
         this.segment = segment;
         this.textureDelta = textureAtlas.getDeltaCoordinates(segment);
     }
-
-    /**
-     * Cleans up after the entity
-     */
-    public void cleanUp(){}
 }

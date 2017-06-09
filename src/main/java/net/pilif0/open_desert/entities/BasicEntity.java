@@ -66,9 +66,4 @@ public class BasicEntity extends Entity implements Renderable {
     public Shape getShape(){
         return shape;
     }
-
-    /**
-     * Cleans up after the entity
-     */
-    public void cleanUp(){}
 }

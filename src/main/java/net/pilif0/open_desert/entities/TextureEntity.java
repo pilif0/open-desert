@@ -92,9 +92,4 @@ public class TextureEntity extends Entity implements Renderable{
     public Texture getTexture(){
         return texture;
     }
-
-    /**
-     * Cleans up after the entity
-     */
-    public void cleanUp(){}
 }

@@ -66,9 +66,4 @@ public class ColorEntity extends Entity implements Renderable {
     public ColorShape getShape(){
         return shape;
     }
-
-    /**
-     * Cleans up after the entity
-     */
-    public void cleanUp(){}
 }

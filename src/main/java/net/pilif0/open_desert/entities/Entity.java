@@ -35,4 +35,9 @@ public class Entity {
      * @return The entity transformation
      */
     public Transformation getTransformation(){ return transformation; }
+
+    /**
+     * Cleans up after the entity
+     */
+    public void cleanUp(){}
 }

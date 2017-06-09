@@ -79,9 +79,4 @@ public class DynamicColorEntity extends Entity implements Renderable {
      * @return The entity colour
      */
     public Color getColor(){ return color; }
-
-    /**
-     * Cleans up after the entity
-     */
-    public void cleanUp(){}
 }
