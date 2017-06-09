@@ -19,8 +19,6 @@ public class DynamicColorEntity extends Entity implements Renderable {
     private Color color;
     /** The entity shape */
     protected final Shape shape;
-    /** The shader program used to render this entity */
-    protected ShaderProgram program = ShaderProgram.DYNAMIC_COLOR_SHADER;
 
     /**
      * Constructs the entity from a shape with no transformation (identity) and white colour
@@ -43,11 +41,13 @@ public class DynamicColorEntity extends Entity implements Renderable {
         super(t);
         this.shape = shape;
         this.color = color;
-        program = ShaderProgram.DYNAMIC_COLOR_SHADER;
     }
 
     @Override
     public void render(PerpendicularCamera camera, Transformation parentTransformation){
+        //Retrieve the shader
+        ShaderProgram program = ShaderProgram.DYNAMIC_COLOR_SHADER;
+
         //Bind the shader
         program.bind();
 

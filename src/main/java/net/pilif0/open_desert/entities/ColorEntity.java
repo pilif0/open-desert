@@ -16,8 +16,6 @@ import net.pilif0.open_desert.graphics.PerpendicularCamera;
 public class ColorEntity extends Entity implements Renderable {
     /** The entity shape */
     protected final ColorShape shape;
-    /** The shader program used to render this entity */
-    protected ShaderProgram program = ShaderProgram.STATIC_COLOR_SHADER;
 
     /**
      * Constructs the entity from a shape with no transformation (identity)
@@ -42,6 +40,9 @@ public class ColorEntity extends Entity implements Renderable {
 
     @Override
     public void render(PerpendicularCamera camera, Transformation parentTransformation){
+        //Retrieve the shader
+        ShaderProgram program = ShaderProgram.STATIC_COLOR_SHADER;
+
         //Bind the shader
         program.bind();
 

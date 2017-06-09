@@ -23,8 +23,6 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 public class SpriteEntity extends Entity implements Renderable {
     /** The entity shape */
     protected final SpriteShape shape;
-    /** The shader program used to render this entity */
-    protected ShaderProgram program = ShaderProgram.SPRITE_SHADER;
     /** The entity texture atlas */
     protected TextureAtlas textureAtlas;
     /** The number of the currently used segment from the texture atlas */
@@ -63,6 +61,9 @@ public class SpriteEntity extends Entity implements Renderable {
 
     @Override
     public void render(PerpendicularCamera camera, Transformation parentTransformation){
+        //Retrieve the shader
+        ShaderProgram program = ShaderProgram.SPRITE_SHADER;
+
         //Bind the shader
         program.bind();
 

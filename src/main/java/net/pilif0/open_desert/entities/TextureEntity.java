@@ -19,8 +19,6 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 public class TextureEntity extends Entity implements Renderable{
     /** The entity shape */
     protected final TextureShape shape;
-    /** The shader program used to render this entity */
-    protected ShaderProgram program = ShaderProgram.TEXTURE_SHADER;
     /** The entity texture */
     protected Texture texture;
 
@@ -51,6 +49,9 @@ public class TextureEntity extends Entity implements Renderable{
 
     @Override
     public void render(PerpendicularCamera camera, Transformation parentTransformation){
+        //Retrieve the shader
+        ShaderProgram program = ShaderProgram.TEXTURE_SHADER;
+
         //Bind the shader
         program.bind();
 
