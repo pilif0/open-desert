@@ -15,7 +15,7 @@ import java.nio.file.Path;
  * @author Filip Smola
  * @version 1.0
  */
-public class TextureAtlas extends Texture{
+public class TextureAtlas extends PNGTexture {
     /** The segment size (in the OpenGL format - from 0 to 1) */
     public final Vector2fc segmentSize;
     /** The number of columns of segments in this atlas */
@@ -30,10 +30,11 @@ public class TextureAtlas extends Texture{
      *
      * @param path The path to the PNG file
      * @param segmentSize The size of the segment (in the OpenGL format - from 0 to 1)
+     * @param filteringMethod The filtering method (GL constant)
      * @throws IOException on a problem with reading the file
      */
-    public TextureAtlas(Path path, Vector2fc segmentSize) throws IOException {
-        super(path);
+    public TextureAtlas(Path path, Vector2fc segmentSize, int filteringMethod) throws IOException {
+        super(path, filteringMethod);
         this.segmentSize = segmentSize;
         cols = (int) (1 / segmentSize.x());
         rows = (int) (1 / segmentSize.y());
@@ -41,7 +42,18 @@ public class TextureAtlas extends Texture{
     }
 
     /**
-     * Constructs the texture atlas from the PNG file
+     * Constructs the texture atlas from the PNG file, applying the default filtering method
+     *
+     * @param path The path to the PNG file
+     * @param segmentSize The size of the segment (in the OpenGL format - from 0 to 1)
+     * @throws IOException on a problem with reading the file
+     */
+    public TextureAtlas(Path path, Vector2fc segmentSize) throws IOException {
+        this(path, segmentSize, PNGTexture.DEFAULT_FILTERING_METHOD);
+    }
+
+    /**
+     * Constructs the texture atlas from the PNG file, applying the default filtering method
      *
      * @param path The path to the PNG file
      * @param segmentWidth The width of the segment (in the OpenGL format - from 0 to 1)
@@ -58,14 +70,27 @@ public class TextureAtlas extends Texture{
      * @param path The path to the PNG file
      * @param segmentWidth The width of the segment (in pixels of the picture)
      * @param segmentHeight The height of the segment (in pixels of the picture)
+     * @param filteringMethod The filtering method (GL constant)
      * @throws IOException on a problem with reading the file
      */
-    public TextureAtlas(Path path, int segmentWidth, int segmentHeight) throws IOException{
-        super(path);
+    public TextureAtlas(Path path, int segmentWidth, int segmentHeight, int filteringMethod) throws IOException{
+        super(path, filteringMethod);
         segmentSize = new Vector2f(((float) segmentWidth) / ((float) width), ((float) segmentHeight) / ((float) height));
         cols = width / segmentWidth;
         rows = height / segmentHeight;
         segments = cols * rows;
+    }
+
+    /**
+     * Constructs the texture atlas from the PNG file
+     *
+     * @param path The path to the PNG file
+     * @param segmentWidth The width of the segment (in pixels of the picture)
+     * @param segmentHeight The height of the segment (in pixels of the picture)
+     * @throws IOException on a problem with reading the file
+     */
+    public TextureAtlas(Path path, int segmentWidth, int segmentHeight) throws IOException{
+        this(path, segmentWidth, segmentHeight, PNGTexture.DEFAULT_FILTERING_METHOD);
     }
 
     /**
