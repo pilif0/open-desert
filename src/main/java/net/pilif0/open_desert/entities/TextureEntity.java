@@ -3,6 +3,7 @@ package net.pilif0.open_desert.entities;
 import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.*;
 import net.pilif0.open_desert.graphics.shapes.TextureShape;
+import net.pilif0.open_desert.graphics.Texture;
 
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
@@ -63,7 +64,7 @@ public class TextureEntity extends Entity implements Renderable{
 
         //Bind the texture
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture.ID);
+        glBindTexture(GL_TEXTURE_2D, texture.getID());
 
         //Render the shape
         getShape().render();

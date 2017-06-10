@@ -10,6 +10,8 @@ import net.pilif0.open_desert.graphics.shapes.ColorShape;
 import net.pilif0.open_desert.graphics.shapes.Shape;
 import net.pilif0.open_desert.graphics.shapes.SpriteShape;
 import net.pilif0.open_desert.graphics.shapes.TextureShape;
+import net.pilif0.open_desert.graphics.text.Font;
+import net.pilif0.open_desert.graphics.text.Text;
 import net.pilif0.open_desert.input.Action;
 import net.pilif0.open_desert.input.InputManager;
 import net.pilif0.open_desert.state.GameState;
@@ -47,7 +49,9 @@ public class IntroState extends GameState{
     /** The sprite texture atlas */
     public static final TextureAtlas SPRITE_TEXTURE_ATLAS;
     /** The test texture */
-    public static final Texture TEST_TEXTURE;
+    public static final PNGTexture TEST_TEXTURE;
+    /** The text font */
+    public static final Font TEXT_FONT;
 
     static{
         //Read the texture atlas
@@ -66,10 +70,18 @@ public class IntroState extends GameState{
 
         //Read the texture
         try {
-            TEST_TEXTURE = new Texture(Paths.get("textures/test.png"));
+            TEST_TEXTURE = new PNGTexture(Paths.get("textures/test.png"));
         } catch (IOException e) {
             Launcher.getLog().log("Texture", e);
             throw new RuntimeException("Crash because of texture");
+        }
+
+        //Read the font
+        try{
+            TEXT_FONT = new Font(Paths.get("textures/font.png"));
+        }catch(IOException e){
+            Launcher.getLog().log("Texture", e);
+            throw new RuntimeException("Crash because of font");
         }
     }
 
@@ -85,6 +97,8 @@ public class IntroState extends GameState{
     private double pulsePhase;
     /** The camera */
     private PerpendicularCamera camera;
+    /** The text */
+    private Text text;
 
     /**
      * Constructs the state
@@ -121,6 +135,11 @@ public class IntroState extends GameState{
         sprite = new SpriteEntity(SPRITE_SHAPE, SPRITE_TEXTURE_ATLAS);
         sprite.getTransformation()
                 .translate(new Vector2f(800, 600));
+
+        //Create the text
+        text = new Text("Hello world!\nTest of new line", TEXT_FONT, 32);
+        text.getTransformation()
+                .translate(new Vector2f(-400, -400));
 
         //Register input listeners for entity scale control
         Game.getInstance().getWindow().inputManager.getScrollCallback().register(e -> {
@@ -234,6 +253,7 @@ public class IntroState extends GameState{
         entity.render(camera);
         pulsatingEntity.render(camera);
         sprite.render(camera);
+        text.render(camera);
     }
 
     @Override
@@ -246,6 +266,7 @@ public class IntroState extends GameState{
         pulsatingEntity.cleanUp();
         staticEntity.cleanUp();
         sprite.cleanUp();
+        text.cleanUp();
 
         //Clean up shapes
         SQUARE_SHAPE.cleanUp();
@@ -257,4 +278,9 @@ public class IntroState extends GameState{
         SPRITE_TEXTURE_ATLAS.cleanUp();
         TEST_TEXTURE.cleanUp();
     }
+
+    /**
+     * Cleans up after the entity
+     */
+    public void cleanUp(){}
 }
