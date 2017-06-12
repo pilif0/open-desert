@@ -93,8 +93,6 @@ public class IntroState extends GameState{
     private DynamicColorEntity pulsatingEntity;
     /** The sprite entity */
     private SpriteEntity sprite;
-    /** The phase of the pulsating entity */
-    private double pulsePhase;
     /** The camera */
     private PerpendicularCamera camera;
     /** The text */
@@ -130,6 +128,16 @@ public class IntroState extends GameState{
         pulsatingEntity.getTransformation()
                 .setScale(new Vector2f(150, 50))
                 .translate(new Vector2f(200, 600));
+        pulsatingEntity.addDirector(new DynamicColorEntity.DynamicColorEntityDirector(pulsatingEntity) {
+            /** The pulse phase */
+            private double pulsePhase = 0;
+
+            @Override
+            public void update() {
+                pulsePhase += 2 * Game.getInstance().delta.getDeltaSeconds();
+                entity.getColor().setRed((float) Math.abs(Math.sin(pulsePhase)));
+            }
+        });
 
         //Create the sprite entity
         sprite = new SpriteEntity(SPRITE_SHAPE, SPRITE_TEXTURE_ATLAS);
@@ -213,9 +221,8 @@ public class IntroState extends GameState{
             entity.getTransformation().rotate((float) Math.toRadians(z * Game.getInstance().delta.getDeltaSeconds()));
         }
 
-        //Update pulsating entity color
-        pulsePhase += 2 * Game.getInstance().delta.getDeltaSeconds();
-        pulsatingEntity.getColor().setRed((float) Math.abs(Math.sin(pulsePhase)));
+        //Update entities
+        pulsatingEntity.update();
     }
 
     /**

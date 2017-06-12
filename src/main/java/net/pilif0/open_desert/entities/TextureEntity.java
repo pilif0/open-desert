@@ -1,5 +1,6 @@
 package net.pilif0.open_desert.entities;
 
+import net.pilif0.open_desert.entities.animation.AnimationDirector;
 import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.*;
 import net.pilif0.open_desert.graphics.shapes.TextureShape;
@@ -92,5 +93,31 @@ public class TextureEntity extends Entity implements Renderable{
      */
     public Texture getTexture(){
         return texture;
+    }
+
+    /**
+     * Adds an animation director to the list
+     *
+     * @param director The director to add
+     */
+    public void addDirector(TextureEntityDirector director){
+        super.addDirector(director);
+    }
+
+    /**
+     * Animation director for the texture entity
+     */
+    public static abstract class TextureEntityDirector implements AnimationDirector {
+        /** The entity to be directed */
+        protected final TextureEntity entity;
+
+        /**
+         * Constructs the entity director, giving it a reference to the entity to be directed
+         *
+         * @param entity The entity to be directed
+         */
+        public TextureEntityDirector(TextureEntity entity){
+            this.entity = entity;
+        }
     }
 }

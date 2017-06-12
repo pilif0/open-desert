@@ -1,5 +1,6 @@
 package net.pilif0.open_desert.entities;
 
+import net.pilif0.open_desert.entities.animation.AnimationDirector;
 import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.Renderable;
 import net.pilif0.open_desert.graphics.shapes.ColorShape;
@@ -65,5 +66,31 @@ public class ColorEntity extends Entity implements Renderable {
      */
     public ColorShape getShape(){
         return shape;
+    }
+
+    /**
+     * Adds an animation director to the list
+     *
+     * @param director The director to add
+     */
+    public void addDirector(ColorEntityDirector director){
+        super.addDirector(director);
+    }
+
+    /**
+     * Animation director for the color entity
+     */
+    public static abstract class ColorEntityDirector implements AnimationDirector {
+        /** The entity to be directed */
+        protected final ColorEntity entity;
+
+        /**
+         * Constructs the entity director, giving it a reference to the entity to be directed
+         *
+         * @param entity The entity to be directed
+         */
+        public ColorEntityDirector(ColorEntity entity){
+            this.entity = entity;
+        }
     }
 }

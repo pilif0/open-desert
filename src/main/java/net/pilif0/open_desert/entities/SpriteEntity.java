@@ -1,5 +1,6 @@
 package net.pilif0.open_desert.entities;
 
+import net.pilif0.open_desert.entities.animation.AnimationDirector;
 import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.PerpendicularCamera;
 import net.pilif0.open_desert.graphics.Renderable;
@@ -124,5 +125,31 @@ public class SpriteEntity extends Entity implements Renderable {
     public void setSegment(int segment) {
         this.segment = segment;
         this.textureDelta = textureAtlas.getDeltaCoordinates(segment);
+    }
+
+    /**
+     * Adds an animation director to the list
+     *
+     * @param director The director to add
+     */
+    public void addDirector(SpriteEntityDirector director){
+        super.addDirector(director);
+    }
+
+    /**
+     * Animation director for the sprite entity
+     */
+    public static abstract class SpriteEntityDirector implements AnimationDirector {
+        /** The entity to be directed */
+        protected final SpriteEntity entity;
+
+        /**
+         * Constructs the entity director, giving it a reference to the entity to be directed
+         *
+         * @param entity The entity to be directed
+         */
+        public SpriteEntityDirector(SpriteEntity entity){
+            this.entity = entity;
+        }
     }
 }

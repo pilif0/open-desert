@@ -1,5 +1,6 @@
 package net.pilif0.open_desert.entities;
 
+import net.pilif0.open_desert.entities.animation.AnimationDirector;
 import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.PerpendicularCamera;
 import net.pilif0.open_desert.graphics.Renderable;
@@ -65,5 +66,31 @@ public class BasicEntity extends Entity implements Renderable {
      */
     public Shape getShape(){
         return shape;
+    }
+
+    /**
+     * Adds an animation director to the list
+     *
+     * @param director The director to add
+     */
+    public void addDirector(BasicEntityDirector director){
+        super.addDirector(director);
+    }
+
+    /**
+     * Animation director for the basic entity
+     */
+    public static abstract class BasicEntityDirector implements AnimationDirector {
+        /** The entity to be directed */
+        protected final BasicEntity entity;
+
+        /**
+         * Constructs the entity director, giving it a reference to the entity to be directed
+         *
+         * @param entity The entity to be directed
+         */
+        public BasicEntityDirector(BasicEntity entity){
+            this.entity = entity;
+        }
     }
 }

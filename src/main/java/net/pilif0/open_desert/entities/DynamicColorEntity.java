@@ -1,5 +1,6 @@
 package net.pilif0.open_desert.entities;
 
+import net.pilif0.open_desert.entities.animation.AnimationDirector;
 import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.Renderable;
 import net.pilif0.open_desert.graphics.ShaderProgram;
@@ -79,4 +80,30 @@ public class DynamicColorEntity extends Entity implements Renderable {
      * @return The entity colour
      */
     public Color getColor(){ return color; }
+
+    /**
+     * Adds an animation director to the list
+     *
+     * @param director The director to add
+     */
+    public void addDirector(DynamicColorEntityDirector director){
+        super.addDirector(director);
+    }
+
+    /**
+     * Animation director for the dynamic color entity
+     */
+    public static abstract class DynamicColorEntityDirector implements AnimationDirector {
+        /** The entity to be directed */
+        protected final DynamicColorEntity entity;
+
+        /**
+         * Constructs the entity director, giving it a reference to the entity to be directed
+         *
+         * @param entity The entity to be directed
+         */
+        public DynamicColorEntityDirector(DynamicColorEntity entity){
+            this.entity = entity;
+        }
+    }
 }
