@@ -5,6 +5,7 @@ import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.PerpendicularCamera;
 import net.pilif0.open_desert.graphics.Renderable;
 import net.pilif0.open_desert.graphics.ShaderProgram;
+import net.pilif0.open_desert.graphics.Shaders;
 import net.pilif0.open_desert.graphics.shapes.Shape;
 
 /**
@@ -42,7 +43,7 @@ public class BasicEntity extends Entity implements Renderable {
     @Override
     public void render(PerpendicularCamera camera, Transformation parentTransformation){
         //Retrieve the shader
-        ShaderProgram program = ShaderProgram.BASIC_SHADER;
+        ShaderProgram program = Shaders.get(ShaderProgram.BASIC_SHADER);
 
         //Bind the shader
         program.bind();
