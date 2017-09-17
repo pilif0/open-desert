@@ -61,6 +61,9 @@ public class Log{
             System.err.println("Exiting ...");
             System.exit(0);
         }
+
+        //Print success message
+        System.out.printf("Logging started in file %s\n", path.toAbsolutePath());
     }
 
     /**

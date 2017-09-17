@@ -47,7 +47,7 @@ public class PNGTexture implements Texture{
      */
     public PNGTexture(Path path, int filterMethod) throws IOException{
         //Read the file into a buffer
-        PNGDecoder decoder = new PNGDecoder(Files.newInputStream(path, StandardOpenOption.READ));
+        PNGDecoder decoder = new PNGDecoder(Files.newInputStream(path.toAbsolutePath(), StandardOpenOption.READ));
         ByteBuffer buffer = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
         decoder.decode(buffer, decoder.getWidth() * 4, PNGDecoder.Format.RGBA);
         buffer.flip();

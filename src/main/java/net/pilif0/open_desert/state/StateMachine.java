@@ -1,6 +1,7 @@
 package net.pilif0.open_desert.state;
 
-import javafx.util.Pair;
+
+import net.pilif0.open_desert.util.Pair;
 
 import java.util.Map;
 import java.util.Set;
