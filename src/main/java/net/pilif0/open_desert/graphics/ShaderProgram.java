@@ -227,7 +227,7 @@ public class ShaderProgram {
     /**
      * Unbinds the shader program
      */
-    public void unbind(){ glUseProgram(0); }
+    public static void unbind(){ glUseProgram(0); }
 
     /**
      * Cleans up after the program (unbinds, detaches and deletes)

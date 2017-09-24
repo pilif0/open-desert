@@ -103,7 +103,7 @@ public class Text extends Entity implements Renderable{
         glBindTexture(GL_TEXTURE_2D, 0);
 
         //Restore the shader
-        program.unbind();
+        ShaderProgram.unbind();
     }
 
     /**

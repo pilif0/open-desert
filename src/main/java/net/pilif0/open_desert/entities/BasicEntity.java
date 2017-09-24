@@ -57,7 +57,7 @@ public class BasicEntity extends Entity implements Renderable {
         getShape().render();
 
         //Restore the shader
-        program.unbind();
+        ShaderProgram.unbind();
     }
 
     /**

@@ -35,7 +35,7 @@ public class Game {
     public Delta delta;
 
     /**
-     * Constructs the game instnace
+     * Constructs the game instance
      */
     private Game(){}
 
