@@ -6,7 +6,7 @@ package net.pilif0.open_desert.util;
  * @param <K> Key type
  * @param <V> Value type
  *
- * @author Filip Smola <smola.filip@hotmail.com>
+ * @author Filip Smola
  * @version 1.0
  */
 public class Pair<K, V> {

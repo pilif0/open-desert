@@ -4,7 +4,6 @@ import net.pilif0.open_desert.entities.animation.AnimationDirector;
 import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.*;
 import net.pilif0.open_desert.graphics.shapes.TextureShape;
-import net.pilif0.open_desert.graphics.Texture;
 
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
@@ -18,7 +17,7 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
  * @author Filip Smola
  * @version 1.0
  */
-public class TextureEntity extends Entity implements Renderable{
+public class TextureEntity extends Entity implements Renderable {
     /** The entity shape */
     protected final TextureShape shape;
     /** The entity texture */
@@ -52,7 +51,7 @@ public class TextureEntity extends Entity implements Renderable{
     @Override
     public void render(PerpendicularCamera camera, Transformation parentTransformation){
         //Retrieve the shader
-        ShaderProgram program = ShaderProgram.TEXTURE_SHADER;
+        ShaderProgram program = Shaders.get(ShaderProgram.TEXTURE_SHADER);
 
         //Bind the shader
         program.bind();
@@ -74,7 +73,7 @@ public class TextureEntity extends Entity implements Renderable{
         glBindTexture(GL_TEXTURE_2D, 0);
 
         //Restore the shader
-        program.unbind();
+        ShaderProgram.unbind();
     }
 
     /**

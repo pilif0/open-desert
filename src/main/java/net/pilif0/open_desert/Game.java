@@ -1,6 +1,6 @@
 package net.pilif0.open_desert;
 
-import net.pilif0.open_desert.graphics.ShaderProgram;
+import net.pilif0.open_desert.graphics.Shaders;
 import net.pilif0.open_desert.graphics.shapes.Shapes;
 import net.pilif0.open_desert.input.Action;
 import net.pilif0.open_desert.state.GameState;
@@ -35,7 +35,7 @@ public class Game {
     public Delta delta;
 
     /**
-     * Constructs the game instnace
+     * Constructs the game instance
      */
     private Game(){}
 
@@ -163,10 +163,7 @@ public class Game {
      */
     private void cleanUp(){
         //Clean up all the global shaders
-        ShaderProgram.DYNAMIC_COLOR_SHADER.cleanUp();
-        ShaderProgram.STATIC_COLOR_SHADER.cleanUp();
-        ShaderProgram.BASIC_SHADER.cleanUp();
-        ShaderProgram.TEXTURE_SHADER.cleanUp();
+        Shaders.cleanUp();
 
         //Clean up shapes
         Shapes.cleanUp();

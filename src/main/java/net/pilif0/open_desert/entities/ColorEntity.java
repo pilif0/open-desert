@@ -2,10 +2,11 @@ package net.pilif0.open_desert.entities;
 
 import net.pilif0.open_desert.entities.animation.AnimationDirector;
 import net.pilif0.open_desert.geometry.Transformation;
-import net.pilif0.open_desert.graphics.Renderable;
-import net.pilif0.open_desert.graphics.shapes.ColorShape;
-import net.pilif0.open_desert.graphics.ShaderProgram;
 import net.pilif0.open_desert.graphics.PerpendicularCamera;
+import net.pilif0.open_desert.graphics.Renderable;
+import net.pilif0.open_desert.graphics.ShaderProgram;
+import net.pilif0.open_desert.graphics.Shaders;
+import net.pilif0.open_desert.graphics.shapes.ColorShape;
 
 /**
  * Represents the objects in the world, i.e. transformed shapes.
@@ -42,7 +43,7 @@ public class ColorEntity extends Entity implements Renderable {
     @Override
     public void render(PerpendicularCamera camera, Transformation parentTransformation){
         //Retrieve the shader
-        ShaderProgram program = ShaderProgram.STATIC_COLOR_SHADER;
+        ShaderProgram program = Shaders.get(ShaderProgram.STATIC_COLOR_SHADER);
 
         //Bind the shader
         program.bind();
@@ -56,7 +57,7 @@ public class ColorEntity extends Entity implements Renderable {
         getShape().render();
 
         //Restore the shader
-        program.unbind();
+        ShaderProgram.unbind();
     }
 
     /**

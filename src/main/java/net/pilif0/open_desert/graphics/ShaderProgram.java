@@ -2,7 +2,9 @@ package net.pilif0.open_desert.graphics;
 
 import net.pilif0.open_desert.Launcher;
 import net.pilif0.open_desert.util.Severity;
-import org.joml.*;
+import org.joml.Matrix4fc;
+import org.joml.Vector2fc;
+import org.joml.Vector4fc;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
@@ -23,15 +25,15 @@ import static org.lwjgl.opengl.GL20.*;
  */
 public class ShaderProgram {
     /** The basic shader (expects only positions, colours in white) */
-    public static final ShaderProgram BASIC_SHADER = new ShaderProgram();
+    public static final int BASIC_SHADER;
     /** The static color shader (expects positions and colours) */
-    public static final ShaderProgram STATIC_COLOR_SHADER = new ShaderProgram();
+    public static final int STATIC_COLOR_SHADER;
     /** The dynamic color shader (expects positions, colour as uniform) */
-    public static final ShaderProgram DYNAMIC_COLOR_SHADER = new ShaderProgram();
+    public static final int DYNAMIC_COLOR_SHADER;
     /** The texture shader (expects positions and texture coordinates, texture sampler as uniform) */
-    public static final ShaderProgram TEXTURE_SHADER = new ShaderProgram();
+    public static final int TEXTURE_SHADER;
     /** The sprite shader (expects positions and texture coordinates, texture sampler and segment number as uniform */
-    public static final ShaderProgram SPRITE_SHADER = new ShaderProgram();
+    public static final int SPRITE_SHADER;
 
     /** The shader program ID */
     private final int programID;
@@ -43,84 +45,97 @@ public class ShaderProgram {
     private Map<String, Integer> uniforms;
 
     static{
+        //Prepare temporary buffer variable
+        ShaderProgram temp;
+
         //Create the basic shader
+        temp = new ShaderProgram();
         try {
             String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/vertex/Basic.vs")));
             String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/fragment/Basic.fs")));
 
-            BASIC_SHADER.attachVertexShader(vertexCode);
-            BASIC_SHADER.attachFragmentShader(fragmentCode);
-            BASIC_SHADER.link();
+            temp.attachVertexShader(vertexCode);
+            temp.attachFragmentShader(fragmentCode);
+            temp.link();
         } catch (IOException e) {
             Launcher.getLog().log("IO", e);
         }
-        BASIC_SHADER.createUniform("projectionMatrix");
-        BASIC_SHADER.createUniform("worldMatrix");
-        BASIC_SHADER.createUniform("parentMatrix");
+        temp.createUniform("projectionMatrix");
+        temp.createUniform("worldMatrix");
+        temp.createUniform("parentMatrix");
+        BASIC_SHADER = Shaders.add(temp);
 
         //Create the static color shader
+        temp = new ShaderProgram();
         try {
             String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/vertex/Color.vs")));
             String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/fragment/StaticColor.fs")));
 
-            STATIC_COLOR_SHADER.attachVertexShader(vertexCode);
-            STATIC_COLOR_SHADER.attachFragmentShader(fragmentCode);
-            STATIC_COLOR_SHADER.link();
+            temp.attachVertexShader(vertexCode);
+            temp.attachFragmentShader(fragmentCode);
+            temp.link();
         } catch (IOException e) {
             Launcher.getLog().log("IO", e);
         }
-        STATIC_COLOR_SHADER.createUniform("projectionMatrix");
-        STATIC_COLOR_SHADER.createUniform("worldMatrix");
-        STATIC_COLOR_SHADER.createUniform("parentMatrix");
+        temp.createUniform("projectionMatrix");
+        temp.createUniform("worldMatrix");
+        temp.createUniform("parentMatrix");
+        STATIC_COLOR_SHADER = Shaders.add(temp);
 
         //Create the dynamic color shader
+        temp = new ShaderProgram();
         try {
             String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/vertex/Basic.vs")));
             String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/fragment/DynamicColor.fs")));
 
-            DYNAMIC_COLOR_SHADER.attachVertexShader(vertexCode);
-            DYNAMIC_COLOR_SHADER.attachFragmentShader(fragmentCode);
-            DYNAMIC_COLOR_SHADER.link();
+            temp.attachVertexShader(vertexCode);
+            temp.attachFragmentShader(fragmentCode);
+            temp.link();
         } catch (IOException e) {
             Launcher.getLog().log("IO", e);
         }
-        DYNAMIC_COLOR_SHADER.createUniform("projectionMatrix");
-        DYNAMIC_COLOR_SHADER.createUniform("worldMatrix");
-        DYNAMIC_COLOR_SHADER.createUniform("parentMatrix");
-        DYNAMIC_COLOR_SHADER.createUniform("color");
+        temp.createUniform("projectionMatrix");
+        temp.createUniform("worldMatrix");
+        temp.createUniform("parentMatrix");
+        temp.createUniform("color");
+        DYNAMIC_COLOR_SHADER = Shaders.add(temp);
 
         //Create the texture shader
+        temp = new ShaderProgram();
         try {
             String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/vertex/Texture.vs")));
             String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/fragment/Texture.fs")));
 
-            TEXTURE_SHADER.attachVertexShader(vertexCode);
-            TEXTURE_SHADER.attachFragmentShader(fragmentCode);
-            TEXTURE_SHADER.link();
+            temp.attachVertexShader(vertexCode);
+            temp.attachFragmentShader(fragmentCode);
+            temp.link();
         } catch (IOException e) {
             Launcher.getLog().log("IO", e);
         }
-        TEXTURE_SHADER.createUniform("projectionMatrix");
-        TEXTURE_SHADER.createUniform("worldMatrix");
-        TEXTURE_SHADER.createUniform("parentMatrix");
-        TEXTURE_SHADER.createUniform("textureSampler");
+        temp.createUniform("projectionMatrix");
+        temp.createUniform("worldMatrix");
+        temp.createUniform("parentMatrix");
+        temp.createUniform("textureSampler");
+        TEXTURE_SHADER = Shaders.add(temp);
 
         //Create the sprite shader
+        temp = new ShaderProgram();
         try {
             String vertexCode = new String(Files.readAllBytes(Paths.get("shaders/vertex/Texture.vs")));
             String fragmentCode = new String(Files.readAllBytes(Paths.get("shaders/fragment/TextureAtlas.fs")));
 
-            SPRITE_SHADER.attachVertexShader(vertexCode);
-            SPRITE_SHADER.attachFragmentShader(fragmentCode);
-            SPRITE_SHADER.link();
+            temp.attachVertexShader(vertexCode);
+            temp.attachFragmentShader(fragmentCode);
+            temp.link();
         } catch (IOException e) {
             Launcher.getLog().log("IO", e);
         }
-        SPRITE_SHADER.createUniform("projectionMatrix");
-        SPRITE_SHADER.createUniform("worldMatrix");
-        SPRITE_SHADER.createUniform("parentMatrix");
-        SPRITE_SHADER.createUniform("textureSampler");
-        SPRITE_SHADER.createUniform("textureDelta");
+        temp.createUniform("projectionMatrix");
+        temp.createUniform("worldMatrix");
+        temp.createUniform("parentMatrix");
+        temp.createUniform("textureSampler");
+        temp.createUniform("textureDelta");
+        SPRITE_SHADER = Shaders.add(temp);
     }
 
     /**
@@ -212,7 +227,7 @@ public class ShaderProgram {
     /**
      * Unbinds the shader program
      */
-    public void unbind(){ glUseProgram(0); }
+    public static void unbind(){ glUseProgram(0); }
 
     /**
      * Cleans up after the program (unbinds, detaches and deletes)

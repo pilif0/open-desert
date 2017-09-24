@@ -5,6 +5,7 @@ import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.PerpendicularCamera;
 import net.pilif0.open_desert.graphics.Renderable;
 import net.pilif0.open_desert.graphics.ShaderProgram;
+import net.pilif0.open_desert.graphics.Shaders;
 import net.pilif0.open_desert.graphics.shapes.Shapes;
 import org.joml.Vector2f;
 
@@ -49,7 +50,7 @@ public class Text extends Entity implements Renderable{
     @Override
     public void render(PerpendicularCamera camera, Transformation parentTransformation) {
         //Retrieve the shader
-        ShaderProgram program = ShaderProgram.SPRITE_SHADER;
+        ShaderProgram program = Shaders.get(ShaderProgram.SPRITE_SHADER);
 
         //Bind the shader
         program.bind();
@@ -102,7 +103,7 @@ public class Text extends Entity implements Renderable{
         glBindTexture(GL_TEXTURE_2D, 0);
 
         //Restore the shader
-        program.unbind();
+        ShaderProgram.unbind();
     }
 
     /**
