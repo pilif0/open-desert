@@ -1,0 +1,4 @@
+- name: position
+  description: Position
+  class: net.pilif0.open_desert.components.PositionComponent
+  required: none

@@ -1,7 +1,10 @@
 package net.pilif0.open_desert.ecs;
 
+import net.pilif0.open_desert.Game;
+import net.pilif0.open_desert.Launcher;
 import net.pilif0.open_desert.components.PositionComponent;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -22,6 +25,8 @@ public class GameObject {
     private List<Component> components;
     /** Immutable unique (within each world) object handle */
     public final int handle;
+    /** Reference to the template that this game object was created from ({@code null} when created manually) */
+    public final Template template;
 
     // Frequent components
     /** Position component */
@@ -34,8 +39,18 @@ public class GameObject {
      */
     public GameObject(Template t){
         // Create the object based on the template generating a new handle for it
-        //TODO
-        position = new PositionComponent(); //TODO
+        template = t;
+        components = new ArrayList<>();
+        for(Template.ComponentInfo i : t.components){
+            try {
+                components.add(Components.instantiate(i));
+            } catch (Exception e) {
+                // Exception here means the game object cannot be properly created --> abort
+                Launcher.getLog().log("GO:"+t.name, e);
+                System.exit(1);
+            }
+        }
+        position = (PositionComponent) getComponent("position");
         handle = newHandle();
     }
 
@@ -48,7 +63,9 @@ public class GameObject {
     protected GameObject(int handle, List<Component> components){
         this.handle = handle;
         this.components = components;
+        components.forEach(c -> c.onAttach(this));
         position = (PositionComponent) getComponent("position");
+        template = null;
     }
 
     /**
@@ -62,7 +79,9 @@ public class GameObject {
         if(hasComponent(c.getName())){
             return false;
         }
-        return components.add(c);
+        boolean result = components.add(c);
+        c.onAttach(this);
+        return result;
     }
 
     /**
@@ -72,7 +91,9 @@ public class GameObject {
      * @return Whether this game object had this component
      */
     public boolean removeComponent(Component c){
-        return components.remove(c);
+        boolean result = components.remove(c);
+        c.onDetach(this);
+        return result;
     }
 
     /**
@@ -85,7 +106,9 @@ public class GameObject {
         Iterator<Component> it = components.iterator();
 
         while(it.hasNext()){
-            if(it.next().getName().equals(name)){
+            Component c = it.next();
+            if(c.getName().equals(name)){
+                c.onDetach(this);
                 it.remove();
             }
             return true;

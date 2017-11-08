@@ -175,7 +175,6 @@ public class WorldTree {
          * @param p Position
          * @return Index of the child
          */
-        //TODO handle leaf?
         private int getChildIndex(Vector2fc p){
             if(p.x() >= mid.x()){
                 // Right
@@ -199,12 +198,13 @@ public class WorldTree {
         }
 
         /**
-         * Get the child quad that contains the provided position
+         * Get the child quad that contains the provided position.
+         * Assumes that the quad has children, throws an NPE otherwise.
          *
          * @param p Position
          * @return Child quad that contain the position
          */
-        //TODO handle leaf?
+        // Assuming use only when the quad has children, not checking for performance
         private Quad getChild(Vector2fc p){
             return children[getChildIndex(p)];
         }

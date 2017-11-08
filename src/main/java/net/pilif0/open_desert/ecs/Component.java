@@ -31,4 +31,26 @@ public interface Component {
      */
     // Mainly to be used in debugging
     Map<String, Object> getState();
+
+    /**
+     * Handle attaching to a game object
+     *
+     * @param owner Game object the component is being attached to
+     */
+    void onAttach(GameObject owner);
+
+    /**
+     * Handle detaching from a game object
+     *
+     * @param owner Game object the component is being detached from
+     */
+    void onDetach(GameObject owner);
+
+    /**
+     * Override field values with the provided ones
+     *
+     * @param overrides New fields values
+     */
+    // For instantiating from templates and serialised game objects
+    void overrideFields(Map<String, Object> overrides);
 }
