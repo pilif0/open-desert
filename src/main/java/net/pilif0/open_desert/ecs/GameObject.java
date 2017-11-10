@@ -73,7 +73,13 @@ public class GameObject {
      * @param delta Delta time in ns
      */
     public void update(long delta){
+        // Distribute as an event, because some components might not want to update (ex. just hold data)
         distributeEvent(new UpdateEvent(delta));
+    }
+
+    public void cleanUp(){
+        // Distribute as an event, because some components might not have anything to clean up
+        distributeEvent(new CleanUpEvent());
     }
 
     /**
@@ -198,7 +204,7 @@ public class GameObject {
     /**
      * Event representing a game update
      */
-    public static class UpdateEvent implements GameObjectEvent {
+    public static class UpdateEvent implements GameObjectEvent{
         /** Delta time in ns */
         public final long delta;
 
@@ -211,6 +217,16 @@ public class GameObject {
             this.delta = delta;
         }
 
+        @Override
+        public Component getOrigin() {
+            return null;
+        }
+    }
+
+    /**
+     * Event representing game object cleaning up
+     */
+    public static class CleanUpEvent implements GameObjectEvent{
         @Override
         public Component getOrigin() {
             return null;
