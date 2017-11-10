@@ -2,6 +2,7 @@ package net.pilif0.open_desert.world;
 
 import net.pilif0.open_desert.Launcher;
 import net.pilif0.open_desert.ecs.GameObject;
+import net.pilif0.open_desert.ecs.GameObjectEvent;
 import net.pilif0.open_desert.util.Severity;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -167,6 +168,16 @@ public class WorldTree {
 
             // Handle inner quad
             getChild(o.position.getPosition()).add(o, false);  // Position already checked
+        }
+
+        /**
+         * Updates all the game objects in this quad
+         *
+         * @param delta Delta time in ns
+         */
+        public void update(long delta){
+            GameObjectEvent event = new GameObject.UpdateEvent(delta);
+            contents.forEach(go -> go.distributeEvent(event));
         }
 
         /**

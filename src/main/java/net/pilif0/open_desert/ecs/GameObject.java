@@ -1,6 +1,5 @@
 package net.pilif0.open_desert.ecs;
 
-import net.pilif0.open_desert.Game;
 import net.pilif0.open_desert.Launcher;
 import net.pilif0.open_desert.components.PositionComponent;
 
@@ -66,6 +65,15 @@ public class GameObject {
         components.forEach(c -> c.onAttach(this));
         position = (PositionComponent) getComponent("position");
         template = null;
+    }
+
+    /**
+     * Update this game object
+     *
+     * @param delta Delta time in ns
+     */
+    public void update(long delta){
+        distributeEvent(new UpdateEvent(delta));
     }
 
     /**
@@ -183,7 +191,29 @@ public class GameObject {
      *
      * @param e Event to distribute
      */
-    public void distributeEvent(ComponentEvent e){
+    public void distributeEvent(GameObjectEvent e){
         components.stream().forEach(c -> c.handle(e));
+    }
+
+    /**
+     * Event representing a game update
+     */
+    public static class UpdateEvent implements GameObjectEvent {
+        /** Delta time in ns */
+        public final long delta;
+
+        /**
+         * Construct the event from the delta time
+         *
+         * @param delta Delta time in ns
+         */
+        public UpdateEvent(long delta){
+            this.delta = delta;
+        }
+
+        @Override
+        public Component getOrigin() {
+            return null;
+        }
     }
 }

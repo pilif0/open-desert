@@ -21,7 +21,7 @@ public interface Component {
      *
      * @param e Event to handle
      */
-    void handle(ComponentEvent e);
+    void handle(GameObjectEvent e);
 
     /**
      * Get the component state as a map of field names to values (as Objects with meaningful {@code toString()}).
@@ -33,14 +33,14 @@ public interface Component {
     Map<String, Object> getState();
 
     /**
-     * Handle attaching to a game object
+     * Handle attaching to a game object (after the fact)
      *
      * @param owner Game object the component is being attached to
      */
     void onAttach(GameObject owner);
 
     /**
-     * Handle detaching from a game object
+     * Handle detaching from a game object (after the fact)
      *
      * @param owner Game object the component is being detached from
      */

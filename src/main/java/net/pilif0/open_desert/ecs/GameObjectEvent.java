@@ -6,12 +6,12 @@ package net.pilif0.open_desert.ecs;
  * @author Filip Smola
  * @version 1.0
  */
-public interface ComponentEvent {
+public interface GameObjectEvent {
 
     /**
      * Get the component where the event originated
      *
-     * @return Origin component
+     * @return Origin component or {@code null} when the event did not originate from a component
      */
     Component getOrigin();
 }

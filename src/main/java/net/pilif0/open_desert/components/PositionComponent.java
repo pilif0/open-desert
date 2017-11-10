@@ -1,7 +1,7 @@
 package net.pilif0.open_desert.components;
 
 import net.pilif0.open_desert.ecs.Component;
-import net.pilif0.open_desert.ecs.ComponentEvent;
+import net.pilif0.open_desert.ecs.GameObjectEvent;
 import net.pilif0.open_desert.ecs.GameObject;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -53,7 +53,7 @@ public class PositionComponent implements Component {
     }
 
     @Override
-    public void handle(ComponentEvent e) {
+    public void handle(GameObjectEvent e) {
         // So far there are no events for this component to handle
     }
 
