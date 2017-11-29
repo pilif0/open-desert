@@ -19,6 +19,8 @@ import java.util.Map;
 public class PositionComponent implements Component {
     /** Name of this component */
     public static final String NAME = "position";
+    /** Default value for position */
+    public static final String DEFAULT_POSITION = "0,0";
 
     /** Position value */
     private Vector2f position;
@@ -75,7 +77,7 @@ public class PositionComponent implements Component {
     @Override
     public void overrideFields(Map<String, Object> overrides) {
         // Position is serialised as a String with two float values separated by ','
-        String val = (String) overrides.get("position");
+        String val = (String) overrides.getOrDefault("position", DEFAULT_POSITION);
         String[] p = val.split(",");
         position.set(Float.parseFloat(p[0]), Float.parseFloat(p[1]));
     }
