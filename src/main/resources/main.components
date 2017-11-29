@@ -2,3 +2,18 @@
   description: Position
   class: net.pilif0.open_desert.components.PositionComponent
   required: none
+
+- name: rotation
+  description: Rotation
+  class: net.pilif0.open_desert.components.RotationComponent
+  required: none
+
+- name: scale
+  description: Scale
+  class: net.pilif0.open_desert.components.ScaleComponent
+  required: none
+
+- name: world_matrix
+  description: Keeps an up-to-date world matrix for the game object
+  class: net.pilif0.open_desert.components.WorldMatrixComponent
+  required: position, rotation, scale

@@ -5,6 +5,8 @@ import net.pilif0.open_desert.ecs.GameObjectEvent;
 import net.pilif0.open_desert.ecs.GameObject;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,14 +26,14 @@ public class PositionComponent implements Component {
 
     /** Position value */
     private Vector2f position;
-    /** Map of the component state */
-    private Map<String, Object> state;
+    /** Component's owner */
+    private GameObject owner;
 
     /**
      * Construct the component with position (0,0)
      */
     public PositionComponent(){
-        this(null);
+        position = new Vector2f();
     }
 
     /**
@@ -40,13 +42,7 @@ public class PositionComponent implements Component {
      * @param position Position
      */
     public PositionComponent(Vector2fc position){
-        if(position == null){
-            this.position = new Vector2f();
-        }else{
-            this.position = new Vector2f(position);
-        }
-        state = new HashMap<>();
-        state.put("position", position);
+        this.position = new Vector2f(position);
     }
 
     @Override
@@ -61,17 +57,21 @@ public class PositionComponent implements Component {
 
     @Override
     public Map<String, Object> getState() {
-        return state;
+        Map<String, Object> result = new HashMap<>();
+        result.put("position", position);
+        return result;
     }
 
     @Override
     public void onAttach(GameObject owner) {
-        // Nothing to do
+        // Remember who the component is attached to and set to recalculate
+        this.owner = owner;
     }
 
     @Override
     public void onDetach(GameObject owner) {
-        // Nothing to do
+        // Forget the owner
+        this.owner = null;
     }
 
     @Override
@@ -89,5 +89,46 @@ public class PositionComponent implements Component {
      */
     public Vector2fc getPosition(){
         return position;
+    }
+
+    /**
+     * Get the position value in 3D
+     *
+     * @return Position value
+     */
+    public Vector3fc getPosition3D(){
+        return (new Vector3f(position, 0)).toImmutable();
+    }
+
+    /**
+     * Set the position
+     *
+     * @param newValue New position
+     */
+    public void setPosition(Vector2fc newValue){
+        position.set(newValue);
+        owner.distributeEvent(new PositionEvent(this));
+    }
+
+    /**
+     * Represents an event in the position, such as a change
+     */
+    public static class PositionEvent implements GameObjectEvent {
+        /** Origin of the event */
+        private PositionComponent origin;
+
+        /**
+         * Construct the event from its origin
+         *
+         * @param origin Origin of the event
+         */
+        public PositionEvent(PositionComponent origin) {
+            this.origin = origin;
+        }
+
+        @Override
+        public Component getOrigin() {
+            return origin;
+        }
     }
 }

@@ -2,6 +2,8 @@ package net.pilif0.open_desert.ecs;
 
 import net.pilif0.open_desert.Launcher;
 import net.pilif0.open_desert.components.PositionComponent;
+import net.pilif0.open_desert.components.RotationComponent;
+import net.pilif0.open_desert.components.ScaleComponent;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,6 +32,10 @@ public class GameObject {
     // Frequent components
     /** Position component */
     public final PositionComponent position;
+    /** Rotation component */
+    public final RotationComponent rotation;
+    /** Scale component */
+    public final ScaleComponent scale;
 
     /**
      * Construct a new game object based on a template
@@ -50,6 +56,8 @@ public class GameObject {
             }
         }
         position = (PositionComponent) getComponent("position");
+        rotation = (RotationComponent) getComponent("rotation");
+        scale = (ScaleComponent) getComponent("scale");
         handle = newHandle();
     }
 
@@ -64,6 +72,8 @@ public class GameObject {
         this.components = components;
         components.forEach(c -> c.onAttach(this));
         position = (PositionComponent) getComponent("position");
+        rotation = (RotationComponent) getComponent("rotation");
+        scale = (ScaleComponent) getComponent("scale");
         template = null;
     }
 
