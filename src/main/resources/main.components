@@ -17,3 +17,8 @@
   description: Keeps an up-to-date world matrix for the game object
   class: net.pilif0.open_desert.components.WorldMatrixComponent
   required: position, rotation, scale
+
+- name: sprite
+  description: Contains information needed to render the game object as a sprite
+  class: net.pilif0.open_desert.components.SpriteComponent
+  required: world_matrix

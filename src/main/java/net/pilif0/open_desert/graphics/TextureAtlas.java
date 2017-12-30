@@ -2,9 +2,13 @@ package net.pilif0.open_desert.graphics;
 
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
+import org.joml.Vector2i;
+import org.joml.Vector2ic;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a texture that is segmented into smaller rectangles (of equal size).
@@ -103,6 +107,32 @@ public class TextureAtlas extends PNGTexture {
         int col = i % cols;
         int row = i / cols;
         Vector2f result = (new Vector2f()).set(segmentSize).mul(col, row);
+        return result;
+    }
+
+    // Optimisation to avoid multiple equal texture atlas objects
+    /** Atlas for each file requested through {@code from(Path)} */
+    private static Map<Path, TextureAtlas> atlases = new HashMap<>();
+    /** Default segment size */
+    // TODO: replace this with a way to set segment size dynamically (in the component, file name, ...)
+    public static final Vector2ic DEFAULT_SEGMENT_SIZE = (new Vector2i(64, 64)).toImmutable();
+
+    /**
+     * Return the texture atlas from the PNG file, applying the default filtering method and using the default segment
+     *  size.
+     * Constructs only one instance per file.
+     *
+     * @param path The path to the PNG file
+     * @throws IOException on a problem with reading the file
+     */
+    public static TextureAtlas from(Path path) throws IOException{
+        TextureAtlas result = atlases.get(path);
+
+        if(result == null){
+            result = new TextureAtlas(path, DEFAULT_SEGMENT_SIZE.x(), DEFAULT_SEGMENT_SIZE.y());
+            atlases.put(path, result);
+        }
+
         return result;
     }
 }
