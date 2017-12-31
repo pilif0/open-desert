@@ -101,7 +101,14 @@ public class SpriteComponent implements Component {
         }
 
         // Index is serialised as a String with one integer value
-        index = (int) overrides.getOrDefault("index", DEFAULT_TEXTURE_INDEX);
+        Object valIndex = overrides.getOrDefault("index", DEFAULT_TEXTURE_INDEX);
+        if(valIndex instanceof Integer) {
+            // When the value is a number
+            index = (int) valIndex;
+        }else if(valIndex instanceof String){
+            // When the value is anything else or nothing
+            index = Integer.parseInt((String) valIndex);
+        }
 
         // Dimensions are serialised as a String with two float values separated by ','
         String valDim = (String) overrides.getOrDefault("dimensions", DEFAULT_DIMENSIONS);

@@ -12,7 +12,6 @@ import net.pilif0.open_desert.graphics.*;
 import net.pilif0.open_desert.graphics.render.SpriteRenderer;
 import net.pilif0.open_desert.graphics.shapes.ColorShape;
 import net.pilif0.open_desert.graphics.shapes.Shape;
-import net.pilif0.open_desert.graphics.shapes.SpriteShape;
 import net.pilif0.open_desert.graphics.shapes.TextureShape;
 import net.pilif0.open_desert.graphics.text.Font;
 import net.pilif0.open_desert.graphics.text.Text;
@@ -48,29 +47,16 @@ public class IntroState extends GameState{
     public static final ColorShape RAINBOW_SQUARE;
     /** The basic square shape */
     public static final Shape BASIC_SQUARE;
-    /** The sprite shape */
-    public static final SpriteShape SPRITE_SHAPE;
-    /** The sprite texture atlas */
-    public static final TextureAtlas SPRITE_TEXTURE_ATLAS;
     /** The test texture */
     public static final PNGTexture TEST_TEXTURE;
     /** The text font */
     public static final Font TEXT_FONT;
 
     static{
-        //Read the texture atlas
-        try{
-            SPRITE_TEXTURE_ATLAS = new TextureAtlas(Paths.get("textures/atlas.png"), 64, 64);
-        }catch(IOException e){
-            Launcher.getLog().log("Texture", e);
-            throw new RuntimeException("Crash because of texture atlas");
-        }
-
         //Parse the shapes
         SQUARE_SHAPE = TextureShape.parse(Paths.get("shapes/TexturedSquare.shape"));
         RAINBOW_SQUARE = ColorShape.parse(Paths.get("shapes/RainbowSquare.shape"));
         BASIC_SQUARE = Shape.parse(Paths.get("shapes/Square.shape"));
-        SPRITE_SHAPE = new SpriteShape(64, 64, SPRITE_TEXTURE_ATLAS.width, SPRITE_TEXTURE_ATLAS.height);
 
         //Read the texture
         try {
@@ -100,7 +86,7 @@ public class IntroState extends GameState{
     /** The text */
     private Text text;
 
-    /** The static square */
+    /** The static sprite square */
     private GameObject spriteGO;
 
     /**
@@ -297,10 +283,8 @@ public class IntroState extends GameState{
         SQUARE_SHAPE.cleanUp();
         BASIC_SQUARE.cleanUp();
         RAINBOW_SQUARE.cleanUp();
-        SPRITE_SHAPE.cleanUp();
 
         //Clean up textures
-        SPRITE_TEXTURE_ATLAS.cleanUp();
         TEST_TEXTURE.cleanUp();
 
         // Clean up renderer
