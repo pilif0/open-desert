@@ -1,0 +1,11 @@
+name: texture_test
+description: Texture test
+parent: none
+components:
+    - position
+    - rotation
+    - scale
+    - world_matrix
+    - sprite:
+        atlas: textures/test.png
+        dimensions: 100, 100

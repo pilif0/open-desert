@@ -41,30 +41,17 @@ public class IntroState extends GameState{
     public static final float CAMERA_SPEED = 750f;
     /** The entity movement speed */
     public static final float ENTITY_SPEED = 250f;
-    /** The textured square shape */
-    public static final TextureShape SQUARE_SHAPE;
     /** The rainbow square shape */
     public static final ColorShape RAINBOW_SQUARE;
     /** The basic square shape */
     public static final Shape BASIC_SQUARE;
-    /** The test texture */
-    public static final PNGTexture TEST_TEXTURE;
     /** The text font */
     public static final Font TEXT_FONT;
 
     static{
         //Parse the shapes
-        SQUARE_SHAPE = TextureShape.parse(Paths.get("shapes/TexturedSquare.shape"));
         RAINBOW_SQUARE = ColorShape.parse(Paths.get("shapes/RainbowSquare.shape"));
         BASIC_SQUARE = Shape.parse(Paths.get("shapes/Square.shape"));
-
-        //Read the texture
-        try {
-            TEST_TEXTURE = new PNGTexture(Paths.get("textures/test.png"));
-        } catch (IOException e) {
-            Launcher.getLog().log("Texture", e);
-            throw new RuntimeException("Crash because of texture");
-        }
 
         //Read the font
         try{
@@ -75,8 +62,6 @@ public class IntroState extends GameState{
         }
     }
 
-    /** The entity to draw */
-    private TextureEntity entity;
     /** The static entity */
     private ColorEntity staticEntity;
     /** The pulsating entity */
@@ -86,8 +71,10 @@ public class IntroState extends GameState{
     /** The text */
     private Text text;
 
-    /** The static sprite square */
+    /** Static sprite square */
     private GameObject spriteGO;
+    /** Texture test square */
+    private GameObject textureGO;
 
     /**
      * Constructs the state
@@ -111,11 +98,6 @@ public class IntroState extends GameState{
             camera.setDimensions(new Vector2i(e.newX, e.newY));
         });
 
-        //Create the entity and scale it by factor of 100
-        entity = new TextureEntity(SQUARE_SHAPE, TEST_TEXTURE);
-        entity.getTransformation()
-                .setScale(new Vector2f(100, 100));
-
         //Create the static entity
         staticEntity = new ColorEntity(RAINBOW_SQUARE);
         staticEntity.getTransformation()
@@ -138,11 +120,19 @@ public class IntroState extends GameState{
             }
         });
 
-        // Create the sprite entity
+        // Create the sprite square
         try {
             spriteGO = new GameObject(new Template(Paths.get("templates/numbers.template")));
         } catch (IOException e) {
             Launcher.getLog().log("spriteGO", e);
+            System.exit(1);
+        }
+
+        // Create the texture square
+        try {
+            textureGO = new GameObject(new Template(Paths.get("templates/texture_test.template")));
+        } catch (IOException e) {
+            Launcher.getLog().log("textureGO", e);
             System.exit(1);
         }
 
@@ -154,7 +144,7 @@ public class IntroState extends GameState{
         //Register input listeners for entity scale control
         Game.getInstance().getWindow().inputManager.getScrollCallback().register(e -> {
             float f = (float) -e.y;
-            entity.getTransformation().scaleAdd(new Vector2f(10*f, 10*f));
+            textureGO.scale.addScale(new Vector2f(0.2F*f, 0.2F*f));
         });
 
         // Register input listeners for sprite control
@@ -201,9 +191,7 @@ public class IntroState extends GameState{
             d.add(camera.getPosition());
 
             //Subtract the entity position
-            Vector2f entityP = new Vector2f(
-                    entity.getTransformation().getTranslation().x(),
-                    entity.getTransformation().getTranslation().y());
+            Vector2fc entityP = textureGO.position.getPosition();
             d.sub(entityP);
         }
         if(im.isMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)){
@@ -217,12 +205,12 @@ public class IntroState extends GameState{
         if(d.x != 0 || d.y != 0){
             d.normalize();
             d.mul(ENTITY_SPEED * (float) Game.getInstance().delta.getDeltaSeconds());
-            entity.getTransformation().translate(d);
+            textureGO.position.addPosition(d);
         }
 
         //Rotate
         if(z != 0){
-            entity.getTransformation().rotate((float) Math.toRadians(z * Game.getInstance().delta.getDeltaSeconds()));
+            textureGO.rotation.addRotation((float) Math.toRadians(z * Game.getInstance().delta.getDeltaSeconds()));
         }
 
         //Update entities
@@ -261,7 +249,7 @@ public class IntroState extends GameState{
     @Override
     protected void onRender() {
         staticEntity.render(camera);
-        entity.render(camera);
+        SpriteRenderer.render(camera.getMatrix(), textureGO);
         pulsatingEntity.render(camera);
         SpriteRenderer.render(camera.getMatrix(), spriteGO);
         text.render(camera);
@@ -273,19 +261,18 @@ public class IntroState extends GameState{
     @Override
     public void onCleanUp() {
         //Clean up entities
-        entity.cleanUp();
+        textureGO.cleanUp();
         pulsatingEntity.cleanUp();
         staticEntity.cleanUp();
         spriteGO.cleanUp();
         text.cleanUp();
 
         //Clean up shapes
-        SQUARE_SHAPE.cleanUp();
         BASIC_SQUARE.cleanUp();
         RAINBOW_SQUARE.cleanUp();
 
         //Clean up textures
-        TEST_TEXTURE.cleanUp();
+        TextureAtlas.cleanAll();
 
         // Clean up renderer
         SpriteRenderer.cleanUp();
