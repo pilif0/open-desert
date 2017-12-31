@@ -23,7 +23,7 @@ public class SpriteComponent implements Component {
     /** Name of this component */
     public static final String NAME = "sprite";
     /** Default value for the texture atlas */
-    public static final String DEFAULT_TEXTURE_ATLAS = "default.png";
+    public static final String DEFAULT_TEXTURE_ATLAS = "textures/default.png";
     /** Default value for the texture index */
     public static final String DEFAULT_TEXTURE_INDEX = "0";
     /** Default value for the sprite dimensions */
@@ -44,6 +44,7 @@ public class SpriteComponent implements Component {
             atlas = TextureAtlas.from(Paths.get(DEFAULT_TEXTURE_ATLAS));
         } catch (IOException e) {
             // Pass the exception up (causes instantiation to fail and the system to abort)
+            e.printStackTrace();
             throw new ComponentFieldException("Texture atlas could not be created.", e);
         }
         index = 0;
@@ -100,8 +101,7 @@ public class SpriteComponent implements Component {
         }
 
         // Index is serialised as a String with one integer value
-        String valIndex = (String) overrides.getOrDefault("index", DEFAULT_TEXTURE_INDEX);
-        index = Integer.parseInt(valIndex);
+        index = (int) overrides.getOrDefault("index", DEFAULT_TEXTURE_INDEX);
 
         // Dimensions are serialised as a String with two float values separated by ','
         String valDim = (String) overrides.getOrDefault("dimensions", DEFAULT_DIMENSIONS);
@@ -115,6 +115,22 @@ public class SpriteComponent implements Component {
      * @return Delta coordinates of the sprite
      */
     public Vector2fc getTextureDelta(){ return atlas.getDeltaCoordinates(index); }
+
+    /**
+     * Return the sprite index
+     *
+     * @return Sprite index
+     */
+    public int getIndex(){ return index; }
+
+    /**
+     * Return the texture atlas
+     *
+     * @return Texture atlas
+     */
+    public TextureAtlas getAtlas() {
+        return atlas;
+    }
 
     /**
      * Return the ID of the texture atlas

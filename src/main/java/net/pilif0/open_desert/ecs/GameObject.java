@@ -48,7 +48,7 @@ public class GameObject {
         components = new ArrayList<>();
         for(Template.ComponentInfo i : t.components){
             try {
-                components.add(Components.instantiate(i));
+                addComponent(Components.instantiate(i));
             } catch (Exception e) {
                 // Exception here means the game object cannot be properly created --> abort
                 Launcher.getLog().log("GO:"+t.name, e);

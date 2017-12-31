@@ -66,7 +66,9 @@ public class Components {
         Component component = instantiate(info.name);
 
         // Provide override information to the component
-        component.overrideFields(info.fieldOverrides);
+        if(info.fieldOverrides != null){
+            component.overrideFields(info.fieldOverrides);
+        }
 
         // Return it
         return component;
@@ -137,6 +139,7 @@ public class Components {
             }
             String reqs = data.get("required");
             String[] required = ("none".equals(reqs)) ? new String[0] : reqs.split(",");
+            for(int i = 0; i < required.length; i++) required[i] = required[i].trim();
             return new ComponentDecl(name, (Class<Component>) attachedClass, required);
         }
     }

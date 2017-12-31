@@ -1,11 +1,10 @@
 #version 330
 
 layout (location=0) in vec2 pos;
-layout (location=1) in vec2 inTexCoord;
 
-out vec2 exTexCoord;
+out vec2 texPosition;
 
-uniform vec2 segmentDimensions;
+uniform vec2 spriteDimensions;
 uniform mat4 projectionMatrix;
 uniform mat4 worldMatrix;
 
@@ -13,7 +12,6 @@ void main()
 {
     gl_Position = projectionMatrix
         * worldMatrix
-        * vec4(segmentDimensions / vec2(2, 2), 1.0, 1.0)
-        * vec4(pos, 0.0, 1.0);
-    exTexCoord = inTexCoord;
+        * vec4(spriteDimensions * pos, 0.0, 1.0);
+    texPosition = pos + vec2(0.5, 0.5);
 }

@@ -44,7 +44,7 @@ public class Template {
     }
 
     /**
-     * Construct a template directly from a YAML fil
+     * Construct a template directly from a YAML file
      *
      * @param p Path to the file
      * @throws IOException If an I/O error occurs
@@ -151,6 +151,12 @@ public class Template {
          * @return Component information object
          */
         private static ComponentInfo fromYAML(Object src){
+            // Source is String when there are no overrides
+            if(src instanceof String){
+                return new ComponentInfo((String) src, null);
+            }
+
+            // Otherwise handle the overrides
             Map<String, Object> root = (Map<String, Object>) src;
             String name = root.keySet().stream().findFirst().get(); // Name is the first (and only) key of the root map
             Map<String, Object> fieldOverrides = (Map<String, Object>) root.get(name);
