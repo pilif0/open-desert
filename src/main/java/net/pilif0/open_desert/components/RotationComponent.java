@@ -96,6 +96,15 @@ public class RotationComponent implements Component{
     }
 
     /**
+     * Add to rotation
+     *
+     * @param difference Value to add
+     */
+    public void addRotation(float difference){
+        rotation = (rotation + difference) % 360;
+    }
+
+    /**
      * Represents an event in the rotation, such as a change
      */
     public static class RotationEvent implements GameObjectEvent {

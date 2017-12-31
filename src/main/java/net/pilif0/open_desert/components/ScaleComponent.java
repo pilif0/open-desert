@@ -110,6 +110,15 @@ public class ScaleComponent implements Component {
     }
 
     /**
+     * Add to the scale
+     *
+     * @param difference Value to add
+     */
+    public void addScale(Vector2fc difference){
+        scale.add(difference);
+    }
+
+    /**
      * Represents an event in the scale, such as a change
      */
     public static class ScaleEvent implements GameObjectEvent {

@@ -111,6 +111,15 @@ public class PositionComponent implements Component {
     }
 
     /**
+     * Add to the position
+     *
+     * @param difference Value to add
+     */
+    public void addPosition(Vector2fc difference){
+        position.add(difference);
+    }
+
+    /**
      * Represents an event in the position, such as a change
      */
     public static class PositionEvent implements GameObjectEvent {

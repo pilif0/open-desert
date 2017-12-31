@@ -135,4 +135,12 @@ public class TextureAtlas extends PNGTexture {
 
         return result;
     }
+
+    /**
+     * Clean up all the atlases remembered
+     */
+    public static void cleanAll(){
+        atlases.values().forEach(x -> x.cleanUp());
+        atlases.clear();
+    }
 }
