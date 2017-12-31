@@ -1,11 +1,15 @@
 package net.pilif0.open_desert;
 
+import net.pilif0.open_desert.components.SpriteComponent;
+import net.pilif0.open_desert.ecs.Components;
+import net.pilif0.open_desert.ecs.GameObject;
+import net.pilif0.open_desert.ecs.Template;
 import net.pilif0.open_desert.entities.ColorEntity;
 import net.pilif0.open_desert.entities.DynamicColorEntity;
-import net.pilif0.open_desert.entities.SpriteEntity;
 import net.pilif0.open_desert.entities.TextureEntity;
 import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.*;
+import net.pilif0.open_desert.graphics.render.SpriteRenderer;
 import net.pilif0.open_desert.graphics.shapes.ColorShape;
 import net.pilif0.open_desert.graphics.shapes.Shape;
 import net.pilif0.open_desert.graphics.shapes.SpriteShape;
@@ -91,18 +95,27 @@ public class IntroState extends GameState{
     private ColorEntity staticEntity;
     /** The pulsating entity */
     private DynamicColorEntity pulsatingEntity;
-    /** The sprite entity */
-    private SpriteEntity sprite;
     /** The camera */
     private PerpendicularCamera camera;
     /** The text */
     private Text text;
+
+    /** The static square */
+    private GameObject spriteGO;
 
     /**
      * Constructs the state
      */
     public IntroState(){
         super();
+
+        // Load declared components
+        try {
+            Components.from(Paths.get("main.components"));
+        } catch (IOException e) {
+            Launcher.getLog().log("Main Components File", e);
+            System.exit(1);
+        }
 
         //Create the camera
         camera = new PerpendicularCamera(new Vector2f(0, 0), Game.getInstance().getWindow().getResolution());
@@ -139,10 +152,13 @@ public class IntroState extends GameState{
             }
         });
 
-        //Create the sprite entity
-        sprite = new SpriteEntity(SPRITE_SHAPE, SPRITE_TEXTURE_ATLAS);
-        sprite.getTransformation()
-                .translate(new Vector2f(800, 600));
+        // Create the sprite entity
+        try {
+            spriteGO = new GameObject(new Template(Paths.get("templates/numbers.template")));
+        } catch (IOException e) {
+            Launcher.getLog().log("spriteGO", e);
+            System.exit(1);
+        }
 
         //Create the text
         text = new Text("Hello world!\nTest of new line", TEXT_FONT, 32);
@@ -155,19 +171,21 @@ public class IntroState extends GameState{
             entity.getTransformation().scaleAdd(new Vector2f(10*f, 10*f));
         });
 
-        //Register input listeners for sprite control
+        // Register input listeners for sprite control
         Game.getInstance().getWindow().inputManager.getKeyCallback().register(e -> {
-            //Increment segment on right arrow
+            SpriteComponent spriteComponent = (SpriteComponent) spriteGO.getComponent("sprite");
+
+            // Increment segment on right arrow
             if(e.key == GLFW_KEY_RIGHT && e.action == Action.RELEASE){
-                int after = (sprite.getSegment() + 1) % sprite.getTextureAtlas().segments;
-                sprite.setSegment(after);
+                int after = (spriteComponent.getIndex() + 1) % spriteComponent.getAtlas().segments;
+                spriteComponent.setIndex(after);
             }
 
-            //Decrement segment on left arrow
+            // Decrement segment on left arrow
             if(e.key == GLFW_KEY_LEFT && e.action == Action.RELEASE){
-                int after = (sprite.getSegment() - 1) % sprite.getTextureAtlas().segments;
-                if(after < 0) after += sprite.getTextureAtlas().segments;
-                sprite.setSegment(after);
+                int after = (spriteComponent.getIndex() - 1) % spriteComponent.getAtlas().segments;
+                if(after < 0) after += spriteComponent.getAtlas().segments;
+                spriteComponent.setIndex(after);
             }
         });
     }
@@ -259,7 +277,7 @@ public class IntroState extends GameState{
         staticEntity.render(camera);
         entity.render(camera);
         pulsatingEntity.render(camera);
-        sprite.render(camera);
+        SpriteRenderer.render(camera.getMatrix(), spriteGO);
         text.render(camera);
     }
 
@@ -272,7 +290,7 @@ public class IntroState extends GameState{
         entity.cleanUp();
         pulsatingEntity.cleanUp();
         staticEntity.cleanUp();
-        sprite.cleanUp();
+        spriteGO.cleanUp();
         text.cleanUp();
 
         //Clean up shapes
@@ -284,6 +302,9 @@ public class IntroState extends GameState{
         //Clean up textures
         SPRITE_TEXTURE_ATLAS.cleanUp();
         TEST_TEXTURE.cleanUp();
+
+        // Clean up renderer
+        SpriteRenderer.cleanUp();
     }
 
     /**
