@@ -65,8 +65,14 @@ public class RotationComponent implements Component{
     @Override
     public void overrideFields(Map<String, Object> overrides) {
         // Rotation is serialised as a String with one float value
-        String val = (String) overrides.getOrDefault("rotation", DEFAULT_ROTATION);
-        rotation = Float.parseFloat(val);
+        Object val = overrides.getOrDefault("rotation", DEFAULT_ROTATION);
+        if(val instanceof Integer) {
+            // When the value is a number
+            rotation = (int) val;
+        }else if(val instanceof String){
+            // When the value is anything else or nothing
+            rotation = Float.parseFloat((String) val);
+        }
     }
 
     /**

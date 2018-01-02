@@ -1,21 +1,17 @@
 package net.pilif0.open_desert;
 
-import net.pilif0.open_desert.components.SpriteComponent;
 import net.pilif0.open_desert.ecs.Components;
 import net.pilif0.open_desert.ecs.GameObject;
 import net.pilif0.open_desert.ecs.Template;
 import net.pilif0.open_desert.entities.ColorEntity;
 import net.pilif0.open_desert.entities.DynamicColorEntity;
-import net.pilif0.open_desert.entities.TextureEntity;
 import net.pilif0.open_desert.geometry.Transformation;
 import net.pilif0.open_desert.graphics.*;
 import net.pilif0.open_desert.graphics.render.SpriteRenderer;
 import net.pilif0.open_desert.graphics.shapes.ColorShape;
 import net.pilif0.open_desert.graphics.shapes.Shape;
-import net.pilif0.open_desert.graphics.shapes.TextureShape;
 import net.pilif0.open_desert.graphics.text.Font;
 import net.pilif0.open_desert.graphics.text.Text;
-import net.pilif0.open_desert.input.Action;
 import net.pilif0.open_desert.input.InputManager;
 import net.pilif0.open_desert.state.GameState;
 import net.pilif0.open_desert.util.Color;
@@ -37,8 +33,6 @@ import static org.lwjgl.opengl.GL11.*;
 public class IntroState extends GameState{
     /** The background colour */
     public static final Color CLEAR_COLOR = new Color(0x00_00_00_ff);
-    /** The camera movement speed */
-    public static final float CAMERA_SPEED = 750f;
     /** The entity movement speed */
     public static final float ENTITY_SPEED = 250f;
     /** The rainbow square shape */
@@ -75,6 +69,8 @@ public class IntroState extends GameState{
     private GameObject spriteGO;
     /** Texture test square */
     private GameObject textureGO;
+    /** Object for the camera to follow */
+    private GameObject cameraFocus;
 
     /**
      * Constructs the state
@@ -100,9 +96,7 @@ public class IntroState extends GameState{
         camera = new PerpendicularCamera(new Vector2f(0, 0), Game.getInstance().getWindow().getResolution());
 
         //Have the camera listen to window resolution change
-        Game.getInstance().getWindow().resolutionMultiplexer.register(e -> {
-            camera.setDimensions(new Vector2i(e.newX, e.newY));
-        });
+        Game.getInstance().getWindow().resolutionMultiplexer.register(e -> camera.setDimensions(new Vector2i(e.newX, e.newY)));
 
         //Create the static entity
         staticEntity = new ColorEntity(RAINBOW_SQUARE);
@@ -139,6 +133,14 @@ public class IntroState extends GameState{
             textureGO = new GameObject(new Template(Paths.get("templates/texture_test.template")));
         } catch (IOException e) {
             Launcher.getLog().log("textureGO", e);
+            System.exit(1);
+        }
+
+        // Create the camera focus
+        try {
+            cameraFocus = new GameObject(new Template(Paths.get("templates/camera_focus.template")));
+        } catch (IOException e) {
+            Launcher.getLog().log("cameraFocus", e);
             System.exit(1);
         }
 
@@ -203,32 +205,19 @@ public class IntroState extends GameState{
 
         //Update entities
         pulsatingEntity.update();
+
+        // Update GOs
+        cameraFocus.update(Game.getInstance().delta.getDelta());
+        textureGO.update(Game.getInstance().delta.getDelta());
+        spriteGO.update(Game.getInstance().delta.getDelta());
     }
 
     /**
      * Updates the camera position based on WASD movement keys
      */
     protected void updateCamera(){
-        Vector2f d = new Vector2f();
-        if(Game.getInstance().getWindow().inputManager.isKeyDown(GLFW_KEY_W)){
-            d.add(0, -1);
-        }
-        if(Game.getInstance().getWindow().inputManager.isKeyDown(GLFW_KEY_S)){
-            d.add(0, 1);
-        }
-        if(Game.getInstance().getWindow().inputManager.isKeyDown(GLFW_KEY_A)){
-            d.add(-1, 0);
-        }
-        if(Game.getInstance().getWindow().inputManager.isKeyDown(GLFW_KEY_D)){
-            d.add(1, 0);
-        }
-
-        //Normalize and scale to speed
-        if(d.x != 0 || d.y != 0){
-            d.normalize();
-            d.mul(CAMERA_SPEED * (float) Game.getInstance().delta.getDeltaSeconds());
-            camera.move(d);
-        }
+        // Move the camera to follow the focus
+        camera.setPosition(cameraFocus.position.getPosition());
 
         //Actually update the camera
         camera.update();
@@ -254,6 +243,7 @@ public class IntroState extends GameState{
         staticEntity.cleanUp();
         spriteGO.cleanUp();
         text.cleanUp();
+        cameraFocus.cleanUp();
 
         //Clean up shapes
         BASIC_SQUARE.cleanUp();
@@ -265,9 +255,4 @@ public class IntroState extends GameState{
         // Clean up renderer
         SpriteRenderer.cleanUp();
     }
-
-    /**
-     * Cleans up after the entity
-     */
-    public void cleanUp(){}
 }

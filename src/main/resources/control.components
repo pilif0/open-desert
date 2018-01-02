@@ -2,3 +2,7 @@
   description: Control component for the test sprite
   class: net.pilif0.open_desert.components.control.TestSpriteControlComponent
   required: sprite, keyboard_sensitive
+- name: wasd_movement_control
+  description: Controls position based on WASD keys
+  class: net.pilif0.open_desert.components.control.WASDMovementControlComponent
+  required: position, keyboard_sensitive

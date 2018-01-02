@@ -1,0 +1,9 @@
+name: camera_focus
+description: Object for the camera to follow
+parent: none
+components:
+    - position:
+        position: 0, 0
+    - keyboard_sensitive
+    - wasd_movement_control:
+        speed: 750
