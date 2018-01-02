@@ -24,15 +24,6 @@ public interface Component {
     void handle(GameObjectEvent e);
 
     /**
-     * Get the component state as a map of field names to values (as Objects with meaningful {@code toString()}).
-     * This summarises the component state in an easy-to-read way.
-     *
-     * @return Component state map
-     */
-    // Mainly to be used in debugging
-    Map<String, Object> getState();
-
-    /**
      * Handle attaching to a game object (after the fact)
      *
      * @param owner Game object the component is being attached to

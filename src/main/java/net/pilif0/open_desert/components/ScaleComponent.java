@@ -55,13 +55,6 @@ public class ScaleComponent implements Component {
     }
 
     @Override
-    public Map<String, Object> getState(){
-        Map<String, Object> result = new HashMap<>();
-        result.put("scale", scale.toImmutable());
-        return result;
-    }
-
-    @Override
     public void onAttach(GameObject owner) {
         // Remember who the component is attached to and set to recalculate
         this.owner = owner;

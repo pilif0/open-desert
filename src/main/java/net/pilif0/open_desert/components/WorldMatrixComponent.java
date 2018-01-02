@@ -50,14 +50,6 @@ public class WorldMatrixComponent implements Component {
     }
 
     @Override
-    public Map<String, Object> getState(){
-        Map<String, Object> result = new HashMap<>();
-        result.put("worldMatrix", worldMatrix);
-        result.put("recalculate", recalculate);
-        return result;
-    }
-
-    @Override
     public void onAttach(GameObject owner) {
         // Remember who the component is attached to and set to recalculate
         this.owner = owner;

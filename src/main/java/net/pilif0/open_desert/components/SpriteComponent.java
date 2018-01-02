@@ -75,15 +75,6 @@ public class SpriteComponent implements Component {
     }
 
     @Override
-    public Map<String, Object> getState() {
-        Map<String, Object> result = new HashMap<>();
-        result.put("atlas", atlas);
-        result.put("index", index);
-        result.put("dimensions", dimensions);
-        return result;
-    }
-
-    @Override
     public void onAttach(GameObject owner) {}
 
     @Override
