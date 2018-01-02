@@ -89,6 +89,12 @@ public class IntroState extends GameState{
             Launcher.getLog().log("Main Components File", e);
             System.exit(1);
         }
+        try {
+            Components.from(Paths.get("control.components"));
+        } catch (IOException e) {
+            Launcher.getLog().log("Control Components File", e);
+            System.exit(1);
+        }
 
         //Create the camera
         camera = new PerpendicularCamera(new Vector2f(0, 0), Game.getInstance().getWindow().getResolution());
@@ -145,24 +151,6 @@ public class IntroState extends GameState{
         Game.getInstance().getWindow().inputManager.getScrollCallback().register(e -> {
             float f = (float) -e.y;
             textureGO.scale.addScale(new Vector2f(0.2F*f, 0.2F*f));
-        });
-
-        // Register input listeners for sprite control
-        Game.getInstance().getWindow().inputManager.getKeyCallback().register(e -> {
-            SpriteComponent spriteComponent = (SpriteComponent) spriteGO.getComponent("sprite");
-
-            // Increment segment on right arrow
-            if(e.key == GLFW_KEY_RIGHT && e.action == Action.RELEASE){
-                int after = (spriteComponent.getIndex() + 1) % spriteComponent.getAtlas().segments;
-                spriteComponent.setIndex(after);
-            }
-
-            // Decrement segment on left arrow
-            if(e.key == GLFW_KEY_LEFT && e.action == Action.RELEASE){
-                int after = (spriteComponent.getIndex() - 1) % spriteComponent.getAtlas().segments;
-                if(after < 0) after += spriteComponent.getAtlas().segments;
-                spriteComponent.setIndex(after);
-            }
         });
     }
 

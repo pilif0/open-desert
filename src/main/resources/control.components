@@ -1,0 +1,4 @@
+- name: test_sprite_control
+  description: Control component for the test sprite
+  class: net.pilif0.open_desert.components.control.TestSpriteControlComponent
+  required: sprite, keyboard_sensitive

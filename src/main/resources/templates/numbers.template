@@ -10,3 +10,7 @@ components:
     - sprite:
         atlas: textures/atlas.png
         dimensions: 64, 64
+    - keyboard_sensitive
+    - test_sprite_control:
+        increment: left
+        decrement: right
