@@ -22,3 +22,8 @@
   description: Contains information needed to render the game object as a sprite
   class: net.pilif0.open_desert.components.SpriteComponent
   required: world_matrix
+
+- name: keyboard_sensitive
+  description: Delegates keyboard events through the game object
+  class: net.pilif0.open_desert.components.KeyboardSensitiveComponent
+  required: none
