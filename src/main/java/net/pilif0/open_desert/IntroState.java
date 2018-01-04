@@ -148,12 +148,6 @@ public class IntroState extends GameState{
         text = new Text("Hello world!\nTest of new line", TEXT_FONT, 32);
         text.getTransformation()
                 .translate(new Vector2f(-400, -400));
-
-        //Register input listeners for entity scale control
-        Game.getInstance().getWindow().inputManager.getScrollCallback().register(e -> {
-            float f = (float) -e.y;
-            textureGO.scale.addScale(new Vector2f(0.2F*f, 0.2F*f));
-        });
     }
 
     @Override

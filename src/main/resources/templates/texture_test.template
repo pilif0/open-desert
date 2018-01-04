@@ -9,3 +9,6 @@ components:
     - sprite:
         atlas: textures/test.png
         dimensions: 100, 100
+    - scroll_sensitive
+    - scroll_scale_control:
+        factor: 1.5

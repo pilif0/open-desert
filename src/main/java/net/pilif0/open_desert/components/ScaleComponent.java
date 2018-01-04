@@ -112,6 +112,15 @@ public class ScaleComponent implements Component {
     }
 
     /**
+     * Multiply the scale by a factor
+     *
+     * @param f Factor
+     */
+    public void mulScale(float f) {
+        scale.mul(f);
+    }
+
+    /**
      * Represents an event in the scale, such as a change
      */
     public static class ScaleEvent implements GameObjectEvent {
