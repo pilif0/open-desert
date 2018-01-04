@@ -27,3 +27,13 @@
   description: Delegates keyboard events through the game object
   class: net.pilif0.open_desert.components.KeyboardSensitiveComponent
   required: none
+
+- name: mouse_button_sensitive
+  description: Delegates mouse button events through the game object
+  class: net.pilif0.open_desert.components.MouseButtonSensitiveComponent
+  required: none
+
+- name: scroll_sensitive
+  description: Delegates scroll events through the game object
+  class: net.pilif0.open_desert.components.ScrollSensitiveComponent
+  required: none

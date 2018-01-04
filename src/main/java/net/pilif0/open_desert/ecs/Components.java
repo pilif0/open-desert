@@ -1,6 +1,7 @@
 package net.pilif0.open_desert.ecs;
 
 import net.pilif0.open_desert.Launcher;
+import net.pilif0.open_desert.util.Severity;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
@@ -64,6 +65,11 @@ public class Components {
     public static Component instantiate(Template.ComponentInfo info) throws InstantiationException, IllegalAccessException {
         // Instantiate the component
         Component component = instantiate(info.name);
+
+        // Check the component was found
+        if(component == null){
+            Launcher.getLog().log(Severity.ERROR, "Components", "Component with name '"+info.name+"' was not found.");
+        }
 
         // Provide override information to the component
         if(info.fieldOverrides != null){
