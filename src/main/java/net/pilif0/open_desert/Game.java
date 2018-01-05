@@ -179,4 +179,11 @@ public class Game {
      * @return The main window
      */
     public Window getWindow(){ return window; }
+
+    /**
+     * Return current game state
+     *
+     * @return Current state
+     */
+    public GameState getCurrentState(){ return states.getCurrent(); }
 }

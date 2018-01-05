@@ -249,4 +249,9 @@ public class IntroState extends GameState{
         // Clean up renderer
         SpriteRenderer.cleanUp();
     }
+
+    @Override
+    public Camera getCamera() {
+        return camera;
+    }
 }

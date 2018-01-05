@@ -8,7 +8,7 @@ import org.joml.*;
  * @author Filip Smola
  * @version 1.0
  */
-public class PerpendicularCamera {
+public class PerpendicularCamera implements Camera {
     /** The closer z-axis clipping plane */
     public static final float NEAR = -10.0f;
     /** The further z-axis clipping plane */
@@ -84,18 +84,12 @@ public class PerpendicularCamera {
         transformed = true;
     }
 
-    /**
-     * Returns the projection matrix
-     *
-     * @return The projection matrix
-     */
+    @Override
     public Matrix4f getMatrix() {
         return matrix;
     }
 
-    /**
-     * Updates the camera, regenerating the projection matrix if needed
-     */
+    @Override
     public void update(){
         if(transformed){
             regenerateMatrix();

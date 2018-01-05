@@ -2,6 +2,7 @@ package net.pilif0.open_desert.state;
 
 import net.pilif0.open_desert.events.Event;
 import net.pilif0.open_desert.events.EventMultiplexer;
+import net.pilif0.open_desert.graphics.Camera;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -117,6 +118,13 @@ public abstract class GameState {
     public int hashCode() {
         return ID;
     }
+
+    /**
+     * Return main state camera
+     *
+     * @return Main camera
+     */
+    public abstract Camera getCamera();
 
     /**
      * Returns the state with the ID provided
