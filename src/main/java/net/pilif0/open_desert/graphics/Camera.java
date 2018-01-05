@@ -1,6 +1,7 @@
 package net.pilif0.open_desert.graphics;
 
-import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
+import org.joml.Vector2fc;
 
 /**
  * General camera interface
@@ -15,10 +16,18 @@ public interface Camera {
      *
      * @return Projection matrix
      */
-    Matrix4f getMatrix();
+    Matrix4fc getMatrix();
 
     /**
      * Update the camera
      */
     void update();
+
+    /**
+     * Return the vector transformed to world space
+     *
+     * @param s Vector in screen space
+     * @return Vector in world space
+     */
+    Vector2fc toWorldSpace(Vector2fc s);
 }

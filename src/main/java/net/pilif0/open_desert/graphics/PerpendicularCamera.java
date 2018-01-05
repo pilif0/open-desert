@@ -85,8 +85,8 @@ public class PerpendicularCamera implements Camera {
     }
 
     @Override
-    public Matrix4f getMatrix() {
-        return matrix;
+    public Matrix4fc getMatrix() {
+        return matrix.toImmutable();
     }
 
     @Override
@@ -94,6 +94,12 @@ public class PerpendicularCamera implements Camera {
         if(transformed){
             regenerateMatrix();
         }
+    }
+
+    @Override
+    public Vector2fc toWorldSpace(Vector2fc s) {
+        // Just add the camera position
+        return s.add(getPosition(), new Vector2f()).toImmutable();
     }
 
     /**

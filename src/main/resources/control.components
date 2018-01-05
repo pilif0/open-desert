@@ -12,3 +12,8 @@
   description: Controls scale based on scrolling
   class: net.pilif0.open_desert.components.control.ScrollScaleControlComponent
   required: scale, scroll_sensitive
+
+- name: test_follow_control
+  description: Makes GO follow the mouse when middle button is held
+  class: net.pilif0.open_desert.components.control.TestFollowControlComponent
+  required: position, mouse_button_sensitive

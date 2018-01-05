@@ -33,8 +33,6 @@ import static org.lwjgl.opengl.GL11.*;
 public class IntroState extends GameState{
     /** The background colour */
     public static final Color CLEAR_COLOR = new Color(0x00_00_00_ff);
-    /** The entity movement speed */
-    public static final float ENTITY_SPEED = 250f;
     /** The rainbow square shape */
     public static final ColorShape RAINBOW_SQUARE;
     /** The basic square shape */
@@ -167,29 +165,12 @@ public class IntroState extends GameState{
 
         //Update entity transformations
         InputManager im = Game.getInstance().getWindow().inputManager;
-        Vector2f d = new Vector2f();
         float z = 0;
-        if(im.isMouseButtonDown(GLFW_MOUSE_BUTTON_MIDDLE)){
-            //Start at the mouse position (adjusted for camera position)
-            d.set(im.getMousePosition());
-            d.add(camera.getPosition());
-
-            //Subtract the entity position
-            Vector2fc entityP = textureGO.position.getPosition();
-            d.sub(entityP);
-        }
         if(im.isMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)){
             z -= 90;
         }
         if(im.isMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT)){
             z += 90;
-        }
-
-        //Normalize and scale to speed
-        if(d.x != 0 || d.y != 0){
-            d.normalize();
-            d.mul(ENTITY_SPEED * (float) Game.getInstance().delta.getDeltaSeconds());
-            textureGO.position.addPosition(d);
         }
 
         //Rotate

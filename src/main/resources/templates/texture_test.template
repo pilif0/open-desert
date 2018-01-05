@@ -12,3 +12,7 @@ components:
     - scroll_sensitive
     - scroll_scale_control:
         factor: 1.5
+    - mouse_button_sensitive
+    - test_follow_control:
+        speed: 250
+        precision: 1
