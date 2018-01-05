@@ -1,6 +1,7 @@
 package net.pilif0.open_desert.ecs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -12,6 +13,33 @@ import java.util.List;
 public class Condition {
     /** Components the game object needs to have */
     private List<String> components;
+
+    /**
+     * Construct a condition from a number of component names
+     *
+     * @param names Names of desired components
+     */
+    public Condition(String... names){
+        components = new ArrayList<String>(Arrays.asList(names));
+    }
+
+    /**
+     * Add component to the desired list
+     *
+     * @param name Name of the component
+     */
+    public void addComponent(String name){
+        components.add(name);
+    }
+
+    /**
+     * Remove component from the desired list
+     *
+     * @param name Name of the component
+     */
+    public void removeComponent(String name){
+        components.add(name);
+    }
 
     /**
      * Whether the game object satisfies this condition

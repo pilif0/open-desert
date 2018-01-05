@@ -1,14 +1,17 @@
 package net.pilif0.open_desert.world;
 
 import net.pilif0.open_desert.Launcher;
+import net.pilif0.open_desert.ecs.Condition;
 import net.pilif0.open_desert.ecs.GameObject;
 import net.pilif0.open_desert.ecs.GameObjectEvent;
 import net.pilif0.open_desert.util.Severity;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Quad tree representation of the (2D) world utilising the position component of game objects.
@@ -62,6 +65,17 @@ public class WorldTree {
     }
 
     /**
+     * Update the root, validate the tree, and reinsert any game objects that were in the wrong quad
+     *
+     * @param delta Delta time in ns
+     */
+    public void update(long delta) {
+        root.update(delta);
+        GameObject[] outside = root.validate();
+        for (GameObject go : outside) root.add(go);
+    }
+
+    /**
      * Represents a single node in the quad tree.
      *
      * Includes its minimal borders.
@@ -92,6 +106,7 @@ public class WorldTree {
             this.min = min;
             this.max = max;
             this.mid = (new Vector2f(min)).add(max).mul(0.5f).toImmutable();
+            contents = new ArrayList<>();
         }
 
         /**
@@ -126,6 +141,34 @@ public class WorldTree {
                 // Move the game object
                 it.remove();
                 getChild(o.position.getPosition()).add(o, false);  // Position already checked
+            }
+        }
+
+        /**
+         * Validate the quad, removing and returning any game objects whose position is outside
+         *
+         * @return All game objects whose position was outside (now removed)
+         */
+        public GameObject[] validate(){
+            if(isLeaf()){
+                // Gather the game objects, remove and return them
+                List<GameObject> result = contents.stream()
+                        .filter(go -> !this.contains(go.position.getPosition()))
+                        .collect(Collectors.toList());
+                contents.removeAll(result);
+                return result.toArray(new GameObject[0]);
+            }else{
+                // Delegate to children, then merge and return
+                GameObject[] a = children[0].validate();
+                GameObject[] b = children[1].validate();
+                GameObject[] c = children[2].validate();
+                GameObject[] d = children[3].validate();
+                GameObject[] result = new GameObject[a.length + b.length + c.length + d.length];
+                System.arraycopy(a, 0, result, 0, a.length);
+                System.arraycopy(b, 0, result, a.length, b.length);
+                System.arraycopy(c, 0, result, a.length + b.length, c.length);
+                System.arraycopy(d, 0, result, a.length + b.length + c.length, d.length);
+                return result;
             }
         }
 
@@ -176,8 +219,23 @@ public class WorldTree {
          * @param delta Delta time in ns
          */
         public void update(long delta){
-            GameObjectEvent event = new GameObject.UpdateEvent(delta);
-            contents.forEach(go -> go.distributeEvent(event));
+            if(isLeaf()) {
+                GameObjectEvent event = new GameObject.UpdateEvent(delta);
+                contents.forEach(go -> go.distributeEvent(event));
+            }else{
+                for(Quad q : children) q.update(delta);
+            }
+        }
+
+        /**
+         * Clean up all game objects in this quad
+         */
+        public void cleanUp(){
+            if(isLeaf()) {
+                contents.forEach(GameObject::cleanUp);
+            }else{
+                for(Quad q : children) q.cleanUp();
+            }
         }
 
         /**
@@ -234,6 +292,29 @@ public class WorldTree {
                 return false;
             }
             return true;
+        }
+
+        /**
+         * Get game objects in this quad based on a condition
+         *
+         * @param cond Condition to check
+         * @return Game objects for which the condition holds
+         */
+        public List<GameObject> getByCondition(Condition cond){
+            if(isLeaf()){
+                // Gather the game objects and return them
+                return contents.stream()
+                        .filter(cond::check)
+                        .collect(Collectors.toList());
+            }else{
+                // Delegate to children, then merge and return
+                List<GameObject> result = new ArrayList<>();
+                result.addAll(children[0].getByCondition(cond));
+                result.addAll(children[1].getByCondition(cond));
+                result.addAll(children[2].getByCondition(cond));
+                result.addAll(children[3].getByCondition(cond));
+                return result;
+            }
         }
 
         /**
