@@ -1,6 +1,7 @@
 package net.pilif0.open_desert;
 
 import net.pilif0.open_desert.ecs.Components;
+import net.pilif0.open_desert.ecs.Condition;
 import net.pilif0.open_desert.ecs.GameObject;
 import net.pilif0.open_desert.ecs.Template;
 import net.pilif0.open_desert.entities.ColorEntity;
@@ -15,6 +16,7 @@ import net.pilif0.open_desert.graphics.text.Text;
 import net.pilif0.open_desert.input.InputManager;
 import net.pilif0.open_desert.state.GameState;
 import net.pilif0.open_desert.util.Color;
+import net.pilif0.open_desert.world.WorldTree;
 import org.joml.*;
 import org.joml.Math;
 
@@ -39,6 +41,8 @@ public class IntroState extends GameState{
     public static final Shape BASIC_SQUARE;
     /** The text font */
     public static final Font TEXT_FONT;
+    /** Condition for sprite-renderable game objects */
+    public static final Condition SPRITE_RENDERABLE;
 
     static{
         //Parse the shapes
@@ -52,6 +56,9 @@ public class IntroState extends GameState{
             Launcher.getLog().log("Texture", e);
             throw new RuntimeException("Crash because of font");
         }
+
+        // Build the condition
+        SPRITE_RENDERABLE = new Condition("sprite", "world_matrix", "position", "rotation", "scale");
     }
 
     /** The static entity */
@@ -69,6 +76,9 @@ public class IntroState extends GameState{
     private GameObject textureGO;
     /** Object for the camera to follow */
     private GameObject cameraFocus;
+
+    /** World tree */
+    private WorldTree world;
 
     /**
      * Constructs the state
@@ -89,6 +99,9 @@ public class IntroState extends GameState{
             Launcher.getLog().log("Control Components File", e);
             System.exit(1);
         }
+
+        // Create the world
+        world = new WorldTree(1e6f);
 
         //Create the camera
         camera = new PerpendicularCamera(new Vector2f(0, 0), Game.getInstance().getWindow().getResolution());
@@ -121,6 +134,7 @@ public class IntroState extends GameState{
         // Create the sprite square
         try {
             spriteGO = new GameObject(new Template(Paths.get("templates/numbers.template")));
+            world.root.add(spriteGO);
         } catch (IOException e) {
             Launcher.getLog().log("spriteGO", e);
             System.exit(1);
@@ -129,6 +143,7 @@ public class IntroState extends GameState{
         // Create the texture square
         try {
             textureGO = new GameObject(new Template(Paths.get("templates/texture_test.template")));
+            world.root.add(textureGO);
         } catch (IOException e) {
             Launcher.getLog().log("textureGO", e);
             System.exit(1);
@@ -137,6 +152,7 @@ public class IntroState extends GameState{
         // Create the camera focus
         try {
             cameraFocus = new GameObject(new Template(Paths.get("templates/camera_focus.template")));
+            world.root.add(cameraFocus);
         } catch (IOException e) {
             Launcher.getLog().log("cameraFocus", e);
             System.exit(1);
@@ -181,10 +197,8 @@ public class IntroState extends GameState{
         //Update entities
         pulsatingEntity.update();
 
-        // Update GOs
-        cameraFocus.update(Game.getInstance().delta.getDelta());
-        textureGO.update(Game.getInstance().delta.getDelta());
-        spriteGO.update(Game.getInstance().delta.getDelta());
+        // Update world
+        world.update(Game.getInstance().delta.getDelta());
     }
 
     /**
@@ -201,10 +215,11 @@ public class IntroState extends GameState{
     @Override
     protected void onRender() {
         staticEntity.render(camera);
-        SpriteRenderer.render(camera.getMatrix(), textureGO);
         pulsatingEntity.render(camera);
-        SpriteRenderer.render(camera.getMatrix(), spriteGO);
         text.render(camera);
+
+        // Render world
+        world.root.getByCondition(SPRITE_RENDERABLE).forEach(go -> SpriteRenderer.render(camera.getMatrix(), go));
     }
 
     @Override
@@ -213,12 +228,12 @@ public class IntroState extends GameState{
     @Override
     public void onCleanUp() {
         //Clean up entities
-        textureGO.cleanUp();
         pulsatingEntity.cleanUp();
         staticEntity.cleanUp();
-        spriteGO.cleanUp();
         text.cleanUp();
-        cameraFocus.cleanUp();
+
+        // Clean up world
+        world.root.cleanUp();
 
         //Clean up shapes
         BASIC_SQUARE.cleanUp();
