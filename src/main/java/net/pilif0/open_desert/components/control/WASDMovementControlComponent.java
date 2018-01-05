@@ -37,7 +37,7 @@ public class WASDMovementControlComponent implements Component {
     private boolean d = false;
 
     /**
-     * Construct the component with default keys (left for decrement, right for increment)
+     * Construct the component with default speed
      */
     public WASDMovementControlComponent(){}
 
@@ -126,9 +126,9 @@ public class WASDMovementControlComponent implements Component {
     public void overrideFields(Map<String, Object> overrides) {
         // Speed is serialised as a single float
         Object val = overrides.getOrDefault("speed", DEFAULT_SPEED);
-        if(val instanceof Integer) {
+        if(val instanceof Number) {
             // When the value is a number
-            speed = (int) val;
+            speed = ((Number) val).floatValue();
         }else if(val instanceof String){
             // When the value is anything else or nothing
             speed = Float.parseFloat((String) val);

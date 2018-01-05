@@ -61,9 +61,9 @@ public class ScrollScaleControlComponent implements Component {
     public void overrideFields(Map<String, Object> overrides) {
         // Speed is serialised as a single float
         Object val = overrides.getOrDefault("factor", DEFAULT_FACTOR);
-        if(val instanceof Float) {
+        if(val instanceof Number) {
             // When the value is a number
-            factor = (float) val;
+            factor = ((Number) val).floatValue();
         }else if(val instanceof String){
             // When the value is anything else or nothing
             factor = Float.parseFloat((String) val);

@@ -93,9 +93,9 @@ public class SpriteComponent implements Component {
 
         // Index is serialised as a String with one integer value
         Object valIndex = overrides.getOrDefault("index", DEFAULT_TEXTURE_INDEX);
-        if(valIndex instanceof Integer) {
+        if(valIndex instanceof Number) {
             // When the value is a number
-            index = (int) valIndex;
+            index = ((Number) valIndex).intValue();
         }else if(valIndex instanceof String){
             // When the value is anything else or nothing
             index = Integer.parseInt((String) valIndex);
