@@ -24,8 +24,8 @@ public class Template {
     public final String name;
     /** Parent of the template */
     public final Template parent;
-    /** Array of information objects to construct the appropriate components with the right state */
-    public final ComponentInfo[] components;
+    /** List of information objects to construct the appropriate components with the right state */
+    private final List<ComponentInfo> components;
     /** Whether the parent's components have been merged into this template's components */
     private boolean componentsMerged = false;
 
@@ -36,7 +36,7 @@ public class Template {
      * @param parent Parent of the template
      * @param components Component information objects
      */
-    private Template(String name, Template parent, ComponentInfo[] components){
+    private Template(String name, Template parent, List<ComponentInfo> components){
         this.name = name;
         this.parent = parent;
         this.components = components;
@@ -57,15 +57,12 @@ public class Template {
         Map<String, Object> root = yaml.load(Files.newInputStream(p, StandardOpenOption.READ));
 
         // Process the read map
-        name = (String) root.get("name");
-        parent = templates.get((String) root.get("parent"));
+        name = root.get("name").toString();
+        parent = templates.get(root.get("parent").toString());
 
         List<Object> comps = (List<Object>) root.get("components");
-        components = new ComponentInfo[comps.size()];
-        Iterator it = comps.iterator();
-        for(int i = 0; it.hasNext(); i++){
-            components[i] = ComponentInfo.fromYAML(it.next());
-        }
+        components = new ArrayList<>();
+        comps.forEach(o -> components.add(ComponentInfo.fromYAML(o)));
 
         // Add the template to the list
         templates.put(name, this);
@@ -76,6 +73,7 @@ public class Template {
      *
      * @return Whether merge was successful
      */
+    // Can only fail with an exception
     private boolean mergeComponents() {
         // Termination - no parent --> no merging needed
         if(parent == null){
@@ -83,30 +81,31 @@ public class Template {
         }
 
         //Retrieve the parent's component information
-        ComponentInfo[] parental = parent.getComponents();
+        List<ComponentInfo> parental = parent.getComponents();
 
         // For all of this template's components, either add it or merge it
-        List<ComponentInfo> result = new ArrayList<>(Arrays.asList(parental));
+        List<ComponentInfo> result = new ArrayList<>(parental);
         for(ComponentInfo child : components){
             // Compare with each already present component
             ListIterator<ComponentInfo> it = result.listIterator();
-            boolean handled = false;
+            boolean wasPresent = false;
 
             while(it.hasNext()){
                 ComponentInfo present = it.next();
 
                 // Compare based on names
                 if(present.name.equals(child.name)){
-                    //TODO merge
                     it.remove();
                     it.add(ComponentInfo.merge(present, child));
-                    handled = true;
+                    wasPresent = true;
                     break;
                 }
             }
-            if(handled) continue;
 
-            result.add(child);
+            // Add if it wasn't in parental
+            if(!wasPresent){
+                result.add(child);
+            }
         }
 
         return true;
@@ -117,12 +116,20 @@ public class Template {
      *
      * @return Full component information
      */
-    public ComponentInfo[] getComponents() {
+    public List<ComponentInfo> getComponents() {
         if(!componentsMerged){
             componentsMerged = mergeComponents();
         }
         return components;
     }
+
+    /**
+     * Return a template by name
+     *
+     * @param name Name to seek
+     * @return Template or {@code null} if there isn't one with the name
+     */
+    public static Template get(String name){ return templates.get(name); }
 
     /**
      * Information about a component in a template - its name and overrides for fields
@@ -139,7 +146,7 @@ public class Template {
          * @param name Component name
          * @param fieldOverrides Field overrides
          */
-        private ComponentInfo(String name, Map<String, Object> fieldOverrides){
+        public ComponentInfo(String name, Map<String, Object> fieldOverrides){
             this.name = name;
             this.fieldOverrides = fieldOverrides;
         }
@@ -150,10 +157,10 @@ public class Template {
          * @param src Object to read
          * @return Component information object
          */
-        private static ComponentInfo fromYAML(Object src){
+        public static ComponentInfo fromYAML(Object src){
             // Source is String when there are no overrides
             if(src instanceof String){
-                return new ComponentInfo((String) src, null);
+                return new ComponentInfo((String) src, new HashMap<>());
             }
 
             // Otherwise handle the overrides
@@ -170,7 +177,7 @@ public class Template {
          * @param child Child component info
          * @return Merged component info
          */
-        private static ComponentInfo merge(ComponentInfo parent, ComponentInfo child){
+        public static ComponentInfo merge(ComponentInfo parent, ComponentInfo child){
             // Check names are equal
             if(!parent.name.equals(child.name)){
                 throw new IllegalStateException(String.format("Cannot merge component information for '%s' and '%s'", parent.name, child.name));

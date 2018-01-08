@@ -44,4 +44,12 @@ public interface Component {
      */
     // For instantiating from templates and serialised game objects
     void overrideFields(Map<String, Object> overrides);
+
+    /**
+     * Convert the component to a YAML object with respect to a template (only overrides with respect to the template)
+     *
+     * @param t Template to consider
+     * @return YAML object or {@code null} if the same record is in the template already
+     */
+    Object toYaml(Template t);
 }

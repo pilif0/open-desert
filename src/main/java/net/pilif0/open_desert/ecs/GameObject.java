@@ -5,9 +5,7 @@ import net.pilif0.open_desert.components.PositionComponent;
 import net.pilif0.open_desert.components.RotationComponent;
 import net.pilif0.open_desert.components.ScaleComponent;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -46,7 +44,7 @@ public class GameObject {
         // Create the object based on the template generating a new handle for it
         template = t;
         components = new ArrayList<>();
-        for(Template.ComponentInfo i : t.components){
+        for(Template.ComponentInfo i : t.getComponents()){
             try {
                 addComponent(Components.instantiate(i));
             } catch (Exception e) {
@@ -78,6 +76,85 @@ public class GameObject {
     }
 
     /**
+     * Convert the game object to a YAML object for serialization
+     *
+     * @return YAML object
+     */
+    public Object toYaml(){
+        Map<String, Object> result = new HashMap<>();
+        result.put("template", template.name);
+
+        // Convert components
+        List<Object> comps = new ArrayList<>();
+        for(Component c : components){
+            Object serialised = c.toYaml(template);
+
+            if(serialised != null) {
+                comps.add(serialised);
+            }
+        }
+        if(!comps.isEmpty()){
+            result.put("components", comps);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert (deserialize) a YAML object to a game object
+     *
+     * @param yaml Source object
+     * @return Deserialized game object
+     *
+     * @throws IllegalArgumentException When the source object is not a valid serialised game object
+     */
+    public static GameObject fromYaml(Object yaml){
+        // Convert to a map
+        Map root;
+        if(yaml instanceof Map) {
+            root = (Map) yaml;
+        }else{
+            throw new IllegalArgumentException("Object is not a map, therefore not a serialised game object.");
+        }
+
+        // Read the template
+        Object templateVal = root.get("template");
+        Template template;
+        if(templateVal == null){
+            throw new IllegalArgumentException("Serialised game object needs to have a template name");
+        }else if(templateVal instanceof String){
+            template = Template.get((String) templateVal);
+            if(template == null){
+                throw new IllegalArgumentException("Template with name '"+templateVal+"' has not been loaded");
+            }
+        }else{
+            throw new IllegalArgumentException("Template name of the game object needs to be a String");
+        }
+
+        // Read the component overrides
+        Object componentsVal = root.get("components");
+        List<Template.ComponentInfo> overrides = new ArrayList<>();
+        if(componentsVal == null){
+            // No component overrides --> skip
+        }else if(componentsVal instanceof List){
+            ((List) componentsVal).forEach(o -> overrides.add(Template.ComponentInfo.fromYAML(o)));
+        }else{
+            throw new IllegalArgumentException("Overrides need to be a list of objects");
+        }
+
+        // Construct the game object
+        GameObject go = new GameObject(template);
+
+        // Apply overrides
+        for(Template.ComponentInfo info : overrides){
+            go.getComponent(info.name).overrideFields(info.fieldOverrides);
+        }
+
+        // Return the result
+        return go;
+    }
+
+    /**
      * Update this game object
      *
      * @param delta Delta time in ns
@@ -87,6 +164,9 @@ public class GameObject {
         distributeEvent(new UpdateEvent(delta));
     }
 
+    /**
+     * Clean up after the game object
+     */
     public void cleanUp(){
         // Distribute as an event, because some components might not have anything to clean up
         distributeEvent(new CleanUpEvent());
@@ -134,8 +214,8 @@ public class GameObject {
             if(c.getName().equals(name)){
                 c.onDetach(this);
                 it.remove();
+                return true;
             }
-            return true;
         }
 
         return false;
@@ -208,7 +288,7 @@ public class GameObject {
      * @param e Event to distribute
      */
     public void distributeEvent(GameObjectEvent e){
-        components.stream().forEach(c -> c.handle(e));
+        components.forEach(c -> c.handle(e));
     }
 
     /**
