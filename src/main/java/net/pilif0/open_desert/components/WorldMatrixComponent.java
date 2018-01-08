@@ -3,6 +3,7 @@ package net.pilif0.open_desert.components;
 import net.pilif0.open_desert.ecs.Component;
 import net.pilif0.open_desert.ecs.GameObject;
 import net.pilif0.open_desert.ecs.GameObjectEvent;
+import net.pilif0.open_desert.ecs.Template;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 
@@ -65,6 +66,24 @@ public class WorldMatrixComponent implements Component {
     @Override
     public void overrideFields(Map<String, Object> overrides) {
         // Nothing in this component is to be overridden, the fields start with functional values
+    }
+
+    @Override
+    public Object toYaml(Template t) {
+        // Retrieve the template default
+        Template.ComponentInfo info = t.getComponents().stream()
+                .filter(i -> NAME.equals(i.name))
+                .findFirst()
+                .orElse(null);
+
+        // Check template
+        if(info != null){
+            // Present in template
+            return null;
+        }else{
+            // Only declare the component
+            return NAME;
+        }
     }
 
     /**

@@ -5,10 +5,12 @@ import net.pilif0.open_desert.components.MouseButtonSensitiveComponent;
 import net.pilif0.open_desert.ecs.Component;
 import net.pilif0.open_desert.ecs.GameObject;
 import net.pilif0.open_desert.ecs.GameObjectEvent;
+import net.pilif0.open_desert.ecs.Template;
 import net.pilif0.open_desert.input.Action;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_MIDDLE;
@@ -22,17 +24,21 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_MIDDLE;
 public class TestFollowControlComponent implements Component {
     /** Name of this component */
     public static final String NAME = "test_follow_control";
-    /** Default move speed */
+    /** Default move speed (in files) */
     public static final String DEFAULT_SPEED = "100";
+    /** Default move speed */
+    public static final float DEFAULT_SPEED_VALUE = 100f;
+    /** Default precision (in files) */
+    public static final String DEFAULT_PRECISION = "1";
     /** Default precision */
-    public static final String DEFAULT_PRECISION = "5";
+    public static final float DEFAULT_PRECISION_VALUE = 1f;
 
     /** Component's owner */
     private GameObject owner;
     /** Move speed */
-    private float speed = 100;
+    private float speed = DEFAULT_SPEED_VALUE;
     /** Distance at which no movement is made anymore */
-    private float precision = 5;
+    private float precision = DEFAULT_PRECISION_VALUE;
 
     // Input flag
     private boolean held = false;
@@ -117,6 +123,75 @@ public class TestFollowControlComponent implements Component {
         }else if(precVal instanceof String){
             // When the value is anything else or nothing
             precision = Float.parseFloat((String) precVal);
+        }
+    }
+
+    @Override
+    public Object toYaml(Template t) {
+        // Retrieve the template default
+        Template.ComponentInfo info = t.getComponents().stream()
+                .filter(i -> NAME.equals(i.name))
+                .findFirst()
+                .orElse(null);
+
+        // Check template and default values
+        Map<String, Object> data = new HashMap<>();
+
+        // Check speed
+        if(speed != DEFAULT_SPEED_VALUE){
+            if(info != null){
+                Object val = info.fieldOverrides.getOrDefault("speed", DEFAULT_SPEED);
+                if(val instanceof Number) {
+                    if(speed != ((Number) val).floatValue()){
+                        // Not default and different from template --> must add to data
+                        data.put("speed", speed);
+                    }
+                }else if(val instanceof String){
+                    if(speed != Float.parseFloat((String) val)){
+                        // Not default and different from template --> must add to data
+                        data.put("speed", speed);
+                    }
+                }
+            }else{
+                // Not default and component not in template --> must add to data
+                data.put("speed", speed);
+            }
+        }
+
+        // Check precision
+        if(precision != DEFAULT_PRECISION_VALUE){
+            if(info != null){
+                Object val = info.fieldOverrides.getOrDefault("precision", DEFAULT_SPEED);
+                if(val instanceof Number) {
+                    if(precision != ((Number) val).floatValue()){
+                        // Not default and different from template --> must add to data
+                        data.put("precision", precision);
+                    }
+                }else if(val instanceof String){
+                    if(precision != Float.parseFloat((String) val)){
+                        // Not default and different from template --> must add to data
+                        data.put("precision", precision);
+                    }
+                }
+            }else{
+                // Not default and component not in template --> must add to data
+                data.put("precision", precision);
+            }
+        }
+
+        // Build and return the appropriate object
+        if(data.isEmpty()){
+            if(info != null){
+                // No data overrides and component declared in template --> return null
+                return null;
+            }else{
+                // No data overrides but component not declared in template --> declare the component
+                return NAME;
+            }
+        }else{
+            Map<String, Object> result = new HashMap<>();
+            result.put(NAME, data);
+            return result;
         }
     }
 }

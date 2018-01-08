@@ -19,6 +19,7 @@ import net.pilif0.open_desert.util.Color;
 import net.pilif0.open_desert.world.WorldTree;
 import org.joml.*;
 import org.joml.Math;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -223,7 +224,15 @@ public class IntroState extends GameState{
     }
 
     @Override
-    public void onExit() {}
+    public void onExit() {
+        // Test serialisation
+        Yaml yaml = new Yaml();
+        String serialized = yaml.dump(textureGO.toYaml());
+        System.out.println(serialized);
+        GameObject deserialized = GameObject.fromYaml(yaml.load(serialized));
+        System.out.printf("Deserialized with template %s and position %s\n", deserialized.template.name, deserialized.position.getPosition());
+        System.out.println(yaml.dump(deserialized.toYaml()));
+    }
 
     @Override
     public void onCleanUp() {

@@ -3,6 +3,7 @@ package net.pilif0.open_desert.components;
 import net.pilif0.open_desert.ecs.Component;
 import net.pilif0.open_desert.ecs.GameObject;
 import net.pilif0.open_desert.ecs.GameObjectEvent;
+import net.pilif0.open_desert.ecs.Template;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,8 +17,10 @@ import java.util.Map;
 public class RotationComponent implements Component{
     /** Name of this component */
     public static final String NAME = "rotation";
-    /** Default value for rotation */
+    /** Default value for rotation (in files) */
     public static final String DEFAULT_ROTATION = "0";
+    /** Default value for rotation */
+    public static final float DEFAULT_ROTATION_VALUE = 0f;
 
     /** Rotation amount (degrees) */
     private float rotation;
@@ -25,11 +28,9 @@ public class RotationComponent implements Component{
     private GameObject owner;
 
     /**
-     * Construct the component with rotation of 0 degrees
+     * Construct the component with default rotation
      */
-    public RotationComponent(){
-        rotation = 0;
-    }
+    public RotationComponent(){ this(DEFAULT_ROTATION_VALUE); }
 
     /**
      * Construct the component with the provided rotation
@@ -73,6 +74,39 @@ public class RotationComponent implements Component{
             // When the value is anything else or nothing
             rotation = Float.parseFloat((String) val);
         }
+    }
+
+    @Override
+    public Object toYaml(Template t) {
+        // Retrieve the template default
+        Template.ComponentInfo info = t.getComponents().stream()
+                .filter(i -> NAME.equals(i.name))
+                .findFirst()
+                .orElse(null);
+
+        // Check for equal to template values
+        if(info != null){
+            // Compare the current values to the overrides
+            Object val = info.fieldOverrides.getOrDefault("rotation", DEFAULT_ROTATION);
+            if( (val instanceof Number && rotation == ((Number) val).floatValue()) ||
+                (val instanceof String && rotation == Float.parseFloat((String) val)) ){
+                // Equal to override
+                return null;
+            }
+        }
+
+        // Check for equal to default value
+        if(rotation == DEFAULT_ROTATION_VALUE){
+            // Only declare the component
+            return NAME;
+        }
+
+        // Build full object
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
+        data.put("rotation", rotation);
+        result.put(NAME, data);
+        return result;
     }
 
     /**

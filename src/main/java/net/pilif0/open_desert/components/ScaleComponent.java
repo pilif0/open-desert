@@ -3,6 +3,7 @@ package net.pilif0.open_desert.components;
 import net.pilif0.open_desert.ecs.Component;
 import net.pilif0.open_desert.ecs.GameObject;
 import net.pilif0.open_desert.ecs.GameObjectEvent;
+import net.pilif0.open_desert.ecs.Template;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import org.joml.Vector3f;
@@ -20,8 +21,10 @@ import java.util.Map;
 public class ScaleComponent implements Component {
     /** Name of this component */
     public static final String NAME = "scale";
-    /** Default value for scale */
+    /** Default value for scale (in files) */
     public static final String DEFAULT_SCALE = "1,1";
+    /** Default value for scale */
+    public static final Vector2fc DEFAULT_SCALE_VALUE = new Vector2f(1, 1);
 
     /** Scale factors */
     private Vector2f scale;
@@ -32,7 +35,7 @@ public class ScaleComponent implements Component {
      * Construct the component with scale (1,1)
      */
     public ScaleComponent(){
-        scale = new Vector2f(1, 1);
+        this(DEFAULT_SCALE_VALUE);
     }
 
     /**
@@ -41,7 +44,7 @@ public class ScaleComponent implements Component {
      * @param scale Scale factors
      */
     public ScaleComponent(Vector2fc scale){
-        this.scale = new Vector2f(this.scale);
+        this.scale = new Vector2f(scale);
     }
 
     @Override
@@ -72,6 +75,40 @@ public class ScaleComponent implements Component {
         String val = (String) overrides.getOrDefault("scale", DEFAULT_SCALE);
         String[] p = val.split(",");
         scale.set(Float.parseFloat(p[0]), Float.parseFloat(p[1]));
+    }
+
+    @Override
+    public Object toYaml(Template t) {
+        // Retrieve the template default
+        Template.ComponentInfo info = t.getComponents().stream()
+                .filter(i -> NAME.equals(i.name))
+                .findFirst()
+                .orElse(null);
+
+        // Check for equal to template values
+        if(info != null){
+            // Compare the current values to the overrides
+            String val = (String) info.fieldOverrides.getOrDefault("scale", DEFAULT_SCALE);
+            String[] p = val.split(",");
+
+            if(scale.x() == Float.parseFloat(p[0]) && scale.y() == Float.parseFloat(p[1])){
+                // Equal to the override
+                return null;
+            }
+        }
+
+        // Check for equal to default value
+        if(scale.equals(DEFAULT_SCALE_VALUE)){
+            // Only declare the component
+            return NAME;
+        }
+
+        // Build full object
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
+        data.put("scale", String.format("%f, %f", scale.x(), scale.y()));
+        result.put(NAME, data);
+        return result;
     }
 
     /**

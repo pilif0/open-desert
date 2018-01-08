@@ -4,6 +4,7 @@ import net.pilif0.open_desert.Game;
 import net.pilif0.open_desert.ecs.Component;
 import net.pilif0.open_desert.ecs.GameObject;
 import net.pilif0.open_desert.ecs.GameObjectEvent;
+import net.pilif0.open_desert.ecs.Template;
 import net.pilif0.open_desert.events.EventListener;
 import net.pilif0.open_desert.input.KeyEvent;
 
@@ -59,6 +60,24 @@ public class KeyboardSensitiveComponent implements EventListener<KeyEvent>, Comp
     @Override
     public void overrideFields(Map<String, Object> overrides) {
         // There is nothing to override
+    }
+
+    @Override
+    public Object toYaml(Template t) {
+        // Retrieve the template default
+        Template.ComponentInfo info = t.getComponents().stream()
+                .filter(i -> NAME.equals(i.name))
+                .findFirst()
+                .orElse(null);
+
+        // Check template
+        if(info != null){
+            // Present in template
+            return null;
+        }else{
+            // Only declare the component
+            return NAME;
+        }
     }
 
     /**

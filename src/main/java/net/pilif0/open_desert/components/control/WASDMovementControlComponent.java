@@ -6,9 +6,11 @@ import net.pilif0.open_desert.components.SpriteComponent;
 import net.pilif0.open_desert.ecs.Component;
 import net.pilif0.open_desert.ecs.GameObject;
 import net.pilif0.open_desert.ecs.GameObjectEvent;
+import net.pilif0.open_desert.ecs.Template;
 import net.pilif0.open_desert.input.Action;
 import org.joml.Vector2f;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -22,13 +24,15 @@ import static org.lwjgl.glfw.GLFW.*;
 public class WASDMovementControlComponent implements Component {
     /** Name of this component */
     public static final String NAME = "wasd_movement_control";
-    /** Default speed value */
+    /** Default speed value (in files) */
     public static final String DEFAULT_SPEED = "100";
+    /** Default speed value */
+    public static final float DEFAULT_SPEED_VALUE = 100f;
 
     /** Component's owner */
     private GameObject owner;
     /** Movement speed (omnidirectional) */
-    private float speed = 100f;
+    private float speed = DEFAULT_SPEED_VALUE;
     
     // Key pressed flags
     private boolean w = false;
@@ -133,5 +137,38 @@ public class WASDMovementControlComponent implements Component {
             // When the value is anything else or nothing
             speed = Float.parseFloat((String) val);
         }
+    }
+
+    @Override
+    public Object toYaml(Template t) {
+        // Retrieve the template default
+        Template.ComponentInfo info = t.getComponents().stream()
+                .filter(i -> NAME.equals(i.name))
+                .findFirst()
+                .orElse(null);
+
+        // Check for equal to template values
+        if(info != null){
+            // Compare the current values to the overrides
+            Object val = info.fieldOverrides.getOrDefault("speed", DEFAULT_SPEED);
+            if( (val instanceof Number && speed == ((Number) val).floatValue()) ||
+                    (val instanceof String && speed == Float.parseFloat((String) val)) ){
+                // Equal to override
+                return null;
+            }
+        }
+
+        // Check for equal to default value
+        if(speed == DEFAULT_SPEED_VALUE){
+            // Only declare the component
+            return NAME;
+        }
+
+        // Build full object
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
+        data.put("speed", speed);
+        result.put(NAME, data);
+        return result;
     }
 }

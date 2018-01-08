@@ -3,6 +3,7 @@ package net.pilif0.open_desert.components;
 import net.pilif0.open_desert.ecs.Component;
 import net.pilif0.open_desert.ecs.GameObjectEvent;
 import net.pilif0.open_desert.ecs.GameObject;
+import net.pilif0.open_desert.ecs.Template;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import org.joml.Vector3f;
@@ -21,8 +22,10 @@ import java.util.Map;
 public class PositionComponent implements Component {
     /** Name of this component */
     public static final String NAME = "position";
-    /** Default value for position */
+    /** Default value for position (in files) */
     public static final String DEFAULT_POSITION = "0,0";
+    /** Default value for position */
+    public static final Vector2fc DEFAULT_POSITION_VALUE = new Vector2f();
 
     /** Position value */
     private Vector2f position;
@@ -30,10 +33,10 @@ public class PositionComponent implements Component {
     private GameObject owner;
 
     /**
-     * Construct the component with position (0,0)
+     * Construct the component with default position
      */
     public PositionComponent(){
-        position = new Vector2f();
+        this(DEFAULT_POSITION_VALUE);
     }
 
     /**
@@ -73,6 +76,40 @@ public class PositionComponent implements Component {
         String val = (String) overrides.getOrDefault("position", DEFAULT_POSITION);
         String[] p = val.split(",");
         position.set(Float.parseFloat(p[0]), Float.parseFloat(p[1]));
+    }
+
+    @Override
+    public Object toYaml(Template t) {
+        // Retrieve the template default
+        Template.ComponentInfo info = t.getComponents().stream()
+                .filter(i -> NAME.equals(i.name))
+                .findFirst()
+                .orElse(null);
+
+        // Check for equal to template values
+        if(info != null){
+            // Compare the current values to the overrides
+            String val = (String) info.fieldOverrides.getOrDefault("position", DEFAULT_POSITION);
+            String[] p = val.split(",");
+
+            if(position.x() == Float.parseFloat(p[0]) && position.y() == Float.parseFloat(p[1])){
+                // Equal to the override
+                return null;
+            }
+        }
+
+        // Check for equal to default value
+        if(position.equals(DEFAULT_POSITION_VALUE)){
+            // Only declare the component
+            return NAME;
+        }
+
+        // Build full object
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
+        data.put("position", String.format("%f, %f", position.x(), position.y()));
+        result.put(NAME, data);
+        return result;
     }
 
     /**

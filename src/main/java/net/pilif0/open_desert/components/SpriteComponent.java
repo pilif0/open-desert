@@ -1,10 +1,9 @@
 package net.pilif0.open_desert.components;
 
-import net.pilif0.open_desert.ecs.Component;
-import net.pilif0.open_desert.ecs.ComponentFieldException;
-import net.pilif0.open_desert.ecs.GameObject;
-import net.pilif0.open_desert.ecs.GameObjectEvent;
+import net.pilif0.open_desert.Launcher;
+import net.pilif0.open_desert.ecs.*;
 import net.pilif0.open_desert.graphics.TextureAtlas;
+import net.pilif0.open_desert.util.Severity;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
@@ -22,12 +21,16 @@ import java.util.Map;
 public class SpriteComponent implements Component {
     /** Name of this component */
     public static final String NAME = "sprite";
-    /** Default value for the texture atlas */
+    /** Default value for the texture atlas (in files) */
     public static final String DEFAULT_TEXTURE_ATLAS = "textures/default.png";
-    /** Default value for the texture index */
+    /** Default value for the texture index (in files) */
     public static final String DEFAULT_TEXTURE_INDEX = "0";
-    /** Default value for the sprite dimensions */
+    /** Default value for the texture index */
+    public static final int DEFAULT_TEXTURE_INDEX_VALUE = 0;
+    /** Default value for the sprite dimensions (in files) */
     public static final String DEFAULT_DIMENSIONS = "1,1";
+    /** Default value for the sprite dimensions */
+    public static final Vector2fc DEFAULT_DIMENSIONS_VALUE = new Vector2f(1,1);
 
     /** Texture atlas the sprite is from */
     private TextureAtlas atlas;
@@ -47,8 +50,8 @@ public class SpriteComponent implements Component {
             e.printStackTrace();
             throw new ComponentFieldException("Texture atlas could not be created.", e);
         }
-        index = 0;
-        dimensions = new Vector2f(1, 1);
+        index = DEFAULT_TEXTURE_INDEX_VALUE;
+        dimensions = new Vector2f(DEFAULT_DIMENSIONS_VALUE);
     }
 
     /**
@@ -105,6 +108,84 @@ public class SpriteComponent implements Component {
         String valDim = (String) overrides.getOrDefault("dimensions", DEFAULT_DIMENSIONS);
         String[] dims = valDim.split(",");
         dimensions = new Vector2f(Float.parseFloat(dims[0]), Float.parseFloat(dims[1]));
+    }
+
+    @Override
+    public Object toYaml(Template t) {
+        // Retrieve the template default
+        Template.ComponentInfo info = t.getComponents().stream()
+                .filter(i -> NAME.equals(i.name))
+                .findFirst()
+                .orElse(null);
+
+        // Check template and default values
+        Map<String, Object> data = new HashMap<>();
+
+        // Check atlas
+        if(!Paths.get(DEFAULT_TEXTURE_ATLAS).equals(atlas.path)){
+            if(info != null) {
+                String valAtlas = (String) info.fieldOverrides.getOrDefault("atlas", DEFAULT_TEXTURE_ATLAS);
+                if (!Paths.get(valAtlas).equals(atlas.path)) {
+                    // Not default and different from template --> must add to data
+                    data.put("atlas", atlas.path.toString());   //TODO: validate the path written is sensible
+                }
+            }else{
+                // Not default and different from template --> must add to data
+                data.put("atlas", atlas.path.toString());   //TODO: validate the path written is sensible
+            }
+        }
+
+        // Check index
+        if(index != DEFAULT_TEXTURE_INDEX_VALUE){
+            if(info != null){
+                Object valIndex = info.fieldOverrides.getOrDefault("index", DEFAULT_TEXTURE_INDEX);
+                if(valIndex instanceof Number) {
+                    if(index != ((Number) valIndex).intValue()){
+                        // Not default and different from template --> must add to data
+                        data.put("index", index);
+                    }
+                }else if(valIndex instanceof String){
+                    if(index != Integer.parseInt((String) valIndex)){
+                        // Not default and different from template --> must add to data
+                        data.put("index", index);
+                    }
+                }
+            }else{
+                // Not default and component not in template --> must add to data
+                data.put("index", index);
+            }
+        }
+
+        // Check dimensions
+        if(!dimensions.equals(DEFAULT_DIMENSIONS_VALUE)){
+            if(info != null){
+                String valDim = (String) info.fieldOverrides.getOrDefault("dimensions", DEFAULT_DIMENSIONS);
+                String[] dims = valDim.split(",");
+                dimensions = new Vector2f(Float.parseFloat(dims[0]), Float.parseFloat(dims[1]));
+                if(dimensions.x() != Float.parseFloat(dims[0]) && dimensions.y() != Float.parseFloat(dims[1])){
+                    // Not default and different from template --> must add to data
+                    data.put("dimensions", String.format("%f, %f", dimensions.x(), dimensions.y()));
+                }
+            }else{
+                // Not default and component not in template --> must add to data
+                data.put("dimensions", String.format("%f, %f", dimensions.x(), dimensions.y()));
+            }
+        }
+
+        // Build and return the appropriate object
+        if(data.isEmpty()){
+            if(info != null){
+                // No data overrides and component declared in template --> return null
+                return null;
+            }else{
+                // No data overrides but component not declared in template --> declare the component
+                return NAME;
+            }
+        }else{
+            Map<String, Object> result = new HashMap<>();
+            result.put(NAME, data);
+            return result;
+        }
     }
 
     /**
