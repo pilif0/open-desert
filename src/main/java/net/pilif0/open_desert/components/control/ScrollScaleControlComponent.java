@@ -5,7 +5,6 @@ import net.pilif0.open_desert.ecs.Component;
 import net.pilif0.open_desert.ecs.GameObject;
 import net.pilif0.open_desert.ecs.GameObjectEvent;
 import net.pilif0.open_desert.ecs.Template;
-import net.pilif0.open_desert.input.Action;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,20 +18,13 @@ import java.util.Map;
 public class ScrollScaleControlComponent implements Component {
     /** Name of this component */
     public static final String NAME = "scroll_scale_control";
-    /** Default scaling factor per step (in files) */
-    public static final String DEFAULT_FACTOR = "1.25";
     /** Default scaling factor per step */
-    public static final float DEFAULT_FACTOR_VALUE = 1.25f;
+    public static final float DEFAULT_FACTOR = 1.25f;
 
     /** Component's owner */
     private GameObject owner;
     /** Scaling factor per scroll step */
-    private float factor = DEFAULT_FACTOR_VALUE;
-
-    /**
-     * Construct the component with default factor
-     */
-    public ScrollScaleControlComponent(){}
+    private float factor = DEFAULT_FACTOR;
 
     @Override
     public String getName() {
@@ -64,7 +56,7 @@ public class ScrollScaleControlComponent implements Component {
     @Override
     public void overrideFields(Map<String, Object> overrides) {
         // Speed is serialised as a single float
-        Object val = overrides.getOrDefault("factor", DEFAULT_FACTOR);
+        Object val = overrides.getOrDefault("factor", null);
         if(val instanceof Number) {
             // When the value is a number
             factor = ((Number) val).floatValue();
@@ -85,16 +77,17 @@ public class ScrollScaleControlComponent implements Component {
         // Check for equal to template values
         if(info != null){
             // Compare the current values to the overrides
-            Object val = info.fieldOverrides.getOrDefault("factor", DEFAULT_FACTOR);
+            Object val = info.fieldOverrides.getOrDefault("factor", null);
             if( (val instanceof Number && factor == ((Number) val).floatValue()) ||
-                    (val instanceof String && factor == Float.parseFloat((String) val)) ){
+                    (val instanceof String && factor == Float.parseFloat((String) val)) ||
+                    (val == null && factor == DEFAULT_FACTOR)){
                 // Equal to override
                 return null;
             }
         }
 
         // Check for equal to default value
-        if(factor == DEFAULT_FACTOR_VALUE){
+        if(factor == DEFAULT_FACTOR){
             // Only declare the component
             return NAME;
         }

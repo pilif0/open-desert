@@ -17,29 +17,13 @@ import java.util.Map;
 public class RotationComponent implements Component{
     /** Name of this component */
     public static final String NAME = "rotation";
-    /** Default value for rotation (in files) */
-    public static final String DEFAULT_ROTATION = "0";
     /** Default value for rotation */
-    public static final float DEFAULT_ROTATION_VALUE = 0f;
+    public static final float DEFAULT_ROTATION = 0f;
 
     /** Rotation amount (degrees) */
-    private float rotation;
+    private float rotation = DEFAULT_ROTATION;
     /** Component's owner */
     private GameObject owner;
-
-    /**
-     * Construct the component with default rotation
-     */
-    public RotationComponent(){ this(DEFAULT_ROTATION_VALUE); }
-
-    /**
-     * Construct the component with the provided rotation
-     *
-     * @param rotation Rotation
-     */
-    public RotationComponent(float rotation){
-        this.rotation = rotation;
-    }
 
     @Override
     public String getName() {
@@ -47,9 +31,7 @@ public class RotationComponent implements Component{
     }
 
     @Override
-    public void handle(GameObjectEvent e) {
-        // So far there are no events for this component to handle
-    }
+    public void handle(GameObjectEvent e) {}
 
     @Override
     public void onAttach(GameObject owner) {
@@ -66,7 +48,7 @@ public class RotationComponent implements Component{
     @Override
     public void overrideFields(Map<String, Object> overrides) {
         // Rotation is serialised as a String with one float value
-        Object val = overrides.getOrDefault("rotation", DEFAULT_ROTATION);
+        Object val = overrides.getOrDefault("rotation", null);
         if(val instanceof Number) {
             // When the value is a number
             rotation = ((Number) val).floatValue();
@@ -87,16 +69,17 @@ public class RotationComponent implements Component{
         // Check for equal to template values
         if(info != null){
             // Compare the current values to the overrides
-            Object val = info.fieldOverrides.getOrDefault("rotation", DEFAULT_ROTATION);
+            Object val = info.fieldOverrides.getOrDefault("rotation", null);
             if( (val instanceof Number && rotation == ((Number) val).floatValue()) ||
-                (val instanceof String && rotation == Float.parseFloat((String) val)) ){
+                    (val instanceof String && rotation == Float.parseFloat((String) val)) ||
+                    (val == null && rotation == DEFAULT_ROTATION)){
                 // Equal to override
                 return null;
             }
         }
 
         // Check for equal to default value
-        if(rotation == DEFAULT_ROTATION_VALUE){
+        if(rotation == DEFAULT_ROTATION){
             // Only declare the component
             return NAME;
         }
@@ -135,6 +118,7 @@ public class RotationComponent implements Component{
      */
     public void addRotation(float difference){
         rotation = (rotation + difference) % 360;
+        owner.distributeEvent(new RotationEvent(this));
     }
 
     /**

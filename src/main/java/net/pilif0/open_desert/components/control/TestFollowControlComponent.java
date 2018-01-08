@@ -24,29 +24,20 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_MIDDLE;
 public class TestFollowControlComponent implements Component {
     /** Name of this component */
     public static final String NAME = "test_follow_control";
-    /** Default move speed (in files) */
-    public static final String DEFAULT_SPEED = "100";
     /** Default move speed */
-    public static final float DEFAULT_SPEED_VALUE = 100f;
-    /** Default precision (in files) */
-    public static final String DEFAULT_PRECISION = "1";
+    public static final float DEFAULT_SPEED = 100f;
     /** Default precision */
-    public static final float DEFAULT_PRECISION_VALUE = 1f;
+    public static final float DEFAULT_PRECISION = 1f;
 
     /** Component's owner */
     private GameObject owner;
     /** Move speed */
-    private float speed = DEFAULT_SPEED_VALUE;
+    private float speed = DEFAULT_SPEED;
     /** Distance at which no movement is made anymore */
-    private float precision = DEFAULT_PRECISION_VALUE;
+    private float precision = DEFAULT_PRECISION;
 
     // Input flag
     private boolean held = false;
-
-    /**
-     * Construct the component with default speed and precision
-     */
-    public TestFollowControlComponent(){}
 
     @Override
     public String getName() {
@@ -106,7 +97,7 @@ public class TestFollowControlComponent implements Component {
     @Override
     public void overrideFields(Map<String, Object> overrides) {
         // Speed is serialised as a single float
-        Object speedVal = overrides.getOrDefault("speed", DEFAULT_SPEED);
+        Object speedVal = overrides.getOrDefault("speed", null);
         if(speedVal instanceof Number) {
             // When the value is a number
             speed = ((Number) speedVal).floatValue();
@@ -116,7 +107,7 @@ public class TestFollowControlComponent implements Component {
         }
 
         // Precision is serialised as a single float
-        Object precVal = overrides.getOrDefault("precision", DEFAULT_PRECISION);
+        Object precVal = overrides.getOrDefault("precision", null);
         if(precVal instanceof Number) {
             // When the value is a number
             precision = ((Number) precVal).floatValue();
@@ -138,9 +129,9 @@ public class TestFollowControlComponent implements Component {
         Map<String, Object> data = new HashMap<>();
 
         // Check speed
-        if(speed != DEFAULT_SPEED_VALUE){
+        if(speed != DEFAULT_SPEED){
             if(info != null){
-                Object val = info.fieldOverrides.getOrDefault("speed", DEFAULT_SPEED);
+                Object val = info.fieldOverrides.getOrDefault("speed", null);
                 if(val instanceof Number) {
                     if(speed != ((Number) val).floatValue()){
                         // Not default and different from template --> must add to data
@@ -151,6 +142,9 @@ public class TestFollowControlComponent implements Component {
                         // Not default and different from template --> must add to data
                         data.put("speed", speed);
                     }
+                }else{
+                    // Not default and different from template --> must add to data
+                    data.put("speed", speed);
                 }
             }else{
                 // Not default and component not in template --> must add to data
@@ -159,9 +153,9 @@ public class TestFollowControlComponent implements Component {
         }
 
         // Check precision
-        if(precision != DEFAULT_PRECISION_VALUE){
+        if(precision != DEFAULT_PRECISION){
             if(info != null){
-                Object val = info.fieldOverrides.getOrDefault("precision", DEFAULT_SPEED);
+                Object val = info.fieldOverrides.getOrDefault("precision", null);
                 if(val instanceof Number) {
                     if(precision != ((Number) val).floatValue()){
                         // Not default and different from template --> must add to data
@@ -172,6 +166,9 @@ public class TestFollowControlComponent implements Component {
                         // Not default and different from template --> must add to data
                         data.put("precision", precision);
                     }
+                }else{
+                    // Not default and different from template --> must add to data
+                    data.put("precision", precision);
                 }
             }else{
                 // Not default and component not in template --> must add to data

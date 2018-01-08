@@ -1,8 +1,6 @@
 package net.pilif0.open_desert.components.control;
 
-import net.pilif0.open_desert.Game;
 import net.pilif0.open_desert.components.KeyboardSensitiveComponent;
-import net.pilif0.open_desert.components.SpriteComponent;
 import net.pilif0.open_desert.ecs.Component;
 import net.pilif0.open_desert.ecs.GameObject;
 import net.pilif0.open_desert.ecs.GameObjectEvent;
@@ -24,26 +22,19 @@ import static org.lwjgl.glfw.GLFW.*;
 public class WASDMovementControlComponent implements Component {
     /** Name of this component */
     public static final String NAME = "wasd_movement_control";
-    /** Default speed value (in files) */
-    public static final String DEFAULT_SPEED = "100";
     /** Default speed value */
-    public static final float DEFAULT_SPEED_VALUE = 100f;
+    public static final float DEFAULT_SPEED = 100f;
 
     /** Component's owner */
     private GameObject owner;
     /** Movement speed (omnidirectional) */
-    private float speed = DEFAULT_SPEED_VALUE;
+    private float speed = DEFAULT_SPEED;
     
     // Key pressed flags
     private boolean w = false;
     private boolean a = false;
     private boolean s = false;
     private boolean d = false;
-
-    /**
-     * Construct the component with default speed
-     */
-    public WASDMovementControlComponent(){}
 
     @Override
     public String getName() {
@@ -129,7 +120,7 @@ public class WASDMovementControlComponent implements Component {
     @Override
     public void overrideFields(Map<String, Object> overrides) {
         // Speed is serialised as a single float
-        Object val = overrides.getOrDefault("speed", DEFAULT_SPEED);
+        Object val = overrides.getOrDefault("speed", null);
         if(val instanceof Number) {
             // When the value is a number
             speed = ((Number) val).floatValue();
@@ -150,16 +141,17 @@ public class WASDMovementControlComponent implements Component {
         // Check for equal to template values
         if(info != null){
             // Compare the current values to the overrides
-            Object val = info.fieldOverrides.getOrDefault("speed", DEFAULT_SPEED);
+            Object val = info.fieldOverrides.getOrDefault("speed", null);
             if( (val instanceof Number && speed == ((Number) val).floatValue()) ||
-                    (val instanceof String && speed == Float.parseFloat((String) val)) ){
+                    (val instanceof String && speed == Float.parseFloat((String) val)) ||
+                    (val == null && speed == DEFAULT_SPEED)){
                 // Equal to override
                 return null;
             }
         }
 
         // Check for equal to default value
-        if(speed == DEFAULT_SPEED_VALUE){
+        if(speed == DEFAULT_SPEED){
             // Only declare the component
             return NAME;
         }

@@ -21,31 +21,13 @@ import java.util.Map;
 public class ScaleComponent implements Component {
     /** Name of this component */
     public static final String NAME = "scale";
-    /** Default value for scale (in files) */
-    public static final String DEFAULT_SCALE = "1,1";
     /** Default value for scale */
-    public static final Vector2fc DEFAULT_SCALE_VALUE = new Vector2f(1, 1);
+    public static final Vector2fc DEFAULT_SCALE = new Vector2f(1, 1);
 
     /** Scale factors */
-    private Vector2f scale;
+    private Vector2f scale = new Vector2f(DEFAULT_SCALE);
     /** Component's owner */
     private GameObject owner;
-
-    /**
-     * Construct the component with scale (1,1)
-     */
-    public ScaleComponent(){
-        this(DEFAULT_SCALE_VALUE);
-    }
-
-    /**
-     * Construct the component with the provided scale
-     *
-     * @param scale Scale factors
-     */
-    public ScaleComponent(Vector2fc scale){
-        this.scale = new Vector2f(scale);
-    }
 
     @Override
     public String getName() {
@@ -53,9 +35,7 @@ public class ScaleComponent implements Component {
     }
 
     @Override
-    public void handle(GameObjectEvent e) {
-        // So far there are no events for this component to handle
-    }
+    public void handle(GameObjectEvent e) {}
 
     @Override
     public void onAttach(GameObject owner) {
@@ -72,9 +52,11 @@ public class ScaleComponent implements Component {
     @Override
     public void overrideFields(Map<String, Object> overrides) {
         // Scale is serialised as a String with two float values separated by ','
-        String val = (String) overrides.getOrDefault("scale", DEFAULT_SCALE);
-        String[] p = val.split(",");
-        scale.set(Float.parseFloat(p[0]), Float.parseFloat(p[1]));
+        Object val = overrides.getOrDefault("scale", null);
+        if(val instanceof String){
+            String[] s = ((String) val).split(",");
+            scale.set(Float.parseFloat(s[0]), Float.parseFloat(s[1]));
+        }
     }
 
     @Override
@@ -88,17 +70,21 @@ public class ScaleComponent implements Component {
         // Check for equal to template values
         if(info != null){
             // Compare the current values to the overrides
-            String val = (String) info.fieldOverrides.getOrDefault("scale", DEFAULT_SCALE);
-            String[] p = val.split(",");
-
-            if(scale.x() == Float.parseFloat(p[0]) && scale.y() == Float.parseFloat(p[1])){
+            Object val = info.fieldOverrides.getOrDefault("scale", null);
+            if(val != null && val instanceof String){
+                String[] s = ((String) val).split(",");
+                if(scale.x() == Float.parseFloat(s[0]) && scale.y() == Float.parseFloat(s[1])){
+                    // Equal to the override
+                    return null;
+                }
+            }else if(val == null && scale.equals(DEFAULT_SCALE)){
                 // Equal to the override
                 return null;
             }
         }
 
         // Check for equal to default value
-        if(scale.equals(DEFAULT_SCALE_VALUE)){
+        if(scale.equals(DEFAULT_SCALE)){
             // Only declare the component
             return NAME;
         }
@@ -146,6 +132,7 @@ public class ScaleComponent implements Component {
      */
     public void addScale(Vector2fc difference){
         scale.add(difference);
+        owner.distributeEvent(new ScaleEvent(this));
     }
 
     /**
@@ -155,6 +142,7 @@ public class ScaleComponent implements Component {
      */
     public void mulScale(float f) {
         scale.mul(f);
+        owner.distributeEvent(new ScaleEvent(this));
     }
 
     /**

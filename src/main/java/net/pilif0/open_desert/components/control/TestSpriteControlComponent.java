@@ -24,26 +24,17 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 public class TestSpriteControlComponent implements Component {
     /** Name of this component */
     public static final String NAME = "test_sprite_control";
-    /** Name of the increment key (in GLFW fields) */
-    public static final String DEFAULT_INCREMENT_KEY = "RIGHT";
     /** Default increment key code */
-    public static final int DEFAULT_INCREMENT_KEY_VALUE = GLFW_KEY_RIGHT;
-    /** Name of the decrement key (in GLFW fields) */
-    public static final String DEFAULT_DECREMENT_KEY = "LEFT";
+    public static final int DEFAULT_INCREMENT_KEY = GLFW_KEY_RIGHT;
     /** Default decrement key code */
-    public static final int DEFAULT_DECREMENT_KEY_VALUE = GLFW_KEY_LEFT;
+    public static final int DEFAULT_DECREMENT_KEY = GLFW_KEY_LEFT;
 
     /** Component's owner */
     private GameObject owner;
     /** Increment key code */
-    private int increment = DEFAULT_INCREMENT_KEY_VALUE;
+    private int increment = DEFAULT_INCREMENT_KEY;
     /** Decrement key code */
-    private int decrement = DEFAULT_DECREMENT_KEY_VALUE;
-
-    /**
-     * Construct the component with default keys (left for decrement, right for increment)
-     */
-    public TestSpriteControlComponent(){}
+    private int decrement = DEFAULT_DECREMENT_KEY;
 
     @Override
     public String getName() {
@@ -86,7 +77,7 @@ public class TestSpriteControlComponent implements Component {
     @Override
     public void overrideFields(Map<String, Object> overrides) {
         // Keys are serialised as names of the GLFW fields without the "GLFW_KEY_" prefix or direct integer keycodes
-        Object valInc = overrides.getOrDefault("increment", DEFAULT_INCREMENT_KEY);
+        Object valInc = overrides.getOrDefault("increment", null);
         if(valInc instanceof Number){
             // Keycode
             increment = ((Number) valInc).intValue();
@@ -101,12 +92,9 @@ public class TestSpriteControlComponent implements Component {
             } catch (NoSuchFieldException e) {
                 throw new ComponentFieldException("Increment field contains an invalid key");
             }
-        }else{
-            // Invalid
-            throw new ComponentFieldException("Increment field is not a keycode nor a field name");
         }
 
-        Object valDec = overrides.getOrDefault("decrement", DEFAULT_DECREMENT_KEY);
+        Object valDec = overrides.getOrDefault("decrement", null);
         if(valDec instanceof Number){
             // Keycode
             decrement = ((Number) valDec).intValue();
@@ -121,9 +109,6 @@ public class TestSpriteControlComponent implements Component {
             } catch (NoSuchFieldException e) {
                 throw new ComponentFieldException("Decrement field contains an invalid key");
             }
-        }else{
-            // Invalid
-            throw new ComponentFieldException("Decrement field is not a keycode nor a field name");
         }
     }
 
@@ -140,9 +125,9 @@ public class TestSpriteControlComponent implements Component {
         Map<String, Object> data = new HashMap<>();
 
         // Check increment
-        if(increment != DEFAULT_INCREMENT_KEY_VALUE){
+        if(increment != DEFAULT_INCREMENT_KEY){
             if(info != null){
-                Object val = info.fieldOverrides.getOrDefault("increment", DEFAULT_INCREMENT_KEY);
+                Object val = info.fieldOverrides.getOrDefault("increment", null);
                 if(val instanceof Number){
                     if(increment != ((Number) val).intValue()){
                         // Not default and different from template --> must add to data
@@ -163,6 +148,9 @@ public class TestSpriteControlComponent implements Component {
                     } catch (NoSuchFieldException e) {
                         throw new ComponentFieldException("Increment field contains an invalid key");
                     }
+                }else{
+                    // Not default and different from template --> must add to data
+                    data.put("increment", increment);
                 }
             }else{
                 // Not default and component not in template --> must add to data
@@ -171,9 +159,9 @@ public class TestSpriteControlComponent implements Component {
         }
 
         // Check decrement
-        if(decrement != DEFAULT_DECREMENT_KEY_VALUE){
+        if(decrement != DEFAULT_DECREMENT_KEY){
             if(info != null){
-                Object val = info.fieldOverrides.getOrDefault("decrement", DEFAULT_DECREMENT_KEY);
+                Object val = info.fieldOverrides.getOrDefault("decrement", null);
                 if(val instanceof Number){
                     if(decrement != ((Number) val).intValue()){
                         // Not default and different from template --> must add to data
@@ -194,6 +182,9 @@ public class TestSpriteControlComponent implements Component {
                     } catch (NoSuchFieldException e) {
                         throw new ComponentFieldException("Decrement field contains an invalid key");
                     }
+                }else{
+                    // Not default and different from template --> must add to data
+                    data.put("decrement", decrement);
                 }
             }else{
                 // Not default and component not in template --> must add to data

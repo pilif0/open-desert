@@ -35,9 +35,7 @@ public class MouseButtonSensitiveComponent implements Component, EventListener<M
     }
 
     @Override
-    public void handle(GameObjectEvent e) {
-        // So far there are no events for this component to handle
-    }
+    public void handle(GameObjectEvent e) {}
 
     @Override
     public void onAttach(GameObject owner) {

@@ -103,6 +103,7 @@ public class WorldMatrixComponent implements Component {
             if(owner.scale != null) {
                 worldMatrix.scale(owner.scale.getScale3D());
             }
+            recalculate = false;
         }
 
         return worldMatrix.toImmutable();

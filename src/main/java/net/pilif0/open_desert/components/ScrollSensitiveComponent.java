@@ -35,9 +35,7 @@ public class ScrollSensitiveComponent implements Component, EventListener<Scroll
     }
 
     @Override
-    public void handle(GameObjectEvent e) {
-        // So far there are no events for this component to handle
-    }
+    public void handle(GameObjectEvent e) {}
 
     @Override
     public void onAttach(GameObject owner) {
