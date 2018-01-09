@@ -109,15 +109,15 @@ public class SpriteComponent implements Component {
                 if(valAtlas instanceof String) {
                     if(!Paths.get((String) valAtlas).equals(atlas.path)) {
                         // Not default and different from template --> must add to data
-                        data.put("atlas", atlas.path.toString());   //TODO: validate the path written is relative
+                        data.put("atlas", atlas.path.toString());
                     }
                 }else{
                     // Not default and different from template --> must add to data
-                    data.put("atlas", atlas.path.toString());   //TODO: validate the path written is relative
+                    data.put("atlas", atlas.path.toString());
                 }
             }else{
                 // Not default and different from template --> must add to data
-                data.put("atlas", atlas.path.toString());   //TODO: validate the path written is relative
+                data.put("atlas", atlas.path.toString());
             }
         }
 
