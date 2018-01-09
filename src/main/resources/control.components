@@ -1,0 +1,19 @@
+- name: test_sprite_control
+  description: Control component for the test sprite
+  class: net.pilif0.open_desert.components.control.TestSpriteControlComponent
+  required: sprite, keyboard_sensitive
+
+- name: wasd_movement_control
+  description: Controls position based on WASD keys
+  class: net.pilif0.open_desert.components.control.WASDMovementControlComponent
+  required: position, keyboard_sensitive
+
+- name: scroll_scale_control
+  description: Controls scale based on scrolling
+  class: net.pilif0.open_desert.components.control.ScrollScaleControlComponent
+  required: scale, scroll_sensitive
+
+- name: test_follow_control
+  description: Makes GO follow the mouse when middle button is held
+  class: net.pilif0.open_desert.components.control.TestFollowControlComponent
+  required: position, mouse_button_sensitive

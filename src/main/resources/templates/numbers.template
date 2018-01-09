@@ -1,0 +1,16 @@
+name: numbers
+description: Sprite test (numbers from 0 to 7)
+parent: none
+components:
+    - position:
+        position: 800, 600
+    - rotation
+    - scale
+    - world_matrix
+    - sprite:
+        atlas: textures/atlas.png
+        dimensions: 64, 64
+    - keyboard_sensitive
+    - test_sprite_control:
+        increment: left
+        decrement: right

@@ -28,4 +28,15 @@ public class ScrollEvent implements Event {
         this.x = xoffset;
         this.y = yoffset;
     }
+
+    /**
+     * Constructs the event from the data of another event (copy)
+     *
+     * @param source Source event
+     */
+    public ScrollEvent(ScrollEvent source){
+        this.window = source.window;
+        this.x = source.x;
+        this.y = source.y;
+    }
 }

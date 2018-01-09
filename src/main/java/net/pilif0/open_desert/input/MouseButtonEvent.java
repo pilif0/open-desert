@@ -53,4 +53,19 @@ public class MouseButtonEvent implements Event {
         this.altDown = (mods & GLFW_MOD_ALT) > 0;
         this.superDown = (mods & GLFW_MOD_SUPER) > 0;
     }
+
+    /**
+     * Constructs the event from the data of another event (copy)
+     *
+     * @param source Source event
+     */
+    public MouseButtonEvent(MouseButtonEvent source){
+        this.window = source.window;
+        this.button = source.button;
+        this.action = source.action;
+        this.shiftDown = source.shiftDown;
+        this.controlDown = source.controlDown;
+        this.altDown = source.altDown;
+        this.superDown = source.superDown;
+    }
 }

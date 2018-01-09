@@ -11,13 +11,13 @@ import static org.lwjgl.glfw.GLFW.*;
  * @version 1.0
  */
 public class KeyEvent implements Event {
-    /** The handle of the associated window */
+    /** Handle of the associated window */
     public final long window;
     /** Key code */
     public final int key;
-    /** The system specific scan-code of the key */
+    /** System specific scan-code of the key */
     public final int scancode;
-    /** The action performed */
+    /** Action performed */
     public final Action action;
     /** Whether shift was held down */
     public final boolean shiftDown;
@@ -29,13 +29,13 @@ public class KeyEvent implements Event {
     public final boolean superDown;
 
     /**
-     * Constructs the event from the data given by GLFW
+     * Construct the event from the data given by GLFW
      *
-     * @param window The handle of the associated window
-     * @param key The key code
-     * @param scancode The system specific scan-code
-     * @param action The action performed ({@code PRESS}, {@code RELEASE}, {@code REPEAT})
-     * @param mods The bitfield describing which modifier keys were held down
+     * @param window Handle of the associated window
+     * @param key Key code
+     * @param scancode System specific scan-code
+     * @param action Action performed ({@code PRESS}, {@code RELEASE}, {@code REPEAT})
+     * @param mods Bitfield describing which modifier keys were held down
      */
     public KeyEvent(long window, int key, int scancode, int action, int mods){
         this.window = window;
@@ -55,5 +55,21 @@ public class KeyEvent implements Event {
         this.controlDown = (mods & GLFW_MOD_CONTROL) > 0;
         this.altDown = (mods & GLFW_MOD_ALT) > 0;
         this.superDown = (mods & GLFW_MOD_SUPER) > 0;
+    }
+
+    /**
+     * Construct the event from the data of another event (copy)
+     *
+     * @param source Source event
+     */
+    public KeyEvent(KeyEvent source){
+        this.window = source.window;
+        this.key = source.key;
+        this.scancode = source.scancode;
+        this.action = source.action;
+        this.shiftDown = source.shiftDown;
+        this.controlDown = source.controlDown;
+        this.altDown = source.altDown;
+        this.superDown = source.superDown;
     }
 }

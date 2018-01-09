@@ -27,6 +27,8 @@ public class PNGTexture implements Texture{
     public final int width;
     /** The texture height */
     public final int height;
+    /** Path to texture */
+    public final Path path;
 
     /**
      * Constructs the texture from the PNG file, applying the default filtering method
@@ -55,6 +57,7 @@ public class PNGTexture implements Texture{
         //Set the data members
         width = decoder.getWidth();
         height = decoder.getHeight();
+        this.path = path;
 
         //Upload the texture to the GPU
         ID = glGenTextures();
