@@ -53,7 +53,16 @@ public class GameObject {
                 System.exit(1);
             }
         }
-        position = (PositionComponent) getComponent("position");
+
+        // Make sure the game object has a position
+        if(hasComponent("position")){
+            position = (PositionComponent) getComponent("position");
+        }else{
+            position = new PositionComponent();
+            addComponent(position);
+        }
+
+        // Set the remaining members
         rotation = (RotationComponent) getComponent("rotation");
         scale = (ScaleComponent) getComponent("scale");
         handle = newHandle();
